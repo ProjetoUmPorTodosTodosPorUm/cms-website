@@ -1,38 +1,36 @@
-# create-svelte
+# ProjetoUmPorTodosTodosPorUm.org's CMS
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+## Dependencies
+- [Docker with Docker Compose](https://docs.docker.com/get-docker/)
+- [asdf](https://asdf-vm.com/guide/getting-started.html)
 
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
+## Install
 ```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
+$ asdf install
+$ npm install
 ```
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
+## Run
+### Development
 ```bash
-npm run dev
+# Start the API (api-projeto)
+$ npm run start:dev
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+# Then the App
+$ npm run dev
 ```
 
-## Building
-
-To create a production version of your app:
-
+### Production
 ```bash
-npm run build
+# Build docker image
+$ npm run build:docker
+
+# Then start from API's root folder
+$ npm run start:prod
 ```
+> It will need web image too.
 
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+## Related
+Other projects related to this:
+- [api-projeto](https://github.com/RenanGalvao/api-projeto)
+- [web-projeto](https://github.com/RenanGalvao/web-projeto)

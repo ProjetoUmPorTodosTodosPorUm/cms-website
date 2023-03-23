@@ -1,0 +1,145 @@
+@import "$lib/scss/_shared";
+
+.app-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  box-sizing: border-box;
+  padding: 3rem;
+
+  .image-preview {
+    display: grid;
+    grid-template-areas: '. image';
+    grid-template-columns: 12% 88%;
+    grid-template-rows: 100%;
+    height: 128px;
+    width: 300px;
+    position: relative;
+    margin-bottom: 2rem;
+
+    img {
+      grid-area: image;
+      width: 128px;
+      height: 128px;
+      object-fit: cover;
+      border: 2px solid var(--input-border-color-initial);
+      box-shadow: 1px 1px 10px rgba(0, 0, 0, .2);
+    }
+
+    .overlay {
+      grid-area: image;
+      position: absolute;
+      bottom: 0px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      width: 128px;
+      height: 30%;
+
+      opacity: 0;
+      transition: .6s ease;
+
+      &:hover {
+        opacity: 1;
+        background-color: rgba(0, 0, 0, .4);
+      }
+
+      a {
+        text-align: center;
+        color: #fff;
+      }
+
+      input {
+        height: 0;
+        opacity: 0;
+        pointer-events: none;
+      }
+    }
+  }
+
+  .input-group {
+    display: flex;
+    width: 100%;
+
+    &-column {
+      display: flex;
+      flex-direction: column;
+      justify-content: end;
+
+      margin-bottom: 2rem;
+
+      .input {
+        margin-top: auto;
+        margin-bottom: 0;
+        display: grid;
+        grid-template-areas: 'input';
+        grid-template-columns: 100%;
+        grid-template-rows: 100%;
+
+        input {
+          margin-left: 2rem;
+        }
+      }
+    }
+  }
+
+  .input {
+    width: 300px;
+    margin-bottom: 2rem;
+    margin-right: 1rem;
+    display: grid;
+    grid-template-areas: 'icon input';
+    grid-template-columns: 12% 88%;
+    grid-template-rows: 100%;
+
+    svg {
+      grid-area: icon;
+      font-size: 1.5rem;
+      margin-top: 0.3rem;
+      filter: var(--svg-color)
+    }
+
+    input,
+    select {
+      background-color: var(--input-background-color);
+      color: var(--app-content-main-color);
+      grid-area: input;
+      height: 2.5rem;
+      padding: .5rem .5rem;
+      border-top: 0;
+      border-left: 0;
+      border-right: 0;
+      border-width: 2px;
+      border-color: var(--input-border-color-initial);
+      outline: none;
+      transition: border-color .6s ease;
+      font-size: 1rem;
+
+      &:focus {
+        border-color: var(--input-border-color-full);
+      }
+
+      &::placeholder {
+        color: var(--app-content-main-color);
+      }
+    }
+
+    select {
+      grid-area: input;
+      height: 2.5rem;
+    }
+
+    &.file {
+      a input {
+        cursor: pointer;
+      }
+
+      >input {
+        display: none;
+      }
+    }
+  }
+}

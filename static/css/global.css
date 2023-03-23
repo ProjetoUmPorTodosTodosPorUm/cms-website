@@ -1,0 +1,47 @@
+/*
+* Set up
+*/
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+
+@font-face {
+    font-family: 'Old London';
+    src: url("/fonts/OldLondon.ttf") format('truetype');
+}
+
+html,
+body {
+    font-family: 'Lato', sans-serif;
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth;
+    width: 100vw;
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: var(--font-color);
+}
+
+a {
+    color: var(--link-font-color);
+    text-decoration: none;
+}
+
+p {
+    text-indent: 1rem;
+    text-align: justify;
+}
+
+.no-text-indent {
+    text-indent: initial;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* change color from autocomplete */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  box-shadow: 0 0 0 0px white inset !important;
+}

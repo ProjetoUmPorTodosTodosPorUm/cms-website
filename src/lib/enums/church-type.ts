@@ -1,0 +1,6 @@
+export enum ChurchType {
+    PIONEER = 'PIONEER',
+    EXPANSION = 'EXPANSION',
+    SUPPORT = 'SUPPORT',
+    RESPONSIBLE = 'RESPONSIBLE'
+}

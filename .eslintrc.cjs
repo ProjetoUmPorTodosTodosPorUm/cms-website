@@ -16,5 +16,8 @@ module.exports = {
 		browser: true,
 		es2017: true,
 		node: true
+	},
+	globals: {
+		'__APP_VERSION__': true
 	}
 };

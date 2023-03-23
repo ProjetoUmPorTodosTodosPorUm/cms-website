@@ -1,0 +1,19 @@
+@import "$lib/scss/_shared";
+
+.loading-overlay {
+  position: fixed;
+  width: calc(100% - 200px);
+  height: 100%;
+  margin: -16px; // app-content
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(var(--app-bg-rgb), .3);
+
+  .loading-icon {
+    @include icon-spinner;
+    filter: invert(74%) sepia(100%) saturate(0%) hue-rotate(225deg) brightness(109%) contrast(109%);
+    font-size: 5rem;
+  }
+}

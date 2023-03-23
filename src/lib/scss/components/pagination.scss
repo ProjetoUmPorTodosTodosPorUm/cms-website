@@ -1,0 +1,77 @@
+@import "$lib/scss/_shared";
+//@import "$lib/scss/_variables";
+
+.pagination {
+  display: flex;
+
+  &:hover {
+    border-color: var(--action-color-hover);
+  }
+}
+
+.item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 32px;
+  padding: 0;
+  cursor: pointer;
+
+  border: 0;
+  background-color: var(--primary-background);
+  color: var(--contrast-primary-background);
+
+  font-size: 1.2rem;
+
+  svg {
+    font-size: 1.3rem;
+  }
+
+  &.previous {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+
+    &:hover {
+      color: var(--link-font-color);
+    }
+  }
+
+  &.next {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+
+    &:hover {
+      color: var(--link-font-color);
+    }
+  }
+
+  &.pages {
+    padding: .2rem;
+
+    &:first-of-type {
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+      padding-left: .5rem;
+    }
+
+    &:last-of-type {
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+      padding-right: .5rem;
+    }
+
+    &.active,
+    &:hover {
+      color: var(--link-font-color);
+    }
+  }
+
+  &.action {
+    position: relative;
+
+    p {
+      text-indent: 0;
+    }
+  }
+}

@@ -1,0 +1,76 @@
+/*
+* Media queries
+*/
+
+@mixin for-xs-devices {
+  @media (max-width: 575px) {
+    @content;
+  }
+}
+
+@mixin for-sm-devices {
+  @media (min-width: 576px) {
+    @content;
+  }
+}
+
+@mixin for-md-devices {
+  @media (min-width: 768px) {
+    @content;
+  }
+}
+
+@mixin for-lg-devices {
+  @media (min-width: 992px) {
+    @content;
+  }
+}
+
+@mixin for-xl-devices {
+  @media (min-width: 1200px) {
+    @content;
+  }
+}
+
+/*
+* Utils
+*/
+@mixin icon-spinner($secs: 0.9s) {
+  animation: spin-animation $secs infinite;
+  /*display: inline-block;*/
+
+  @keyframes spin-animation {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(359deg);
+    }
+  }
+}
+
+/* 
+* Misc
+*/
+
+.messages-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+
+  width: 100%;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+
+  .toast {
+    pointer-events: initial;
+  }
+
+  @include for-md-devices {
+    align-items: flex-end;
+  }
+}

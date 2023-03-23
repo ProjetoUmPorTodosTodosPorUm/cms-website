@@ -1,0 +1,197 @@
+@import "$lib/scss/_shared";
+@import "$lib/scss/_variables";
+
+.login-container {
+  min-height: 100vh;
+  width: 100vw;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: $offWhiteBackground;
+}
+
+.form-container {
+  width: 260px;
+  height: 480px;
+  overflow: hidden;
+  border-top-right-radius: .5rem;
+  border-top-left-radius: .5rem;
+
+  display: grid;
+  grid-template-areas:
+    'image'
+    'form';
+  grid-template-rows: 25% 75%;
+  grid-template-columns: 100%;
+
+  background-color: #fff;
+  box-shadow: .3rem .3rem 1rem rgba(0, 0, 0, .2);
+
+  @include for-md-devices {
+    width: 560px;
+    min-height: 380px;
+
+    grid-template-areas: 'image form';
+    grid-template-rows: 100%;
+    grid-template-columns: 30% 70%;
+
+
+    border-top-right-radius: 0;
+    border-top-left-radius: .5rem;
+    border-bottom-left-radius: .5rem;
+  }
+}
+
+.form-image {
+  grid-area: image;
+  background-image: url(/images/pantokrator.webp);
+  background-size: cover;
+  background-position: center 22%;
+  background-repeat: no-repeat;
+
+  @include for-md-devices {
+    background-position: center center;
+    background-size: cover;
+  }
+
+  position: relative;
+
+  button {
+    position: absolute;
+    margin: .5rem .2rem;
+    padding: 0;
+    
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+
+    .icon {
+      font-size: 3rem;
+      filter: invert(100%) sepia(20%) saturate(2873%) hue-rotate(178deg) brightness(80%) contrast(87%);
+    }
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  box-sizing: border-box;
+  padding: 1rem 1.5rem;
+
+  h2 {
+    width: 100%;
+    margin: 0;
+    letter-spacing: .03rem;
+  }
+
+  p {
+    width: 100%;
+    margin: 0;
+    letter-spacing: .03rem;
+    text-indent: initial;
+  }
+
+  .form-links {
+    width: 100%;
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    @include for-md-devices {
+      margin: auto 0 0 0;
+      flex-direction: row;
+      justify-content: end;
+    }
+
+    a {
+      text-decoration: none;
+      color: rgba(0, 0, 0, .6);
+      margin-bottom: .5rem;
+
+      @include for-sm-devices {
+        margin-right: .5rem;
+      }
+    }
+  }
+}
+
+.form-inputs {
+  margin-top: 2rem;
+  width: 100%;
+
+  .form-input {
+    margin-bottom: 1rem;
+    display: grid;
+    grid-template-areas: 'icon input';
+    grid-template-columns: 12% 88%;
+    grid-template-rows: 100%;
+
+    @include for-md-devices {
+      margin-bottom: .5rem;
+    }
+
+    svg {
+      grid-area: icon;
+      font-size: 1.5rem;
+      margin-top: 0.3rem;
+      filter: invert(100%) sepia(20%) saturate(2873%) hue-rotate(178deg) brightness(80%) contrast(87%);
+    }
+
+    input {
+      grid-area: input;
+      height: 2.5rem;
+      border-top: 0;
+      border-left: 0;
+      border-right: 0;
+      border-color: rgba($themeColor, 0.3);
+      outline: none;
+      transition: .6s ease;
+      font-size: 1rem;
+
+      &:focus {
+        border-color: rgba($themeColor, 1);
+      }
+    }
+
+  }
+
+  .token-form-input {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .token-input {
+    width: 15px;
+  }
+
+  button[type=submit] {
+    margin-top: 1rem;
+    width: 100%;
+    padding: .5rem 1rem;
+    border-radius: 2rem;
+    border-width: 0;
+
+    font-size: 1.1rem;
+    color: #fff;
+    background-color: $themeColor;
+    transition: .6s ease;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+
+    &:disabled {
+      background-color: rgba($themeColor, .5);
+    }
+
+    @include for-md-devices {
+      max-width: fit-content;
+      float: right;
+    }
+  }
+}
