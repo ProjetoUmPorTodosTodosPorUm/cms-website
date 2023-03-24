@@ -17,7 +17,6 @@
 	// Component Data
 	export let totalCount = 1;
 	export let showDeleted = true;
-	export let showCleanButton = false;
 	export let itemsSelected: string[] = [];
 	export let isLoading = false;
 	export let messages: any = [];
@@ -36,7 +35,6 @@
 	const dispatch = createEventDispatcher();
 	const restore = () => dispatch('restore');
 	const remove = () => dispatch('remove');
-	const clean = () => dispatch('clean');
 
 	onMount(() => {
 		user = userStore.get('user');
@@ -96,27 +94,6 @@
 				messages = generateMessages([{ message: error.response?.data.message }]);
 			} else {
 				console.warn(error);
-			}
-		}
-	}
-
-	async function onClean() {
-		const remove = confirm(MESSAGES.LOG.CLEAN);
-
-		if (remove) {
-			isLoading = true;
-			try {
-				await axios.delete('/log/clean');
-				clean();
-				isLoading = false;
-			} catch (error) {
-				isLoading = false;
-
-				if (error instanceof Axios.AxiosError) {
-					messages = generateMessages([{ message: error.response?.data.message }]);
-				} else {
-					console.warn(error);
-				}
 			}
 		}
 	}
@@ -240,11 +217,6 @@
 						(x {itemsSelected.length})
 					{/if}
 				</button>
-			</div>
-		{/if}
-		{#if showCleanButton}
-			<div class="clean buttons">
-				<button on:click={onClean}>Remover Todos os Logs</button>
 			</div>
 		{/if}
 	</div>
