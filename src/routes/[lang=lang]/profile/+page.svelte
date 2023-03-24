@@ -7,23 +7,27 @@
 	import { PUBLIC_STATIC_PATH } from '$env/static/public';
 
 	import Icon from 'svelte-icons-pack/Icon.svelte';
-	import FiUser from 'svelte-icons-pack/fi/FiUser';
-	import FiMail from 'svelte-icons-pack/fi/FiMail';
-	import FiLock from 'svelte-icons-pack/fi/FiLock';
-	import BiIdCard from 'svelte-icons-pack/bi/BiIdCard';
+	import HiOutlineUser from 'svelte-icons-pack/hi/HiOutlineUser';
+	import HiOutlineMail from 'svelte-icons-pack/hi/HiOutlineMail';
+	import HiOutlineLockClosed from 'svelte-icons-pack/hi/HiOutlineLockClosed';
+	import HiOutlineIdentification from 'svelte-icons-pack/hi/HiOutlineIdentification';
 
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import { MESSAGES, TEMPLATES, USER_TEMPLATE } from '$src/lib/constants';
 	import * as yup from 'yup';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
 	import { afterNavigate } from '$app/navigation';
 	import type { Navigation } from '@sveltejs/kit';
-	import { getFromLocalStorage, translateFromEnum } from '$src/lib/utils/functions';
-	import { UserStore } from '$src/lib/store/user';
+	import { translateFromEnum } from '$src/lib/utils/functions';
+	import type { UserStore } from '$src/lib/store/user';
+	import type { PageData } from './$types';
+
+	export let data: PageData;
 
 	let isLoading = true;
-	let data = USER_TEMPLATE;
+	let userData = USER_TEMPLATE;
+	let userStore = getContext<UserStore>('userStore');
 
 	// App Container Options
 	let showActions = false;
@@ -46,21 +50,17 @@
 		firstName: yup.string().required(TEMPLATES.YUP.REQUIRED('Nome')),
 		lastName: yup.string().optional(),
 		avatar: yup.string().optional(),
-		password: yup
-			.string()
-			.required(TEMPLATES.YUP.REQUIRED('Senha'))
-			.min(8, TEMPLATES.YUP.MIN('Senha', 8)),
+		password: yup.string().optional().min(8, TEMPLATES.YUP.MIN('Senha', 8)),
 		confirmPassword: yup
 			.string()
 			.oneOf([yup.ref('password')], MESSAGES.YUP.CONFIRM_PASSWORD)
-			.required(TEMPLATES.YUP.REQUIRED('Confirmação da senha'))
+			.nullable()
 	});
 
 	let avatarImageRef: HTMLImageElement;
 	let avatarInputRef: HTMLInputElement;
 	let avatarToUpload: File | null;
 
-	let userStore: UserStore;
 	let password: string;
 	let confirmPassword: string;
 
@@ -68,16 +68,17 @@
 
 	onMount(() => {
 		avatarImageRef.src = defaultAvatarSrc;
-		userStore = new UserStore();
 	});
 
 	afterNavigate(async (navigation: Navigation) => {
-		const accessToken = getFromLocalStorage('accessToken');
+		const accessToken = userStore.get('accessToken');
 
 		if (accessToken) {
 			axios.setAuth(accessToken);
-			data = (await axios.get(`/user/me`)).data.data;
-			avatarImageRef.src = data.avatar ? `${PUBLIC_STATIC_PATH}/${data.avatar}` : defaultAvatarSrc;
+			userData = (await axios.get(`/user/me`)).data.data;
+			avatarImageRef.src = userData.avatar
+				? `${PUBLIC_STATIC_PATH}/${userData.avatar}`
+				: defaultAvatarSrc;
 		}
 		isLoading = false;
 	});
@@ -90,9 +91,9 @@
 		try {
 			const isValid = schema.validateSync(
 				{
-					firstName: data.firstName,
-					lastName: data.lastName,
-					avatar: data.avatar ?? undefined,
+					firstName: userData.firstName,
+					lastName: userData.lastName,
+					avatar: userData.avatar ?? undefined,
 					password,
 					confirmPassword
 				},
@@ -105,9 +106,9 @@
 				}
 
 				const res = await axios.put(`/user/me`, {
-					firstName: data.firstName,
-					lastName: data.lastName,
-					avatar: data.avatar ?? undefined,
+					firstName: userData.firstName,
+					lastName: userData.lastName,
+					avatar: userData.avatar ?? undefined,
 					password: password ?? undefined
 				});
 
@@ -158,7 +159,7 @@
 			});
 
 			messages = generateMessages([{ message: res.data.message, variant: 'success' }]);
-			data.avatar = res.data.data.name;
+			userData.avatar = res.data.data.name;
 		} catch (error) {
 			if (error instanceof Axios.AxiosError) {
 				messages = generateMessages([{ message: error.response?.data.message }]);
@@ -175,10 +176,10 @@
 </script>
 
 <svelte:head>
-	<title>Dashboard | Perfil</title>
+	<title>Profile</title>
 </svelte:head>
 
-<AppContainer {messages}>
+<AppContainer {messages} locale={data.locale}>
 	<AppContent {...appHeader} {isLoading} on:click={onSubmit} {showActions} {showRefreshButton}>
 		<form bind:this={formRef} on:submit|preventDefault|stopPropagation={onSubmit} class="app-form">
 			<div class="image-preview">
@@ -197,9 +198,9 @@
 			</div>
 
 			<div class="input">
-				<Icon src={FiUser} />
+				<Icon src={HiOutlineUser} />
 				<input
-					bind:value={data.firstName}
+					bind:value={userData.firstName}
 					name="firstName"
 					type="text"
 					placeholder="Primeiro Nome"
@@ -208,8 +209,9 @@
 				/>
 			</div>
 			<div class="input">
+				<Icon src={HiOutlineUser} />
 				<input
-					bind:value={data.lastName}
+					bind:value={userData.lastName}
 					name="lastName"
 					type="text"
 					placeholder="Sobrenome"
@@ -217,9 +219,9 @@
 				/>
 			</div>
 			<div class="input">
-				<Icon src={FiMail} />
+				<Icon src={HiOutlineMail} />
 				<input
-					bind:value={data.email}
+					bind:value={userData.email}
 					name="email"
 					type="email"
 					placeholder="Email"
@@ -228,7 +230,7 @@
 				/>
 			</div>
 			<div class="input">
-				<Icon src={FiLock} />
+				<Icon src={HiOutlineLockClosed} />
 				<input
 					bind:value={password}
 					name="password"
@@ -240,7 +242,7 @@
 				/>
 			</div>
 			<div class="input">
-				<Icon src={FiLock} />
+				<Icon src={HiOutlineLockClosed} />
 				<input
 					bind:value={confirmPassword}
 					name="confirmPassword"
@@ -252,9 +254,9 @@
 				/>
 			</div>
 			<div class="input">
-				<Icon src={BiIdCard} />
+				<Icon src={HiOutlineIdentification} />
 				<input
-					value={translateFromEnum(data.role, roles)}
+					value={translateFromEnum(userData.role, roles)}
 					name="role"
 					placeholder="Papel"
 					autocomplete="off"

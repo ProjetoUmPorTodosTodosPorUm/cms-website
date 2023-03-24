@@ -5,23 +5,24 @@
 	import CollectionHeader from '$components/collection-header.svelte';
 	import CollectionRow from '$components/collection-row.svelte';
 
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import type { RowCell, FileDto, Pagination } from '$lib/types';
-	import {
-		friendlyDateString,
-		fromPaginationToQuery,
-		getFromLocalStorage,
-		removeItemById
-	} from '$lib/utils/functions';
+	import { delay, friendlyDateString, fromPaginationToQuery, removeItemById } from '$lib/utils/functions';
 
 	import { generateMessages } from '$components/toast.svelte';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
 	import { TEMPLATES } from '$src/lib/constants';
+	import type { UserStore } from '$src/lib/store/user';
+	import type { PageData } from './$types';
 
-	let data: FileDto[] = [];
+	export let data: PageData;
+
+	let fileData: FileDto[] = [];
+	let userStore = getContext<UserStore>('userStore');
 	let totalCount = 1;
 	let totalPages = 1;
+	let isReady = false;
 
 	let isLoading = true;
 	let messages: any[] = [];
@@ -29,8 +30,9 @@
 	let showEdit = false;
 
 	onMount(async () => {
-		const accessToken = getFromLocalStorage('accessToken');
+		const accessToken = userStore.get('accessToken');
 		axios.setAuth(accessToken);
+		isReady = true;
 	});
 
 	// Pagination config
@@ -46,11 +48,15 @@
 	$: queryString, loadData();
 
 	async function loadData() {
+		while (!isReady) {
+			await delay(50);
+		}
+
 		try {
 			isLoading = true;
 
 			const res = await axios.get(`file?${queryString}`);
-			data = res.data.data;
+			fileData = res.data.data;
 			totalCount = res.headers.get('x-total-count');
 			totalPages = res.headers.get('x-total-pages');
 
@@ -101,7 +107,7 @@
 	});
 
 	// Collection Data
-	$: collectionData = Object.entries(data).map(
+	$: collectionData = Object.entries(fileData).map(
 		([key, file]) =>
 			[
 				{
@@ -144,14 +150,14 @@
 
 	// On Event Functions
 	async function handleRemove(event: CustomEvent) {
-		const { id, data: fileData } = event.detail;
-		const remove = confirm(TEMPLATES.REMOVE.FILE(fileData.name));
+		const { id, data } = event.detail;
+		const remove = confirm(TEMPLATES.REMOVE.FILE(data.name));
 
 		if (remove) {
 			isLoading = true;
 			try {
 				await axios.delete(`/file/${id}`);
-				data = removeItemById(id, data);
+				fileData = removeItemById(id, data);
 				isLoading = false;
 			} catch (error) {
 				isLoading = false;
@@ -193,10 +199,10 @@
 </script>
 
 <svelte:head>
-	<title>Dashboard | Arquivos</title>
+	<title>Files</title>
 </svelte:head>
 
-<AppContainer {messages}>
+<AppContainer {messages} locale={data.locale}>
 	<AppContent
 		{...appHeader}
 		{totalCount}

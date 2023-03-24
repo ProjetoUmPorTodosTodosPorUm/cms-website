@@ -166,7 +166,7 @@
 </script>
 
 <svelte:head>
-	<title>Dashboard | Usuários</title>
+	<title>Users</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
