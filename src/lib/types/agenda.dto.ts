@@ -5,12 +5,12 @@ export type AgendaDto = {
     title: string;
     message: string;
     attachments: string[];
-    date: Date;
+    date: string;
 
-    createdAt: Date;
-    updatedAt: Date;
-    deleted?: Date;
+    createdAt: string;
+    updatedAt: string;
+    deleted?: string;
 
-    fieldId?: string;
-    field?: FieldDto;
+    fieldId: string;
+    field: FieldDto | string | null;
 }

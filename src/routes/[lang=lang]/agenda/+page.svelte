@@ -7,7 +7,7 @@
 	import CollectionRowPlaceholder from '$components/collection-row-placeholder.svelte';
 
 	import { getContext, onMount } from 'svelte';
-	import type { Pagination, RowCell, UserDto } from '$lib/types';
+	import type { AgendaDto, ColumnCell, Pagination, RowCell } from '$lib/types';
 	import {
 		delay,
 		friendlyDateString,
@@ -25,7 +25,7 @@
 
 	export let data: PageData;
 
-	let userData: UserDto[] = [];
+	let agendaData: AgendaDto[] = [];
 	let userStore = getContext<UserStore>('userStore');
 	let totalCount = 1;
 	let totalPages = 1;
@@ -61,8 +61,8 @@
 		try {
 			isLoading = true;
 
-			const res = await axios.get(`user?${queryString}`);
-			userData = res.data.data;
+			const res = await axios.get(`agenda?${queryString}`);
+			agendaData = res.data.data;
 			totalCount = res.headers.get('x-total-count');
 			totalPages = res.headers.get('x-total-pages');
 
@@ -79,32 +79,28 @@
 
 	// App Header
 	const appHeader = {
-		name: 'Usuários',
-		buttonText: 'Adicionar Usuário',
-		buttonLink: `/${data.locale}/users/add`
+		name: 'Agenda',
+		buttonText: 'Adicionar Evento',
+		buttonLink: `/${data.locale}/agenda/add`
 	};
 
 	// Collection Header
 	const collectionHeader = [
 		{
-			label: 'Primeiro Nome',
-			key: 'firstName'
+			label: 'Título',
+			key: 'title'
 		},
 		{
-			label: 'Último Nome',
-			key: 'lastName'
+			label: 'Mensagem',
+			key: 'message',
 		},
 		{
-			label: 'Email',
-			key: 'email'
+			label: 'Anexos',
+			key: 'attachments'
 		},
 		{
-			label: 'Acesso',
-			key: 'role'
-		},
-		{
-			label: 'Último Acesso',
-			key: 'lastAccess'
+			label: 'Data',
+			key: 'date'
 		},
 		{
 			label: 'Criado Em',
@@ -118,59 +114,55 @@
 			label: 'Deletado Em',
 			key: 'deleted'
 		}
-	];
+	] as ColumnCell[];
 
-	$: collectionData = Object.entries(userData).map(
-		([key, user]) =>
+	$: collectionData = Object.entries(agendaData).map(
+		([key, data]) =>
 			[
 				{
 					label: 'id',
 					key: 'id',
-					value: user.id
+					value: data.id
 				},
 				{
-					label: 'Primeiro Nome',
-					key: 'firstName',
-					value: user.firstName
+					label: 'Título',
+			        key: 'title',
+					value: data.title
 				},
 				{
-					label: 'Último Nome',
-					key: 'lastName',
-					value: user.lastName ?? '(não informado)'
+					label: 'Mensagem',
+			        key: 'message',
+					value: data.message,
+                    textLimit: 100,
 				},
 				{
-					label: 'Email',
-					key: 'email',
-					value: user.email
+					label: 'Anexos',
+			        key: 'attachments',
+					value: data.attachments,
+                    isJson: true,
 				},
 				{
-					label: 'Acesso',
-					key: 'role',
-					value: user.role,
-					isTag: true
-				},
-				{
-					label: 'Último Acesso',
-					key: 'lastAccess',
-					value: user.lastAccess,
+					label: 'Data',
+			        key: 'date',
+					value: data.date,
 					transform: friendlyDateString
 				},
 				{
 					label: 'Criado Em',
 					key: 'createdAt',
-					value: user.createdAt,
+					value: data.createdAt,
 					transform: friendlyDateString
 				},
 				{
 					label: 'Atualizado Em',
 					key: 'updatedAt',
-					value: user.updatedAt,
+					value: data.updatedAt,
 					transform: friendlyDateString
 				},
 				{
 					label: 'Deletado Em',
 					key: 'deleted',
-					value: user.deleted,
+					value: data.deleted,
 					transform: friendlyDateString
 				}
 			] as RowCell[]
@@ -179,18 +171,18 @@
 	// On Event Functions
 	function handleEdit(event: CustomEvent) {
 		const id = event.detail;
-		goto(`/${data.locale}/users/edit?id=${id}`);
+		goto(`/${data.locale}/agenda/edit?id=${id}`);
 	}
 
 	async function handleRemove(event: CustomEvent) {
 		const { id, data } = event.detail;
-		const remove = confirm(TEMPLATES.REMOVE.USER(data.email));
+		const remove = confirm(TEMPLATES.REMOVE.AGENDA(data.title));
 
 		if (remove) {
 			isLoading = true;
 			try {
-				await axios.delete(`/user/${id}`);
-				userData = removeItemById(id, userData);
+				await axios.delete(`/agenda/${id}`);
+				agendaData = removeItemById(id, agendaData);
 				isLoading = false;
 			} catch (error) {
 				isLoading = false;
@@ -232,7 +224,7 @@
 </script>
 
 <svelte:head>
-	<title>Users</title>
+	<title>Agenda</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -241,7 +233,7 @@
 		{totalCount}
 		showBackButton={false}
 		maxPage={totalPages}
-		baseRoute={'/user'}
+		baseRoute={'/agenda'}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}

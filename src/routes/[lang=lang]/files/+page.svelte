@@ -157,7 +157,7 @@
 			isLoading = true;
 			try {
 				await axios.delete(`/file/${id}`);
-				fileData = removeItemById(id, data);
+				fileData = removeItemById(id, fileData);
 				isLoading = false;
 			} catch (error) {
 				isLoading = false;
