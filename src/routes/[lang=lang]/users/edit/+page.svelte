@@ -7,8 +7,8 @@
 	import { PUBLIC_STATIC_PATH } from '$env/static/public';
 
 	import Icon from 'svelte-icons-pack/Icon.svelte';
-	import FiUser from 'svelte-icons-pack/fi/FiUser';
-	import BiIdCard from 'svelte-icons-pack/bi/BiIdCard';
+	import HiOutlineUser from "svelte-icons-pack/hi/HiOutlineUser";
+	import HiOutlineIdentification from "svelte-icons-pack/hi/HiOutlineIdentification";
 
 	import { getContext, onMount } from 'svelte';
 	import { Role } from '$lib/enums';
@@ -188,7 +188,7 @@
 			</div>
 
 			<div class="input">
-				<Icon src={FiUser} />
+				<Icon src={HiOutlineUser} />
 				<input
 					bind:value={userData.firstName}
 					name="firstName"
@@ -199,6 +199,7 @@
 				/>
 			</div>
 			<div class="input">
+				<Icon src={HiOutlineUser} />
 				<input
 					bind:value={userData.lastName}
 					name="lastName"
@@ -208,7 +209,7 @@
 				/>
 			</div>
 			<div class="input">
-				<Icon src={BiIdCard} />
+				<Icon src={HiOutlineIdentification} />
 				<select bind:value={userData.role} name="role" required>
 					<option value="" disabled selected>Acesso</option>
 					{#each roles as role}

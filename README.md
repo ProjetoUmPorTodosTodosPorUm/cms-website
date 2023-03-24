@@ -31,6 +31,6 @@ $ npm run start:prod
 > It will need web image too.
 
 ## Related
-Other projects related to this:
+Other repositories related to this:
 - [api-projeto](https://github.com/RenanGalvao/api-projeto)
 - [web-projeto](https://github.com/RenanGalvao/web-projeto)
