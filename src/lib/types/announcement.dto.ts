@@ -11,6 +11,6 @@ export type AnnouncementDto = {
     updatedAt: Date;
     deleted?: Date;
 
-    fieldId?: string;
-    field?: FieldDto;
+    fieldId: string;
+    field: FieldDto | string | null;
 }

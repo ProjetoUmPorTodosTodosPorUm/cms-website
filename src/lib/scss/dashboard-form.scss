@@ -162,5 +162,15 @@
         font-size: .7rem;
       }
     }
+
+    .radio {
+      margin-left: 1rem;
+
+      input {
+        width: 1rem;
+        height: 1rem;
+        margin: 0;
+      }
+    }
   }
 }
