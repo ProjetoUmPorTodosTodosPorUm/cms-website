@@ -5,31 +5,32 @@
 	import CollectionHeader from '$components/collection-header.svelte';
 	import CollectionRow from '$components/collection-row.svelte';
 
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import type { LogDto, Pagination, RowCell } from '$lib/types';
-	import {
-		friendlyDateString,
-		fromPaginationToQuery,
-		getFromLocalStorage,
-		removeItemById
-	} from '$lib/utils/functions';
+	import { delay, friendlyDateString, fromPaginationToQuery } from '$lib/utils/functions';
 
 	import { generateMessages } from '$components/toast.svelte';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
-	import { TEMPLATES } from '$src/lib/constants';
+	import type { UserStore } from '$src/lib/store/user';
+	import type { PageData } from './$types';
 
-	let data: LogDto[] = [];
+	export let data: PageData;
+
+	let logData: LogDto[] = [];
+	let userStore = getContext<UserStore>('userStore');
 	let totalCount = 1;
 	let totalPages = 1;
+	let isReady = false;
 
 	let isLoading = true;
 	let messages: any[] = [];
 	let itemsSelected: string[] = [];
 
 	onMount(async () => {
-		const accessToken = getFromLocalStorage('accessToken');
+		const accessToken = userStore.get('accessToken');
 		axios.setAuth(accessToken);
+		isReady = true;
 	});
 
 	// Pagination config
@@ -45,11 +46,15 @@
 	$: queryString, loadData();
 
 	async function loadData() {
+		while (!isReady) {
+			await delay(50);
+		}
+
 		try {
 			isLoading = true;
 
 			const res = await axios.get(`log?${queryString}`);
-			data = res.data.data;
+			logData = res.data.data;
 			totalCount = res.headers.get('x-total-count');
 			totalPages = res.headers.get('x-total-pages');
 
@@ -113,7 +118,7 @@
 		}
 	];
 
-	$: collectionData = Object.entries(data).map(
+	$: collectionData = Object.entries(logData).map(
 		([key, log]) =>
 			[
 				{
@@ -180,37 +185,6 @@
 			] as RowCell[]
 	);
 
-	async function handleRemove(event: CustomEvent) {
-		const { id, data: logData } = event.detail;
-		const remove = confirm(TEMPLATES.REMOVE.LOG(logData.createdAt));
-
-		if (remove) {
-			isLoading = true;
-			try {
-				await axios.delete(`/log/${id}`);
-				data = removeItemById(id, data);
-				isLoading = false;
-			} catch (error) {
-				isLoading = false;
-
-				if (error instanceof Axios.AxiosError) {
-					messages = generateMessages([{ message: error.response?.data.message }]);
-				} else {
-					console.warn(error);
-				}
-			}
-		}
-	}
-
-	function handleSelect(event: CustomEvent) {
-		const id = event.detail;
-		if (itemsSelected.indexOf(id) > -1) {
-			itemsSelected = [...itemsSelected.filter((itemId) => itemId !== id)];
-		} else {
-			itemsSelected = [...itemsSelected, id];
-		}
-	}
-
 	function onSort(event: CustomEvent) {
 		const key = event.detail;
 		let orderValue;
@@ -233,18 +207,16 @@
 	<title>Dashboard | Logs</title>
 </svelte:head>
 
-<AppContainer {messages}>
+<AppContainer {messages} locale={data.locale}>
 	<AppContent
 		{...appHeader}
 		{totalCount}
 		showBackButton={false}
-		showCleanButton={true}
 		maxPage={totalPages}
 		baseRoute={'/user'}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
-		on:clean={loadData}
 		bind:page={pagination.page}
 		bind:showDeleted={pagination.deleted}
 		bind:itemsSelected
@@ -257,13 +229,7 @@
 			bind:showDeleted={pagination.deleted}
 		/>
 		{#each collectionData as row, i (row[0].value)}
-			<CollectionRow
-				rowCells={row}
-				showOptions={false}
-				on:remove={handleRemove}
-				on:select={handleSelect}
-				bind:showDeleted={pagination.deleted}
-			/>
+			<CollectionRow rowCells={row} showOptions={false} bind:showDeleted={pagination.deleted} />
 		{/each}
 	</AppContent>
 </AppContainer>

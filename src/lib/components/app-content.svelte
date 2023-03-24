@@ -13,7 +13,6 @@
 	export let maxPage = 1;
 	export let totalCount = 1;
 	export let showDeleted = false;
-	export let showCleanButton = false;
 	export let itemsSelected: string[] = [];
 
 	// Component Options - forwarding
@@ -31,7 +30,6 @@
 	const refresh = () => dispatch('refresh');
 	const restore = () => dispatch('restore');
 	const remove = () => dispatch('remove');
-	const clean = () => dispatch('clean');
 	let appHeader = {
 		name,
 		buttonText,
@@ -52,13 +50,11 @@
 			{maxPage}
 			{totalCount}
 			{baseRoute}
-			{showCleanButton}
 			bind:itemsSelected
 			bind:page
 			bind:showDeleted
 			on:remove={remove}
 			on:restore={restore}
-			on:clean={clean}
 		/>
 	{/if}
 	<div class="products-area-wrapper tableView">
