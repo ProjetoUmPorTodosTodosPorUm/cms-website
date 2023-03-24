@@ -90,10 +90,9 @@
     width: 300px;
     margin-bottom: 2rem;
     margin-right: 1rem;
-    display: grid;
-    grid-template-areas: 'icon input';
-    grid-template-columns: 12% 88%;
-    grid-template-rows: 100%;
+
+    display: flex;
+    flex-wrap: wrap;
 
     svg {
       grid-area: icon;
@@ -102,11 +101,12 @@
       filter: var(--svg-color)
     }
 
+    textarea,
     input,
     select {
       background-color: var(--input-background-color);
       color: var(--app-content-main-color);
-      grid-area: input;
+      width: 88%;
       height: 2.5rem;
       padding: .5rem .5rem;
       border-top: 0;
@@ -125,11 +125,21 @@
       &::placeholder {
         color: var(--app-content-main-color);
       }
+
+      .files {
+        width: 100%;
+      }
     }
 
     select {
       grid-area: input;
       height: 2.5rem;
+    }
+
+    textarea {
+      width: 88%;
+      border: 2px solid var(--input-border-color-initial);
+      height: initial;
     }
 
     &.file {
@@ -139,6 +149,17 @@
 
       >input {
         display: none;
+      }
+    }
+
+    .files {
+      margin-left: 12%;
+
+      display: flex;
+      flex-direction: column;
+
+      a {
+        font-size: .7rem;
       }
     }
   }

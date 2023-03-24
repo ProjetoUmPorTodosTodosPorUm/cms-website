@@ -1,5 +1,5 @@
 import { Role } from './enums';
-import type { UserDto } from './types';
+import type { AgendaDto, UserDto } from './types';
 
 export const widthBreakPointXS = 576;
 export const widthBreakPointMD = 768;
@@ -35,8 +35,7 @@ export const TEMPLATES = {
     USER: (email: string) => `Você deseja remover a conta de ${email}?`,
     FILE: (name: string) => `Você deseja remover o arquivo ${name}?`,
     LOG: (createdAt: Date) => `Você deseja remover o log de ${createdAt}?`,
-    MEDIA: (name: string) => `Você deseja remover a mídia ${name}?`,
-    WORK: (name: string) => `Você deseja remover o trabalho ${name}?`
+    AGENDA: (title: string) => `Você deseja remover o evento ${title}?`,
   }
 }
 
@@ -49,3 +48,12 @@ export const USER_TEMPLATE = {
   avatar: null,
   lastAccess: null
 } as UserDto;
+
+export const AGENDA_TEMPLATE = {
+  id: '',
+  title: '',
+  message: '',
+  date: new Date().toISOString().split('T')[0],
+  attachments: [''],
+  field: null,
+} as AgendaDto;
