@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Pagination from '$components/pagination.svelte';
 	import { MESSAGES, USER_TEMPLATE } from '$lib/constants';
-	import { UserStore } from '$lib/store/user';
+	import type { UserStore } from '$lib/store/user';
 	import { Role } from '$lib/enums';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
@@ -24,8 +24,9 @@
 	export let baseRoute = '';
 
 	let user = USER_TEMPLATE;
-	let userStore: UserStore;
+	let userStore = getContext<UserStore>('userStore');
 	$: isAdmin = user.role === Role.ADMIN;
+	$: isWebMaster = user.role === Role.WEB_MASTER;
 
 	let filterMenuRef: HTMLDivElement;
 	let listRef: HTMLButtonElement;
@@ -38,9 +39,8 @@
 	const clean = () => dispatch('clean');
 
 	onMount(() => {
-		userStore = new UserStore();
 		user = userStore.get('user');
-		const accessToken = getFromLocalStorage('accessToken');
+		const accessToken = userStore.get('accessToken');
 		axios.setAuth(accessToken);
 	});
 
@@ -220,7 +220,7 @@
 		</button>
 	</div>
 </div>
-{#if isAdmin}
+{#if isAdmin || isWebMaster}
 	<div class="app-content-actions-admin">
 		<div class="show-deleted">
 			<span>Mostrar Deletados</span>
@@ -243,9 +243,9 @@
 			</div>
 		{/if}
 		{#if showCleanButton}
-		<div class="clean buttons">
-			<button on:click={onClean}>Remover Todos os Logs</button>
-		</div>
+			<div class="clean buttons">
+				<button on:click={onClean}>Remover Todos os Logs</button>
+			</div>
 		{/if}
 	</div>
 {/if}
