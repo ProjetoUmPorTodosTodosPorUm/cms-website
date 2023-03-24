@@ -197,7 +197,7 @@
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineCalendar} />
-				<input bind:value={date} name="email" type="date" autocomplete="off" required />
+				<input bind:value={date} name="date" type="date" autocomplete="off" required />
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineGlobe} />

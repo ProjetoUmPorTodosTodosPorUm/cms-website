@@ -9,27 +9,20 @@
 	import HiOutlineSpeakerphone from 'svelte-icons-pack/hi/HiOutlineSpeakerphone';
 	import HiOutlineDocument from 'svelte-icons-pack/hi/HiOutlineDocument';
 	import HiOutlinePaperClip from 'svelte-icons-pack/hi/HiOutlinePaperClip';
-	import HiOutlineCalendar from 'svelte-icons-pack/hi/HiOutlineCalendar';
+	import BsPinAngle from 'svelte-icons-pack/bs/BsPinAngle';
 	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
 
-	import { getContext, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
-	import { AGENDA_TEMPLATE, TEMPLATES } from '$src/lib/constants';
+	import { TEMPLATES } from '$src/lib/constants';
 	import * as yup from 'yup';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
 	import type { PageData } from '../../users/add/$types';
 	import type { FieldDto, FileDto, Pagination } from '$src/lib/types';
-	import { fromPaginationToQuery, idMatcher } from '$src/lib/utils/functions';
-	import type { UserStore } from '$src/lib/store/user';
-	import { afterNavigate } from '$app/navigation';
-	import type { Navigation } from '@sveltejs/kit';
+	import { fromPaginationToQuery } from '$src/lib/utils/functions';
 
 	export let data: PageData;
-
-	let isLoading = true;
-	let agendaData = AGENDA_TEMPLATE;
-	let userStore = getContext<UserStore>('userStore');
 
 	// App Content Options
 	const showActions = false;
@@ -37,7 +30,7 @@
 
 	// App Header
 	const appHeader = {
-		name: 'Editar Evento',
+		name: 'Adicionar Anúncio',
 		buttonText: 'Salvar'
 	};
 
@@ -52,35 +45,30 @@
 
 	// Form
 	let formRef: HTMLFormElement;
+	let isLoading = false;
 	let fields: FieldDto[] = [];
 
 	const schema = yup.object().shape({
 		title: yup.string().required(TEMPLATES.YUP.REQUIRED('Título')),
 		message: yup.string().required(TEMPLATES.YUP.REQUIRED('Mensagem')),
 		attachments: yup.array(yup.string()).nullable().optional(),
-		date: yup.string().required(TEMPLATES.YUP.REQUIRED('Data')),
+		fixed: yup.boolean().required(TEMPLATES.YUP.REQUIRED('Fixado')),
 		field: yup.string().nullable().optional()
 	});
 
+	let fileInputRef: HTMLInputElement;
 	let filesToUpload: File[] | null;
+
+	let title: string;
+	let message: string;
+	let attachments: string[];
+	let fixed = false;
+	let field: string | null;
 
 	let messages: any[] = [];
 
 	onMount(async () => {
 		await loadData();
-	});
-
-	afterNavigate(async (navigation: Navigation) => {
-		const accessToken = userStore.get('accessToken');
-		const id = navigation.to?.url.searchParams.get('id');
-
-		if (id && idMatcher(id) && accessToken) {
-			axios.setAuth(accessToken);
-			agendaData = (await axios.get(`/agenda/${id}`)).data.data;
-			agendaData.date = agendaData.date.split('T')[0];
-			agendaData.field = agendaData.fieldId;
-		}
-		isLoading = false;
 	});
 
 	async function loadData() {
@@ -108,13 +96,7 @@
 
 		try {
 			const isValid = schema.validateSync(
-				{
-					title: agendaData.title,
-					message: agendaData.message,
-					attachments: agendaData.attachments,
-					date: agendaData.date,
-					field: agendaData.field
-				},
+				{ title, message, attachments, fixed, field },
 				{ abortEarly: false }
 			);
 
@@ -123,16 +105,17 @@
 					await uploadFiles(filesToUpload);
 				}
 
-				const res = await axios.put(`/agenda/${agendaData.id}`, {
-					title: agendaData.title,
-					message: agendaData.message,
-					attachments: agendaData.attachments ?? [],
-					date: agendaData.date,
-					field: agendaData.field
+				const res = await axios.post('/announcement', {
+					title,
+					message,
+					attachments,
+					fixed,
+					field
 				});
 
 				isLoading = false;
 				messages = generateMessages([{ message: res.data.message, variant: 'success' }]);
+				eraseForm();
 			}
 		} catch (error) {
 			isLoading = false;
@@ -147,6 +130,11 @@
 		}
 	}
 
+	function eraseForm() {
+		formRef.reset();
+		field = null;
+		fixed = false;
+	}
 
 	function onFileInputChange(event: Event) {
 		const files = (event.target as any).files as File[];
@@ -171,7 +159,7 @@
 			});
 
 			messages = generateMessages([{ message: res.data.message, variant: 'success' }]);
-			agendaData.attachments = (res.data.data as FileDto[]).map((file) => file.name);
+			attachments = (res.data.data as FileDto[]).map((file) => file.name);
 		} catch (error) {
 			if (error instanceof Axios.AxiosError) {
 				messages = generateMessages([{ message: error.response?.data.message }]);
@@ -183,7 +171,7 @@
 </script>
 
 <svelte:head>
-	<title>Agenda</title>
+	<title>Announcement</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -191,18 +179,12 @@
 		<form bind:this={formRef} on:submit|preventDefault|stopPropagation={onSubmit} class="app-form">
 			<div class="input">
 				<Icon src={HiOutlineSpeakerphone} />
-				<input
-					bind:value={agendaData.title}
-					name="title"
-					placeholder="Título"
-					autocomplete="off"
-					required
-				/>
+				<input bind:value={title} name="title" placeholder="Título" autocomplete="off" required />
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineDocument} />
 				<textarea
-					bind:value={agendaData.message}
+					bind:value={message}
 					name="message"
 					placeholder="Mensagem"
 					autocomplete="off"
@@ -213,21 +195,21 @@
 			<div class="input">
 				<Icon src={HiOutlinePaperClip} />
 				<input on:change={onFileInputChange} name="attachments" multiple type="file" />
-				{#if agendaData.attachments.length > 0}
-					<div class="files">
-						{#each agendaData.attachments as attachment}
-							<a href={`/static/${attachment}`}>{attachment}</a>
-						{/each}
-					</div>
-				{/if}
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineCalendar} />
-				<input bind:value={agendaData.date} name="email" type="date" autocomplete="off" required />
+				<Icon src={BsPinAngle} />
+				<div class="radio">
+					<label for="#">Sim</label>
+					<input bind:group={fixed} name="fixed" type="radio" value={true} />
+				</div>
+				<div class="radio">
+					<label for="#">Não</label>
+					<input bind:group={fixed} name="fixed" type="radio" value={false} />
+				</div>
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineGlobe} />
-				<select bind:value={agendaData.field} name="field" required>
+				<select bind:value={field} name="field" required>
 					<option value={null} disabled selected>Campo Missionário</option>
 
 					{#each fields as field}

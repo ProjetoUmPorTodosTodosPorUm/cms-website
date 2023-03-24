@@ -53,7 +53,7 @@
 				<span class="cell-label">{rowCell.label}:</span>
 				{#if rowCell.isStatus}
 					<span class={`status ${rowCell.value ? 'active' : 'disabled'}`}>
-						{rowCell.value ? 'Active' : 'Disabled'}
+						{rowCell.transform ? rowCell.transform(rowCell.value) : rowCell.value ? 'Active' : 'Disabled'}
 					</span>
 				{:else if rowCell.isLink}
 					{#if rowCell.value}

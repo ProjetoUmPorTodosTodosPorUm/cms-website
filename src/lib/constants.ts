@@ -1,5 +1,5 @@
 import { Role } from './enums';
-import type { AgendaDto, UserDto } from './types';
+import type { AgendaDto, AnnouncementDto, UserDto } from './types';
 
 export const widthBreakPointXS = 576;
 export const widthBreakPointMD = 768;
@@ -57,3 +57,12 @@ export const AGENDA_TEMPLATE = {
   attachments: [''],
   field: null,
 } as AgendaDto;
+
+export const ANNOUNCEMENT_TEMPLATE = {
+  id: '',
+  title: '',
+  message: '',
+  fixed: false,
+  attachments: [''],
+  field: null,
+} as AnnouncementDto;
