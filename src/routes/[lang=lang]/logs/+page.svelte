@@ -204,7 +204,7 @@
 </script>
 
 <svelte:head>
-	<title>Dashboard | Logs</title>
+	<title>Logs</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -213,7 +213,7 @@
 		{totalCount}
 		showBackButton={false}
 		maxPage={totalPages}
-		baseRoute={'/user'}
+		baseRoute={'/log'}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
