@@ -5,9 +5,9 @@ export type FileDto = {
     mimeType: string;
     size: number;
 
-    createdAt: Date;
-    deleted?: Date;
+    createdAt: string;
+    deleted?: string;
 
     fieldId?: string;
-    field?: FieldDto;
+    field?: FieldDto | string | null;;
 }

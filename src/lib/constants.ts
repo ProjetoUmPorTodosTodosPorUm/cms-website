@@ -1,5 +1,5 @@
 import { Role } from './enums';
-import type { AgendaDto, AnnouncementDto, UserDto } from './types';
+import type { AgendaDto, AnnouncementDto, TestimonialDto, UserDto } from './types';
 
 export const widthBreakPointXS = 576;
 export const widthBreakPointMD = 768;
@@ -36,6 +36,7 @@ export const TEMPLATES = {
     FILE: (name: string) => `Você deseja remover o arquivo ${name}?`,
     LOG: (createdAt: Date) => `Você deseja remover o log de ${createdAt}?`,
     AGENDA: (title: string) => `Você deseja remover o evento ${title}?`,
+    TESTIMONIAL: (name: string) => `Você deseja remover o testemunho de ${name}?`
   }
 }
 
@@ -66,3 +67,11 @@ export const ANNOUNCEMENT_TEMPLATE = {
   attachments: [''],
   field: null,
 } as AnnouncementDto;
+
+export const TESTIMONIAL_TEMPLATE = {
+  id: '',
+  name: '',
+  email: '',
+  text: '',
+  field: null
+} as TestimonialDto;

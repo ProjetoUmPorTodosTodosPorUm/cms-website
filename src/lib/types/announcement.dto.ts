@@ -7,9 +7,9 @@ export type AnnouncementDto = {
     attachments: string[];
     fixed: boolean;
 
-    createdAt: Date;
-    updatedAt: Date;
-    deleted?: Date;
+    createdAt: string;
+    updatedAt: string;
+    deleted?: string;
 
     fieldId: string;
     field: FieldDto | string | null;

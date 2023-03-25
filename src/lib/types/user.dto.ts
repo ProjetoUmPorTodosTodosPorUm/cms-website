@@ -8,12 +8,12 @@ export type UserDto = {
     email: string;
     role: Role;
     avatar: string | null;
-    lastAccess: Date | null;
+    lastAccess: string | null;
 
-    createdAt?: Date;
-    updatedAt?: Date;
-    deleted?: Date;
-    restricted?: Date;
+    createdAt?: string;
+    updatedAt?: string;
+    deleted?: string;
+    restricted?: string;
 
     fieldId?: string;
     field?: FieldDto | null;

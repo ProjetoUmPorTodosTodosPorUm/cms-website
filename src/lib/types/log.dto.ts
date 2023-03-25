@@ -10,8 +10,8 @@ export type LogDto = {
     files: string[];
     query?: string;
     statusCode: string;
-    user: UserDto;
+    user: UserDto | null;
 
-    createdAt: Date;
-    deleted?: Date;
+    createdAt: string;
+    deleted?: string;
 }
