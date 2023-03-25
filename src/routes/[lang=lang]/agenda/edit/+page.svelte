@@ -30,6 +30,7 @@
 	let isLoading = true;
 	let agendaData = AGENDA_TEMPLATE;
 	let userStore = getContext<UserStore>('userStore');
+	let isAdminOrVolunteer = false;
 
 	// App Content Options
 	const showActions = false;
@@ -68,6 +69,7 @@
 
 	onMount(async () => {
 		await loadData();
+		isAdminOrVolunteer = userStore.isVolunteer() || userStore.isAdmin();
 	});
 
 	afterNavigate(async (navigation: Navigation) => {
@@ -123,13 +125,18 @@
 					await uploadFiles(filesToUpload);
 				}
 
-				const res = await axios.put(`/agenda/${agendaData.id}`, {
+				const postData = {
 					title: agendaData.title,
 					message: agendaData.message,
 					attachments: agendaData.attachments ?? [],
 					date: agendaData.date,
 					field: agendaData.field
-				});
+				};
+				if (isAdminOrVolunteer) {
+					// @ts-ignore
+					delete postData.field;
+				}
+				const res = await axios.put(`/agenda/${agendaData.id}`, postData);
 
 				isLoading = false;
 				messages = generateMessages([{ message: res.data.message, variant: 'success' }]);
@@ -146,7 +153,6 @@
 			}
 		}
 	}
-
 
 	function onFileInputChange(event: Event) {
 		const files = (event.target as any).files as File[];

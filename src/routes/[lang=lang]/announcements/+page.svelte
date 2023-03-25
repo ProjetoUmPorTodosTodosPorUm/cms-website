@@ -39,6 +39,11 @@
 		const accessToken = userStore.get('accessToken');
 		axios.setAuth(accessToken);
 		isReady = true;
+
+		if(userStore.isVolunteer() || userStore.isAdmin()) {
+			pagination.searchSpecificField = 'fieldId';
+			pagination.searchSpecificValue = userStore.get('user.fieldId')
+		}
 	});
 
 	// Pagination config

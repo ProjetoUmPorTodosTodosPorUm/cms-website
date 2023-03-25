@@ -14,6 +14,7 @@
 	import HiOutlineMail from 'svelte-icons-pack/hi/HiOutlineMail';
 	import HiOutlineLockClosed from 'svelte-icons-pack/hi/HiOutlineLockClosed';
 	import type { PageData } from './$types';
+	import { MESSAGES, TEMPLATES } from '$src/lib/constants';
 
 	export let data: PageData;
 
@@ -34,8 +35,8 @@
 	$: isSubmitDisabled = password.length < 8 || email === '';
 
 	const schema = yup.object().shape({
-		email: yup.string().required().email(),
-		password: yup.string().required().min(8)
+		email: yup.string().required(TEMPLATES.YUP.REQUIRED('Email')).email(MESSAGES.YUP.EMAIL),
+		password: yup.string().required().min(8, TEMPLATES.YUP.MIN('Senha', 8))
 	});
 
 	// Toast Messages

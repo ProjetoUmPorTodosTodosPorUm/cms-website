@@ -29,6 +29,7 @@
 	let isLoading = true;
 	let testimonialData = TESTIMONIAL_TEMPLATE;
 	let userStore = getContext<UserStore>('userStore');
+	let isAdminOrVolunteer = false;
 
 	// App Content Options
 	const showActions = false;
@@ -64,6 +65,7 @@
 
 	onMount(async () => {
 		await loadData();
+		isAdminOrVolunteer = userStore.isVolunteer() || userStore.isAdmin();
 	});
 
 	afterNavigate(async (navigation: Navigation) => {
@@ -113,12 +115,17 @@
 			);
 
 			if (isValid) {
-				const res = await axios.put(`/testimonial/${testimonialData.id}`, {
+				const postData = {
 					name: testimonialData.name,
 					email: testimonialData.email,
 					text: testimonialData.text,
 					field: testimonialData.field
-				});
+				};
+				if (isAdminOrVolunteer) {
+					// @ts-ignore
+					delete postData.field;
+				}
+				const res = await axios.put(`/testimonial/${testimonialData.id}`, postData);
 
 				isLoading = false;
 				messages = generateMessages([{ message: res.data.message, variant: 'success' }]);
