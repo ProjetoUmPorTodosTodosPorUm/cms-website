@@ -25,7 +25,7 @@
 
 	export let data: PageData;
 	let userStore = getContext<UserStore>('userStore');
-	let isAdminOrVolunteer = false;
+	let isAdminOrVolunteer = true;
 
 	// App Content Options
 	const showActions = false;
@@ -207,18 +207,20 @@
 				<Icon src={HiOutlineCalendar} />
 				<input bind:value={date} name="date" type="date" autocomplete="off" required />
 			</div>
-			<div class="input">
-				<Icon src={HiOutlineGlobe} />
-				<select bind:value={field} name="field" required>
-					<option value={null} disabled selected>Campo Missionário</option>
+			{#if !isAdminOrVolunteer}
+				<div class="input">
+					<Icon src={HiOutlineGlobe} />
+					<select bind:value={field} name="field" required>
+						<option value={null} disabled selected>Campo Missionário</option>
 
-					{#each fields as field}
-						<option value={field.id}>
-							{field.abbreviation} - {field.designation}
-						</option>
-					{/each}
-				</select>
-			</div>
+						{#each fields as field}
+							<option value={field.id}>
+								{field.abbreviation} - {field.designation}
+							</option>
+						{/each}
+					</select>
+				</div>
+			{/if}
 		</form>
 	</AppContent>
 </AppContainer>

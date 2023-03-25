@@ -30,7 +30,7 @@
 	let isLoading = true;
 	let agendaData = AGENDA_TEMPLATE;
 	let userStore = getContext<UserStore>('userStore');
-	let isAdminOrVolunteer = false;
+	let isAdminOrVolunteer = true;
 
 	// App Content Options
 	const showActions = false;
@@ -231,6 +231,7 @@
 				<Icon src={HiOutlineCalendar} />
 				<input bind:value={agendaData.date} name="email" type="date" autocomplete="off" required />
 			</div>
+			{#if !isAdminOrVolunteer}
 			<div class="input">
 				<Icon src={HiOutlineGlobe} />
 				<select bind:value={agendaData.field} name="field" required>
@@ -243,6 +244,7 @@
 					{/each}
 				</select>
 			</div>
+			{/if}
 		</form>
 	</AppContent>
 </AppContainer>

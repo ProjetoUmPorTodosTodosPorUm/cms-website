@@ -29,7 +29,7 @@
 	let isLoading = true;
 	let testimonialData = TESTIMONIAL_TEMPLATE;
 	let userStore = getContext<UserStore>('userStore');
-	let isAdminOrVolunteer = false;
+	let isAdminOrVolunteer = true;
 
 	// App Content Options
 	const showActions = false;
@@ -183,18 +183,20 @@
 					required
 				/>
 			</div>
-			<div class="input">
-				<Icon src={HiOutlineGlobe} />
-				<select bind:value={testimonialData.field} name="field" required>
-					<option value={null} disabled selected>Campo Missionário</option>
+			{#if !isAdminOrVolunteer}
+				<div class="input">
+					<Icon src={HiOutlineGlobe} />
+					<select bind:value={testimonialData.field} name="field" required>
+						<option value={null} disabled selected>Campo Missionário</option>
 
-					{#each fields as field}
-						<option value={field.id}>
-							{field.abbreviation} - {field.designation}
-						</option>
-					{/each}
-				</select>
-			</div>
+						{#each fields as field}
+							<option value={field.id}>
+								{field.abbreviation} - {field.designation}
+							</option>
+						{/each}
+					</select>
+				</div>
+			{/if}
 		</form>
 	</AppContent>
 </AppContainer>

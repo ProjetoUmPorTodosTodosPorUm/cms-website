@@ -30,7 +30,7 @@
 	let isLoading = true;
 	let announcementData = ANNOUNCEMENT_TEMPLATE;
 	let userStore = getContext<UserStore>('userStore');
-	let isAdminOrVolunteer = false;
+	let isAdminOrVolunteer = true;
 
 	// App Content Options
 	const showActions = false;
@@ -237,6 +237,7 @@
 					<input bind:group={announcementData.fixed} name="fixed" type="radio" value={false} />
 				</div>
 			</div>
+			{#if !isAdminOrVolunteer}
 			<div class="input">
 				<Icon src={HiOutlineGlobe} />
 				<select bind:value={announcementData.field} name="field" required>
@@ -249,6 +250,7 @@
 					{/each}
 				</select>
 			</div>
+			{/if}
 		</form>
 	</AppContent>
 </AppContainer>
