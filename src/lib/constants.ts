@@ -1,5 +1,5 @@
 import { Role } from './enums';
-import type { AgendaDto, AnnouncementDto, TestimonialDto, UserDto } from './types';
+import type { AgendaDto, AnnouncementDto, ReportDto, TestimonialDto, UserDto } from './types';
 
 export const widthBreakPointXS = 576;
 export const widthBreakPointMD = 768;
@@ -29,14 +29,18 @@ export const TEMPLATES = {
   YUP: {
     REQUIRED: (field: string) => `${field} é um campo obrigatório.`,
     ONE_OF: (enums: string[]) => `Você deve escoher um dentre os valores: ${enums.join(', ')}.`,
-    MIN: (field: string, length: number) => `${field} deve ter no mínimo ${length} caracteres.`
+    MIN: (field: string, length: number) => `${field} deve ter no mínimo ${length} caracteres.`,
+    MAX: (field: string, length: number) => `${field} deve ter no máximo ${length} caracteres.`,
+    MIN_NUMBER: (field: string, value: number) => `${field} deve ser no mínimo ${value}.`,
+    MAX_NUMBER: (field: string, value: number) => `${field} deve ser no máximo ${value}.`,
   },
   REMOVE: {
     USER: (email: string) => `Você deseja remover a conta de ${email}?`,
     FILE: (name: string) => `Você deseja remover o arquivo ${name}?`,
     LOG: (createdAt: Date) => `Você deseja remover o log de ${createdAt}?`,
     AGENDA: (title: string) => `Você deseja remover o evento ${title}?`,
-    TESTIMONIAL: (name: string) => `Você deseja remover o testemunho de ${name}?`
+    TESTIMONIAL: (name: string) => `Você deseja remover o testemunho de ${name}?`,
+    REPORT: (title: string) => `Você deseja remover o relatório ${title}?`
   }
 }
 
@@ -75,3 +79,14 @@ export const TESTIMONIAL_TEMPLATE = {
   text: '',
   field: null
 } as TestimonialDto;
+
+export const REPORT_TEMPLATE = {
+  id: '',
+  title: '',
+  text: '',
+  shortDescription: '',
+  attachments: [''],
+  month: null,
+  year: 0,
+  field: null,
+} as ReportDto;

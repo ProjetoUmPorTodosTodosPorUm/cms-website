@@ -33,7 +33,7 @@
 				};
 			}, {})
 		});
-	const modalOpen = () =>
+	const modalOpen = (key: string) =>
 		dispatch('modalopen', {
 			id,
 			data: rowCells.reduce((pRow, cRow) => {
@@ -41,7 +41,8 @@
 					...pRow,
 					[cRow.key]: cRow.transform ? cRow.transform(cRow.value) : cRow.value
 				};
-			}, {})
+			}, {}),
+			key
 		});
 	const select = () => dispatch('select', id);
 </script>
@@ -53,7 +54,11 @@
 				<span class="cell-label">{rowCell.label}:</span>
 				{#if rowCell.isStatus}
 					<span class={`status ${rowCell.value ? 'active' : 'disabled'}`}>
-						{rowCell.transform ? rowCell.transform(rowCell.value) : rowCell.value ? 'Active' : 'Disabled'}
+						{rowCell.transform
+							? rowCell.transform(rowCell.value)
+							: rowCell.value
+							? 'Active'
+							: 'Disabled'}
 					</span>
 				{:else if rowCell.isLink}
 					{#if rowCell.value}
@@ -76,18 +81,20 @@
 				{:else if rowCell.isJson}
 					<JSONTree value={rowCell.value} />
 				{:else if rowCell.textLimit}
-					{#if rowCell.value.length > rowCell.textLimit}
+					{#if rowCell.value?.length > rowCell.textLimit}
 						{#if rowCell.isModal}
 							<!-- svelte-ignore a11y-invalid-attribute -->
-							<a href="" on:click={modalOpen}>{rowCell.value.substring(0, rowCell.textLimit)}...</a>
+							<a href="" on:click={() => modalOpen(rowCell.key)}
+								>{rowCell.value.substring(0, rowCell.textLimit)}...</a
+							>
 						{:else}
 							{rowCell.value.substring(0, rowCell.textLimit)}...
 						{/if}
 					{:else if rowCell.isModal}
 						<!-- svelte-ignore a11y-invalid-attribute -->
-						<a href="" on:click={modalOpen}>{rowCell.value}</a>
+						<a href="" on:click={() => modalOpen(rowCell.key)}>{rowCell.value ?? ''}</a>
 					{:else}
-						{rowCell.value}
+						{rowCell.value ?? ''}
 					{/if}
 				{:else}
 					{rowCell.transform ? rowCell.transform(rowCell.value) : rowCell.value}
