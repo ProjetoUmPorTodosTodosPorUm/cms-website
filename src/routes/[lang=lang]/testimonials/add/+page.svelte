@@ -28,7 +28,7 @@
 
 	// App Content Options
 	const showActions = false;
-	const showRefreshButton = false;
+	const showRefreshButton = true;
 
 	// App Header
 	const appHeader = {
@@ -164,18 +164,20 @@
 					required
 				/>
 			</div>
-			<div class="input">
-				<Icon src={HiOutlineGlobe} />
-				<select bind:value={field} name="field" required>
-					<option value={null} disabled selected>Campo Missionário</option>
+			{#if !isAdminOrVolunteer}
+				<div class="input">
+					<Icon src={HiOutlineGlobe} />
+					<select bind:value={field} name="field" required>
+						<option value={null} disabled selected>Campo Missionário</option>
 
-					{#each fields as field}
-						<option value={field.id}>
-							{field.abbreviation} - {field.designation}
-						</option>
-					{/each}
-				</select>
-			</div>
+						{#each fields as field}
+							<option value={field.id}>
+								{field.abbreviation} - {field.designation}
+							</option>
+						{/each}
+					</select>
+				</div>
+			{/if}
 		</form>
 	</AppContent>
 </AppContainer>
