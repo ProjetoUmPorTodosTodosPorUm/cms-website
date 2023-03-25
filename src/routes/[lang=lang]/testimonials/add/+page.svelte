@@ -11,7 +11,7 @@
 	import HiOutlineChatAlt from 'svelte-icons-pack/hi/HiOutlineChatAlt';
 	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
 
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 
 	import { TEMPLATES } from '$src/lib/constants';
 	import * as yup from 'yup';
@@ -20,8 +20,11 @@
 	import type { PageData } from '../../users/add/$types';
 	import type { FieldDto, Pagination } from '$src/lib/types';
 	import { fromPaginationToQuery } from '$src/lib/utils/functions';
+	import type { UserStore } from '$src/lib/store/user';
 
 	export let data: PageData;
+	let userStore = getContext<UserStore>('userStore');
+	let isAdminOrVolunteer = false;
 
 	// App Content Options
 	const showActions = false;
@@ -63,6 +66,7 @@
 
 	onMount(async () => {
 		await loadData();
+		isAdminOrVolunteer = userStore.isVolunteer() || userStore.isAdmin();
 	});
 
 	async function loadData() {
@@ -92,12 +96,17 @@
 			const isValid = schema.validateSync({ name, email, text, field }, { abortEarly: false });
 
 			if (isValid) {
-				const res = await axios.post('/testimonial', {
+				const postData = {
 					name,
 					email,
 					text,
 					field
-				});
+				};
+				if (isAdminOrVolunteer) {
+					// @ts-ignore
+					delete postData.field;
+				}
+				const res = await axios.post('/testimonial', postData);
 
 				isLoading = false;
 				messages = generateMessages([{ message: res.data.message, variant: 'success' }]);

@@ -12,7 +12,7 @@
 	import HiOutlineCalendar from 'svelte-icons-pack/hi/HiOutlineCalendar';
 	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
 
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 
 	import { TEMPLATES } from '$src/lib/constants';
 	import * as yup from 'yup';
@@ -21,8 +21,11 @@
 	import type { PageData } from '../../users/add/$types';
 	import type { FieldDto, FileDto, Pagination } from '$src/lib/types';
 	import { fromPaginationToQuery } from '$src/lib/utils/functions';
+	import type { UserStore } from '$src/lib/store/user';
 
 	export let data: PageData;
+	let userStore = getContext<UserStore>('userStore');
+	let isAdminOrVolunteer = false;
 
 	// App Content Options
 	const showActions = false;
@@ -56,19 +59,19 @@
 		field: yup.string().nullable().optional()
 	});
 
-	let fileInputRef: HTMLInputElement;
 	let filesToUpload: File[] | null;
 
 	let title: string;
 	let message: string;
 	let attachments: string[];
-	let date: Date;
+	let date: string;
 	let field: string | null;
 
 	let messages: any[] = [];
 
 	onMount(async () => {
 		await loadData();
+		isAdminOrVolunteer = userStore.isVolunteer() || userStore.isAdmin();
 	});
 
 	async function loadData() {
@@ -105,13 +108,18 @@
 					await uploadFiles(filesToUpload);
 				}
 
-				const res = await axios.post('/agenda', {
+				const postData = {
 					title,
 					message,
 					attachments,
 					date,
 					field
-				});
+				};
+				if (isAdminOrVolunteer) {
+					// @ts-ignore
+					delete postData.field;
+				}
+				const res = await axios.post('/agenda', postData);
 
 				isLoading = false;
 				messages = generateMessages([{ message: res.data.message, variant: 'success' }]);

@@ -30,6 +30,7 @@
 	let isLoading = true;
 	let announcementData = ANNOUNCEMENT_TEMPLATE;
 	let userStore = getContext<UserStore>('userStore');
+	let isAdminOrVolunteer = false;
 
 	// App Content Options
 	const showActions = false;
@@ -68,6 +69,7 @@
 
 	onMount(async () => {
 		await loadData();
+		isAdminOrVolunteer = userStore.isVolunteer() || userStore.isAdmin();
 	});
 
 	afterNavigate(async (navigation: Navigation) => {
@@ -122,13 +124,18 @@
 					await uploadFiles(filesToUpload);
 				}
 
-				const res = await axios.put(`/announcement/${announcementData.id}`, {
+				const postData = {
 					title: announcementData.title,
 					message: announcementData.message,
 					attachments: announcementData.attachments ?? [],
 					fixed: announcementData.fixed,
 					field: announcementData.field
-				});
+				};
+				if (isAdminOrVolunteer) {
+					// @ts-ignore
+					delete postData.field;
+				}
+				const res = await axios.put(`/announcement/${announcementData.id}`, postData);
 
 				isLoading = false;
 				messages = generateMessages([{ message: res.data.message, variant: 'success' }]);

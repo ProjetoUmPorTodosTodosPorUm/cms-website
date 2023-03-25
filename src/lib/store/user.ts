@@ -19,7 +19,6 @@ export class UserStore extends BaseStore<UserStoreType> {
       avatar: null,
       lastAccess: null,
       fieldId: '',
-      field: null,
     },
     isUserLogged: false,
     tokenValidated: Date.now(),
@@ -106,6 +105,10 @@ export class UserStore extends BaseStore<UserStoreType> {
     }
 
     return await this.getTokens();
+  }
+
+  isVolunteer() {
+    return (this.get()).user.role === Role.VOLUNTEER;
   }
 
   isAdmin() {
