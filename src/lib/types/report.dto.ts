@@ -7,14 +7,14 @@ export type ReportDto = {
     text?: string;
     shortDescription: string;
     attachments: string[];
-    month?: number;
+    month: number | null;
     year: number;
     type: ReportType;
 
-    createdAt: Date;
-    updatedAt: Date;
-    deleted?: Date;
+    createdAt: string;
+    updatedAt: string;
+    deleted?: string;
 
     fieldId: string;
-    field: FieldDto;
+    field: FieldDto | string | null;
 }

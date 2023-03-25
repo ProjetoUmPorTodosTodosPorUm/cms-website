@@ -126,6 +126,10 @@
         color: var(--app-content-main-color);
       }
 
+      &:disabled {
+        opacity: .6;
+      }
+
       .files {
         width: 100%;
       }
@@ -171,6 +175,10 @@
         height: 1rem;
         margin: 0;
       }
+    }
+
+    .number {
+      width: 44%;
     }
   }
 }

@@ -24,7 +24,7 @@
 
 	export let data: PageData;
 	let userStore = getContext<UserStore>('userStore');
-	let isAdminOrVolunteer = false;
+	let isAdminOrVolunteer = true;
 
 	// App Content Options
 	const showActions = false;
