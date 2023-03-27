@@ -5,13 +5,13 @@ export type OfferorFamilyDto = {
     id: string;
     representative: string;
     commitment: string;
-    chuchDenomination?: string;
+    churchDenomination?: string;
     group: OfferorFamilyGroup;
 
-    createdAt: Date;
-    updatedAt: Date;
-    deleted?: Date;
+    createdAt: string;
+    updatedAt: string;
+    deleted?: string;
 
     fieldId: string;
-    field: FieldDto;
+    field: FieldDto | string | null;
 }
