@@ -97,7 +97,7 @@
 						{rowCell.value ?? ''}
 					{/if}
 				{:else}
-					{rowCell.transform ? rowCell.transform(rowCell.value) : rowCell.value}
+					{rowCell.transform ? rowCell.transform(rowCell.value) : rowCell.value ?? ''}
 				{/if}
 			</div>
 		{/if}
