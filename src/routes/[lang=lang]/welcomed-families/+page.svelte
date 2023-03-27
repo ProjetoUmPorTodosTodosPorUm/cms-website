@@ -5,9 +5,10 @@
 	import CollectionHeader from '$components/collection-header.svelte';
 	import CollectionRow from '$components/collection-row.svelte';
 	import CollectionRowPlaceholder from '$components/collection-row-placeholder.svelte';
+	import Modal from '$components/modal.svelte';
 
 	import { getContext, onMount } from 'svelte';
-	import type { ColumnCell, OfferorFamilyDto, Pagination, RowCell } from '$lib/types';
+	import type { ColumnCell, Pagination, RowCell, WelcomedFamilyDto } from '$lib/types';
 	import {
 		delay,
 		friendlyDateString,
@@ -25,7 +26,7 @@
 
 	export let data: PageData;
 
-	let offerorFamilyData: OfferorFamilyDto[] = [];
+	let welcomedFamilyDadata: WelcomedFamilyDto[] = [];
 	let userStore = getContext<UserStore>('userStore');
 	let totalCount = 1;
 	let totalPages = 1;
@@ -34,6 +35,12 @@
 	let isLoading = true;
 	let messages: any[] = [];
 	let itemsSelected: string[] = [];
+
+	let showModal = false;
+	let modal = {
+		title: '',
+		text: ''
+	};
 
 	onMount(async () => {
 		const accessToken = userStore.get('accessToken');
@@ -66,8 +73,8 @@
 		try {
 			isLoading = true;
 
-			const res = await axios.get(`offeror-family?${queryString}`);
-			offerorFamilyData = res.data.data;
+			const res = await axios.get(`welcomed-family?${queryString}`);
+			welcomedFamilyDadata = res.data.data;
 			totalCount = res.headers.get('x-total-count');
 			totalPages = res.headers.get('x-total-pages');
 
@@ -84,9 +91,9 @@
 
 	// App Header
 	const appHeader = {
-		name: 'Famílias Ofertantes',
-		buttonText: 'Adicionar Família Ofertante',
-		buttonLink: `/${data.locale}/offeror-families/add`
+		name: 'Famílias Acolhidas',
+		buttonText: 'Adicionar Família Acolhida',
+		buttonLink: `/${data.locale}/welcomed-families/add`
 	};
 
 	// Collection Header
@@ -96,16 +103,8 @@
 			key: 'representative'
 		},
 		{
-			label: 'Compromisso',
-			key: 'commitment'
-		},
-		{
-			label: 'Igreja',
-			key: 'churchDenomination'
-		},
-		{
-			label: 'Grupo',
-			key: 'group'
+			label: 'Observação',
+			key: 'observation'
 		},
 		{
 			label: 'Criado Em',
@@ -121,7 +120,7 @@
 		}
 	] as ColumnCell[];
 
-	$: collectionData = Object.entries(offerorFamilyData).map(
+	$: collectionData = Object.entries(welcomedFamilyDadata).map(
 		([key, data]) =>
 			[
 				{
@@ -135,20 +134,11 @@
 					value: data.representative
 				},
 				{
-					label: 'Compromisso',
-					key: 'commitment',
-					value: data.commitment
-				},
-				{
-					label: 'Igreja',
-					key: 'churchDenomination',
-					value: data.churchDenomination
-				},
-				{
-					label: 'Grupo',
-					key: 'group',
-					value: data.group,
-					isTag: true
+					label: 'Observação',
+					key: 'observation',
+					value: data.observation,
+					textLimit: 100,
+					isModal: true
 				},
 				{
 					label: 'Criado Em',
@@ -174,18 +164,18 @@
 	// On Event Functions
 	function handleEdit(event: CustomEvent) {
 		const id = event.detail;
-		goto(`/${data.locale}/offeror-families/edit?id=${id}`);
+		goto(`/${data.locale}/welcomed-families/edit?id=${id}`);
 	}
 
 	async function handleRemove(event: CustomEvent) {
 		const { id, data } = event.detail;
-		const remove = confirm(TEMPLATES.REMOVE.OFFEROR_FAMILY(data.representative));
+		const remove = confirm(TEMPLATES.REMOVE.WELCOMED_FAMILY(data.representative));
 
 		if (remove) {
 			isLoading = true;
 			try {
-				await axios.delete(`/offeror-family/${id}`);
-				offerorFamilyData = removeItemById(id, offerorFamilyData);
+				await axios.delete(`/welcomed-family/${id}`);
+				welcomedFamilyDadata = removeItemById(id, welcomedFamilyDadata);
 				isLoading = false;
 			} catch (error) {
 				isLoading = false;
@@ -224,10 +214,25 @@
 			orderValue
 		} as Pagination;
 	}
+
+	function onModalOpen(event: CustomEvent) {
+		const {
+			data,
+			key
+		}: { data: WelcomedFamilyDto; key: keyof Pick<WelcomedFamilyDto, 'observation'> } =
+			event.detail;
+		modal.title = 'Observação';
+		modal.text = data[key] ?? '';
+		showModal = true;
+	}
+
+	function onCloseModal() {
+		showModal = false;
+	}
 </script>
 
 <svelte:head>
-	<title>Offeror Families</title>
+	<title>Welcomed Families</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -236,7 +241,7 @@
 		{totalCount}
 		showBackButton={false}
 		maxPage={totalPages}
-		baseRoute={'/offeror-family'}
+		baseRoute={'/welcomed-family'}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
@@ -253,6 +258,7 @@
 		{#each collectionData as row, i (row[0].value)}
 			<CollectionRow
 				rowCells={row}
+				on:modalopen={onModalOpen}
 				on:edit={handleEdit}
 				on:remove={handleRemove}
 				on:select={handleSelect}
@@ -266,4 +272,10 @@
 			/>
 		{/if}
 	</AppContent>
+	{#if showModal}
+		<Modal show={true} on:close={onCloseModal}>
+			<h2 slot="header">{modal.title}</h2>
+			<p>{modal.text}</p>
+		</Modal>
+	{/if}
 </AppContainer>
