@@ -1,5 +1,5 @@
 import { OfferorFamilyGroup, Role } from './enums';
-import type { AgendaDto, AnnouncementDto, OfferorFamilyDto, ReportDto, TestimonialDto, UserDto, WelcomedFamilyDto } from './types';
+import type { AgendaDto, AnnouncementDto, MonthlyOfferDto, OfferorFamilyDto, ReportDto, TestimonialDto, UserDto, WelcomedFamilyDto } from './types';
 
 export const widthBreakPointXS = 576;
 export const widthBreakPointMD = 768;
@@ -106,3 +106,12 @@ export const WELCOMED_FAMILY_TEMPLATE = {
   observation: '',
   field: null
 } as WelcomedFamilyDto;
+
+export const COLLECTED_OFFER_TEMPLATE = {
+  month: 0,
+  year: 0,
+  foodQnt: 0,
+  monetaryValue: 0,
+  othersQnt: 0,
+  field: null
+} as MonthlyOfferDto;

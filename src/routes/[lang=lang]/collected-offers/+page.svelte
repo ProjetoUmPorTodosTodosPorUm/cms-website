@@ -5,10 +5,9 @@
 	import CollectionHeader from '$components/collection-header.svelte';
 	import CollectionRow from '$components/collection-row.svelte';
 	import CollectionRowPlaceholder from '$components/collection-row-placeholder.svelte';
-	import Modal from '$components/modal.svelte';
 
 	import { getContext, onMount } from 'svelte';
-	import type { ColumnCell, Pagination, RowCell, WelcomedFamilyDto } from '$lib/types';
+	import type { ColumnCell, MonthlyOfferDto, Pagination, RowCell } from '$lib/types';
 	import {
 		delay,
 		friendlyDateString,
@@ -25,8 +24,13 @@
 	import type { UserStore } from '$src/lib/store/user';
 
 	export let data: PageData;
+	// @TODO fix (usar o data.locale)
+	let Currency = Intl.NumberFormat('pt-BR', {
+		style: 'currency',
+		currency: 'BRL',
+	});
 
-	let welcomedFamilyData: WelcomedFamilyDto[] = [];
+	let monthlyFamilyData: MonthlyOfferDto[] = [];
 	let userStore = getContext<UserStore>('userStore');
 	let totalCount = 1;
 	let totalPages = 1;
@@ -35,12 +39,6 @@
 	let isLoading = true;
 	let messages: any[] = [];
 	let itemsSelected: string[] = [];
-
-	let showModal = false;
-	let modal = {
-		title: '',
-		text: ''
-	};
 
 	onMount(async () => {
 		const accessToken = userStore.get('accessToken');
@@ -58,7 +56,7 @@
 		itemsPerPage: 20,
 		page: 1,
 		deleted: false,
-		orderKey: 'representative',
+		orderKey: 'createdAt',
 		orderValue: 'asc'
 	} as Pagination;
 
@@ -73,8 +71,8 @@
 		try {
 			isLoading = true;
 
-			const res = await axios.get(`welcomed-family?${queryString}`);
-			welcomedFamilyData = res.data.data;
+			const res = await axios.get(`monthly-offer?${queryString}`);
+			monthlyFamilyData = res.data.data;
 			totalCount = res.headers.get('x-total-count');
 			totalPages = res.headers.get('x-total-pages');
 
@@ -91,20 +89,32 @@
 
 	// App Header
 	const appHeader = {
-		name: 'Famílias Acolhidas',
-		buttonText: 'Adicionar Família Acolhida',
-		buttonLink: `/${data.locale}/welcomed-families/add`
+		name: 'OFertas Coletadas',
+		buttonText: 'Adicionar Ofertas Coletadas',
+		buttonLink: `/${data.locale}/collected-offers/add`
 	};
 
 	// Collection Header
 	const collectionHeader = [
 		{
-			label: 'Representante',
-			key: 'representative'
+			label: 'Mês',
+			key: 'month'
 		},
 		{
-			label: 'Observação',
-			key: 'observation'
+			label: 'Ano',
+			key: 'year'
+		},
+		{
+			label: 'Mantimentos (Qnt.)',
+			key: 'foodQnt'
+		},
+		{
+			label: 'Valores',
+			key: 'monetaryValue'
+		},
+		{
+			label: 'Outros (Qnt.)',
+			key: 'othersQnt'
 		},
 		{
 			label: 'Criado Em',
@@ -120,7 +130,7 @@
 		}
 	] as ColumnCell[];
 
-	$: collectionData = Object.entries(welcomedFamilyData).map(
+	$: collectionData = Object.entries(monthlyFamilyData).map(
 		([key, data]) =>
 			[
 				{
@@ -129,16 +139,30 @@
 					value: data.id
 				},
 				{
-					label: 'Representante',
-					key: 'representative',
-					value: data.representative
+					label: 'Mês',
+					key: 'month',
+					value: data.month
 				},
 				{
-					label: 'Observação',
-					key: 'observation',
-					value: data.observation,
-					textLimit: 100,
-					isModal: true
+					label: 'Ano',
+					key: 'year',
+					value: data.year
+				},
+				{
+					label: 'Mantimentos (Qnt.)',
+					key: 'foodQnt',
+					value: data.foodQnt
+				},
+				{
+					label: 'Valores',
+					key: 'monetaryValue',
+					value: data.monetaryValue,
+					transform: (val: number) => Currency.format(val)
+				},
+				{
+					label: 'Outros (Qnt.)',
+					key: 'othersQnt',
+					value: data.othersQnt
 				},
 				{
 					label: 'Criado Em',
@@ -164,7 +188,7 @@
 	// On Event Functions
 	function handleEdit(event: CustomEvent) {
 		const id = event.detail;
-		goto(`/${data.locale}/welcomed-families/edit?id=${id}`);
+		goto(`/${data.locale}/collected-offers/edit?id=${id}`);
 	}
 
 	async function handleRemove(event: CustomEvent) {
@@ -174,8 +198,8 @@
 		if (remove) {
 			isLoading = true;
 			try {
-				await axios.delete(`/welcomed-family/${id}`);
-				welcomedFamilyData = removeItemById(id, welcomedFamilyData);
+				await axios.delete(`/monthly-offer/${id}`);
+				monthlyFamilyData = removeItemById(id, monthlyFamilyData);
 				isLoading = false;
 			} catch (error) {
 				isLoading = false;
@@ -214,25 +238,10 @@
 			orderValue
 		} as Pagination;
 	}
-
-	function onModalOpen(event: CustomEvent) {
-		const {
-			data,
-			key
-		}: { data: WelcomedFamilyDto; key: keyof Pick<WelcomedFamilyDto, 'observation'> } =
-			event.detail;
-		modal.title = 'Observação';
-		modal.text = data[key] ?? '';
-		showModal = true;
-	}
-
-	function onCloseModal() {
-		showModal = false;
-	}
 </script>
 
 <svelte:head>
-	<title>Welcomed Families</title>
+	<title>Collected Offers</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -241,7 +250,7 @@
 		{totalCount}
 		showBackButton={false}
 		maxPage={totalPages}
-		baseRoute={'/welcomed-family'}
+		baseRoute={'/monthly-offer'}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
@@ -258,7 +267,6 @@
 		{#each collectionData as row, i (row[0].value)}
 			<CollectionRow
 				rowCells={row}
-				on:modalopen={onModalOpen}
 				on:edit={handleEdit}
 				on:remove={handleRemove}
 				on:select={handleSelect}
@@ -272,10 +280,4 @@
 			/>
 		{/if}
 	</AppContent>
-	{#if showModal}
-		<Modal show={true} on:close={onCloseModal}>
-			<h2 slot="header">{modal.title}</h2>
-			<p>{modal.text}</p>
-		</Modal>
-	{/if}
 </AppContainer>
