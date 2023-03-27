@@ -5,10 +5,10 @@ export type WelcomedFamilyDto = {
     representative: string;
     observation: string;
 
-    createdAt: Date;
-    updatedAt: Date;
-    deleted?: Date;
+    createdAt: string;
+    updatedAt: string;
+    deleted?: string;
 
-    fieldId?: string;
-    field?: FieldDto;
+    fieldId: string;
+    field: FieldDto | string | null;
 }

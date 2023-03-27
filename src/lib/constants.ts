@@ -1,5 +1,5 @@
 import { OfferorFamilyGroup, Role } from './enums';
-import type { AgendaDto, AnnouncementDto, OfferorFamilyDto, ReportDto, TestimonialDto, UserDto } from './types';
+import type { AgendaDto, AnnouncementDto, OfferorFamilyDto, ReportDto, TestimonialDto, UserDto, WelcomedFamilyDto } from './types';
 
 export const widthBreakPointXS = 576;
 export const widthBreakPointMD = 768;
@@ -42,6 +42,7 @@ export const TEMPLATES = {
     TESTIMONIAL: (name: string) => `Você deseja remover o testemunho de ${name}?`,
     REPORT: (title: string) => `Você deseja remover o relatório ${title}?`,
     OFFEROR_FAMILY: (name: string) => `Você deseja remover a família ofertante representada pelo(a) ${name}?`,
+    WELCOMED_FAMILY: (name: string) => `Você deseja remover a família acolhida representada pelo(a) ${name}?`,
   }
 }
 
@@ -92,10 +93,16 @@ export const REPORT_TEMPLATE = {
   field: null
 } as ReportDto;
 
-export const OFFEROR_FAMILY_TEMPALTE = {
+export const OFFEROR_FAMILY_TEMPLATE = {
   representative: '',
   commitment: '',
   churchDenomination: '',
   group: OfferorFamilyGroup.COMMUNITY,
   field: null
 } as OfferorFamilyDto;
+
+export const WELCOMED_FAMILY_TEMPLATE = {
+  representative: '',
+  observation: '',
+  field: null
+} as WelcomedFamilyDto;

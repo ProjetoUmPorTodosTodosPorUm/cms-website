@@ -7,39 +7,31 @@
 
 	import Icon from 'svelte-icons-pack/Icon.svelte';
 	import HiOutlineUser from 'svelte-icons-pack/hi/HiOutlineUser';
-	import HiOutlineHand from 'svelte-icons-pack/hi/HiOutlineHand';
-	import HiOutlineLibrary from 'svelte-icons-pack/hi/HiOutlineLibrary';
-	import HiOutlineUserGroup from 'svelte-icons-pack/hi/HiOutlineUserGroup';
+	import HiOutlineInformationCircle from 'svelte-icons-pack/hi/HiOutlineInformationCircle';
 	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
 
 	import { getContext, onMount } from 'svelte';
 
-	import { OFFEROR_FAMILY_TEMPLATE, TEMPLATES } from '$src/lib/constants';
+	import { TEMPLATES } from '$src/lib/constants';
 	import * as yup from 'yup';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
 	import type { PageData } from '../../users/add/$types';
-	import type { FieldDto, FileDto, Pagination } from '$src/lib/types';
-	import { fromPaginationToQuery, idMatcher } from '$src/lib/utils/functions';
+	import type { FieldDto, Pagination } from '$src/lib/types';
+	import { fromPaginationToQuery } from '$src/lib/utils/functions';
 	import type { UserStore } from '$src/lib/store/user';
-	import { afterNavigate } from '$app/navigation';
-	import type { Navigation } from '@sveltejs/kit';
-	import { OfferorFamilyGroup } from '$src/lib/enums';
 
 	export let data: PageData;
-
-	let isLoading = true;
-	let offerorFamilyData = OFFEROR_FAMILY_TEMPLATE;
 	let userStore = getContext<UserStore>('userStore');
 	let isAdminOrVolunteer = true;
 
 	// App Content Options
 	const showActions = false;
-	const showRefreshButton = false;
+	const showRefreshButton = true;
 
 	// App Header
 	const appHeader = {
-		name: 'Editar Família Ofertante',
+		name: 'Adicionar Família Acolhida',
 		buttonText: 'Salvar'
 	};
 
@@ -54,41 +46,23 @@
 
 	// Form
 	let formRef: HTMLFormElement;
+	let isLoading = false;
 	let fields: FieldDto[] = [];
-	const groups = [
-		{ value: 'CHURCH', text: 'Igreja' },
-		{ value: 'COMMUNITY', text: 'Comunidade' },
-		{ value: 'EXTERNAL', text: 'Externo' }
-	];
-
 	const schema = yup.object().shape({
 		representative: yup.string().required(TEMPLATES.YUP.REQUIRED('Representante')),
-		commitment: yup.string().required(TEMPLATES.YUP.REQUIRED('Compromisso')),
-		churchDenomination: yup.string().nullable().optional(),
-		group: yup
-			.string()
-			.oneOf(Object.values(OfferorFamilyGroup), TEMPLATES.YUP.ONE_OF(groups.map((g) => g.text)))
-			.required(TEMPLATES.YUP.REQUIRED('Grupo')),
+		observation: yup.string().required(TEMPLATES.YUP.REQUIRED('Observação')),
 		field: yup.string().nullable().optional()
 	});
+
+	let representative: string;
+	let observation: string;
+	let field: string | null;
 
 	let messages: any[] = [];
 
 	onMount(async () => {
 		await loadData();
 		isAdminOrVolunteer = userStore.isVolunteer() || userStore.isAdmin();
-	});
-
-	afterNavigate(async (navigation: Navigation) => {
-		const accessToken = userStore.get('accessToken');
-		const id = navigation.to?.url.searchParams.get('id');
-
-		if (id && idMatcher(id) && accessToken) {
-			axios.setAuth(accessToken);
-			offerorFamilyData = (await axios.get(`/offeror-family/${id}`)).data.data;
-			offerorFamilyData.field = offerorFamilyData.fieldId;
-		}
-		isLoading = false;
 	});
 
 	async function loadData() {
@@ -116,36 +90,25 @@
 
 		try {
 			const isValid = schema.validateSync(
-				{
-					representative: offerorFamilyData.representative,
-					commitment: offerorFamilyData.commitment,
-					churchDenomination: offerorFamilyData.churchDenomination,
-					group: offerorFamilyData.group,
-					field: offerorFamilyData.field
-				},
+				{ representative, observation, field },
 				{ abortEarly: false }
 			);
 
 			if (isValid) {
 				const postData = {
-					representative: offerorFamilyData.representative,
-					commitment: offerorFamilyData.commitment,
-					churchDenomination: offerorFamilyData.churchDenomination,
-					group: offerorFamilyData.group,
-					field: offerorFamilyData.field
+					representative,
+					observation,
+					field
 				};
 				if (isAdminOrVolunteer) {
 					// @ts-ignore
 					delete postData.field;
 				}
-				if (!offerorFamilyData.churchDenomination) {
-					// @ts-ignore
-					delete postData.churchDenomination;
-				}
-				const res = await axios.put(`/offeror-family/${offerorFamilyData.id}`, postData);
+				const res = await axios.post('/welcomed-family', postData);
 
 				isLoading = false;
 				messages = generateMessages([{ message: res.data.message, variant: 'success' }]);
+				eraseForm();
 			}
 		} catch (error) {
 			isLoading = false;
@@ -159,10 +122,15 @@
 			}
 		}
 	}
+
+	function eraseForm() {
+		formRef.reset();
+		field = null;
+	}
 </script>
 
 <svelte:head>
-	<title>Offeror Families</title>
+	<title>Welcomed Families</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -171,7 +139,7 @@
 			<div class="input">
 				<Icon src={HiOutlineUser} />
 				<input
-					bind:value={offerorFamilyData.representative}
+					bind:value={representative}
 					name="representative"
 					placeholder="Representante"
 					autocomplete="off"
@@ -179,40 +147,20 @@
 				/>
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineHand} />
-				<input
-					bind:value={offerorFamilyData.commitment}
-					name="commitment"
-					placeholder="Compromisso"
+				<Icon src={HiOutlineInformationCircle} />
+				<textarea
+					bind:value={observation}
+					name="observation"
+					placeholder="Observação"
 					autocomplete="off"
+					rows="5"
 					required
 				/>
-			</div>
-			<div class="input">
-				<Icon src={HiOutlineLibrary} />
-				<input
-					bind:value={offerorFamilyData.churchDenomination}
-					name="churchDenomination"
-					placeholder="Igreja"
-					autocomplete="off"
-				/>
-			</div>
-			<div class="input">
-				<Icon src={HiOutlineUserGroup} />
-				<select bind:value={offerorFamilyData.group} name="group" required>
-					<option value={null} disabled selected>Grupo</option>
-
-					{#each groups as group}
-						<option value={group.value}>
-							{group.text}
-						</option>
-					{/each}
-				</select>
 			</div>
 			{#if !isAdminOrVolunteer}
 				<div class="input">
 					<Icon src={HiOutlineGlobe} />
-					<select bind:value={offerorFamilyData.field} name="field" required>
+					<select bind:value={field} name="field" required>
 						<option value={null} disabled selected>Campo Missionário</option>
 
 						{#each fields as field}
