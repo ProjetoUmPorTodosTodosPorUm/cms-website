@@ -5,9 +5,10 @@
 	import CollectionHeader from '$components/collection-header.svelte';
 	import CollectionRow from '$components/collection-row.svelte';
 	import CollectionRowPlaceholder from '$components/collection-row-placeholder.svelte';
+	import Modal from '$components/modal.svelte';
 
 	import { getContext, onMount } from 'svelte';
-	import type { ColumnCell, FieldDto, Pagination, RowCell } from '$lib/types';
+	import type { ChurchDto, ColumnCell, Pagination, RowCell } from '$lib/types';
 	import {
 		delay,
 		friendlyDateString,
@@ -25,7 +26,7 @@
 
 	export let data: PageData;
 
-	let fieldData: FieldDto[] = [];
+	let churchData: ChurchDto[] = [];
 	let userStore = getContext<UserStore>('userStore');
 	let totalCount = 1;
 	let totalPages = 1;
@@ -35,10 +36,21 @@
 	let messages: any[] = [];
 	let itemsSelected: string[] = [];
 
+	let showModal = false;
+	let modal = {
+		title: '',
+		text: ''
+	};
+
 	onMount(async () => {
 		const accessToken = userStore.get('accessToken');
 		axios.setAuth(accessToken);
 		isReady = true;
+
+		if (userStore.isVolunteer() || userStore.isAdmin()) {
+			pagination.searchSpecificField = 'fieldId';
+			pagination.searchSpecificValue = userStore.get('user.fieldId');
+		}
 	});
 
 	// Pagination config
@@ -47,7 +59,7 @@
 		page: 1,
 		deleted: false,
 		orderKey: 'createdAt',
-		orderValue: 'asc'
+		orderValue: 'desc'
 	} as Pagination;
 
 	$: queryString = fromPaginationToQuery(pagination);
@@ -61,8 +73,8 @@
 		try {
 			isLoading = true;
 
-			const res = await axios.get(`field?${queryString}`);
-			fieldData = res.data.data;
+			const res = await axios.get(`church?${queryString}`);
+			churchData = res.data.data;
 			totalCount = res.headers.get('x-total-count');
 			totalPages = res.headers.get('x-total-pages');
 
@@ -79,40 +91,24 @@
 
 	// App Header
 	const appHeader = {
-		name: 'Campos Missionários',
-		buttonText: 'Adicionar Campo Missionário',
-		buttonLink: `/${data.locale}/fields/add`
+		name: 'Igrejas',
+		buttonText: 'Adicionar Igreja Em Unidade',
+		buttonLink: `/${data.locale}/churches/add`
 	};
 
 	// Collection Header
 	const collectionHeader = [
 		{
-			label: 'Continente',
-			key: 'continent'
+			label: 'Nome',
+			key: 'name'
 		},
 		{
-			label: 'País',
-			key: 'country'
+			label: 'Descrição',
+			key: 'description'
 		},
 		{
-			label: 'Estado',
-			key: 'state'
-		},
-		{
-			label: 'Abreviação',
-			key: 'abbreviation'
-		},
-		{
-			label: 'Designação',
-			key: 'designation'
-		},
-		{
-			label: 'Pontos de Coleta',
-			key: 'collectionPoints'
-		},
-		{
-			label: 'Relação de Ruas',
-			key: 'streetRelation'
+			label: 'Tipo',
+			key: 'type'
 		},
 		{
 			label: 'Criado Em',
@@ -128,7 +124,7 @@
 		}
 	] as ColumnCell[];
 
-	$: collectionData = Object.entries(fieldData).map(
+	$: collectionData = Object.entries(churchData).map(
 		([key, data]) =>
 			[
 				{
@@ -137,42 +133,22 @@
 					value: data.id
 				},
 				{
-					label: 'Continente',
-					key: 'continent',
-					value: data.continent
+					label: 'Nome',
+					key: 'name',
+					value: data.name
 				},
 				{
-					label: 'País',
-					key: 'country',
-					value: data.country
+					label: 'Descrição',
+					key: 'description',
+					value: data.description,
+					textLimit: 100,
+					isModal: true
 				},
 				{
-					label: 'Estado',
-					key: 'state',
-					value: data.state
-				},
-				{
-					label: 'Abreviação',
-					key: 'abbreviation',
-					value: data.abbreviation,
+					label: 'Tipo',
+					key: 'type',
+					value: data.type,
 					isTag: true
-				},
-				{
-					label: 'Designação',
-					key: 'designation',
-					value: data.designation
-				},
-				{
-					label: 'Pontos de Coleta',
-					key: 'collectionPoints',
-					value: data.collectionPoints,
-					isJson: true
-				},
-				{
-					abel: 'Relação de Ruas',
-					key: 'streetRelation',
-					value: data.streetRelation,
-					isJson: true
 				},
 				{
 					label: 'Criado Em',
@@ -198,18 +174,18 @@
 	// On Event Functions
 	function handleEdit(event: CustomEvent) {
 		const id = event.detail;
-		goto(`/${data.locale}/fields/edit?id=${id}`);
+		goto(`/${data.locale}/churches/edit?id=${id}`);
 	}
 
 	async function handleRemove(event: CustomEvent) {
-		const { id, data } = event.detail;
-		const remove = confirm(TEMPLATES.REMOVE.FIELD(data.designation));
+		const { id, data }: { id: string; data: ChurchDto } = event.detail;
+		const remove = confirm(TEMPLATES.REMOVE.CHURCH(data.name));
 
 		if (remove) {
 			isLoading = true;
 			try {
-				await axios.delete(`/field/${id}`);
-				fieldData = removeItemById(id, fieldData);
+				await axios.delete(`/church/${id}`);
+				churchData = removeItemById(id, churchData);
 				isLoading = false;
 			} catch (error) {
 				isLoading = false;
@@ -248,10 +224,22 @@
 			orderValue
 		} as Pagination;
 	}
+
+	function onModalOpen(event: CustomEvent) {
+		const { data, key }: { data: ChurchDto; key: keyof Pick<ChurchDto, 'description'> } =
+			event.detail;
+		modal.title = data.name;
+		modal.text = data[key] ?? '';
+		showModal = true;
+	}
+
+	function onCloseModal() {
+		showModal = false;
+	}
 </script>
 
 <svelte:head>
-	<title>Fields</title>
+	<title>Churches</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -260,7 +248,7 @@
 		{totalCount}
 		showBackButton={false}
 		maxPage={totalPages}
-		baseRoute={'/field'}
+		baseRoute={'/church'}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
@@ -277,6 +265,7 @@
 		{#each collectionData as row, i (row[0].value)}
 			<CollectionRow
 				rowCells={row}
+				on:modalopen={onModalOpen}
 				on:edit={handleEdit}
 				on:remove={handleRemove}
 				on:select={handleSelect}
@@ -290,4 +279,10 @@
 			/>
 		{/if}
 	</AppContent>
+	{#if showModal}
+		<Modal show={true} on:close={onCloseModal}>
+			<h2 slot="header">{modal.title}</h2>
+			<p>{modal.text}</p>
+		</Modal>
+	{/if}
 </AppContainer>
