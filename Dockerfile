@@ -1,6 +1,7 @@
 ## ENVS
 ARG PUBLIC_API_URL=http://api.projetoumportodostodosporum.org
 ARG PUBLIC_STATIC_PATH=/static
+ARG PUBLIC_GOOGLE_MAP_API=AIzaSyABC1AW8m5olqyHRUgAlTli8kPzj1iij_0
 
 ###################
 # BASE IMAGE
@@ -9,6 +10,7 @@ FROM node:19.3-alpine as base-image
 
 ARG PUBLIC_API_URL
 ARG PUBLIC_STATIC_PATH
+ARG PUBLIC_GOOGLE_MAP_API
 
 # Fix Unable to establish a connection to query-engine-node-api library. It seems there is a problem with your OpenSSL installation!
 # https://github.com/prisma/prisma/issues/14073#issuecomment-1348534199
@@ -37,6 +39,7 @@ FROM base-image as dev-image
 
 ARG PUBLIC_API_URL
 ARG PUBLIC_STATIC_PATH
+ARG PUBLIC_GOOGLE_MAP_API
 
 # Set NODE_ENV environment variable
 ENV NODE_ENV development
@@ -52,6 +55,7 @@ FROM base-image as prod-image
 
 ARG PUBLIC_API_URL
 ARG PUBLIC_STATIC_PATH
+ARG PUBLIC_GOOGLE_MAP_API
 
 # Set NODE_ENV environment variable
 ENV NODE_ENV production
