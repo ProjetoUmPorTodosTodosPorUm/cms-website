@@ -8,7 +8,7 @@
 	import Modal from '$components/modal.svelte';
 
 	import { getContext, onMount } from 'svelte';
-	import type { ChurchDto, ColumnCell, Pagination, RowCell } from '$lib/types';
+	import type { CollaboratorDto, ColumnCell, Pagination, RowCell } from '$lib/types';
 	import {
 		delay,
 		friendlyDateString,
@@ -26,7 +26,7 @@
 
 	export let data: PageData;
 
-	let churchData: ChurchDto[] = [];
+	let collaboratorData: CollaboratorDto[] = [];
 	let userStore = getContext<UserStore>('userStore');
 	let totalCount = 1;
 	let totalPages = 1;
@@ -73,8 +73,8 @@
 		try {
 			isLoading = true;
 
-			const res = await axios.get(`church?${queryString}`);
-			churchData = res.data.data;
+			const res = await axios.get(`collaborator?${queryString}`);
+			collaboratorData = res.data.data;
 			totalCount = res.headers.get('x-total-count');
 			totalPages = res.headers.get('x-total-pages');
 
@@ -91,24 +91,20 @@
 
 	// App Header
 	const appHeader = {
-		name: 'Igrejas',
-		buttonText: 'Adicionar Igreja Em Unidade',
-		buttonLink: `/${data.locale}/churches/add`
+		name: 'Colaboradores',
+		buttonText: 'Adicionar Colaborador',
+		buttonLink: `/${data.locale}/collaborators/add`
 	};
 
 	// Collection Header
 	const collectionHeader = [
 		{
-			label: 'Nome',
-			key: 'name'
+			label: 'Título',
+			key: 'title'
 		},
 		{
 			label: 'Descrição',
 			key: 'description'
-		},
-		{
-			label: 'Tipo',
-			key: 'type'
 		},
 		{
 			label: 'Criado Em',
@@ -124,7 +120,7 @@
 		}
 	] as ColumnCell[];
 
-	$: collectionData = Object.entries(churchData).map(
+	$: collectionData = Object.entries(collaboratorData).map(
 		([key, data]) =>
 			[
 				{
@@ -133,9 +129,9 @@
 					value: data.id
 				},
 				{
-					label: 'Nome',
-					key: 'name',
-					value: data.name
+					label: 'Título',
+					key: 'title',
+					value: data.title
 				},
 				{
 					label: 'Descrição',
@@ -143,12 +139,6 @@
 					value: data.description,
 					textLimit: 100,
 					isModal: true
-				},
-				{
-					label: 'Tipo',
-					key: 'type',
-					value: data.type,
-					isTag: true
 				},
 				{
 					label: 'Criado Em',
@@ -174,18 +164,18 @@
 	// On Event Functions
 	function handleEdit(event: CustomEvent) {
 		const id = event.detail;
-		goto(`/${data.locale}/churches/edit?id=${id}`);
+		goto(`/${data.locale}/collaborators/edit?id=${id}`);
 	}
 
 	async function handleRemove(event: CustomEvent) {
-		const { id, data }: { id: string; data: ChurchDto } = event.detail;
-		const remove = confirm(TEMPLATES.REMOVE.CHURCH(data.name));
+		const { id, data }: { id: string; data: CollaboratorDto } = event.detail;
+		const remove = confirm(TEMPLATES.REMOVE.COLLABORATOR(data.title));
 
 		if (remove) {
 			isLoading = true;
 			try {
-				await axios.delete(`/church/${id}`);
-				churchData = removeItemById(id, churchData);
+				await axios.delete(`/collaborator/${id}`);
+				collaboratorData = removeItemById(id, collaboratorData);
 				isLoading = false;
 			} catch (error) {
 				isLoading = false;
@@ -226,7 +216,7 @@
 	}
 
 	function onModalOpen(event: CustomEvent) {
-		const { data, key }: { data: ChurchDto; key: keyof Pick<ChurchDto, 'description'> } =
+		const { data, key }: { data: CollaboratorDto; key: keyof Pick<CollaboratorDto, 'description'> } =
 			event.detail;
 		modal.title = 'Descrição';
 		modal.text = data[key] ?? '';
@@ -239,7 +229,7 @@
 </script>
 
 <svelte:head>
-	<title>Churches</title>
+	<title>Collaborators</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -248,7 +238,7 @@
 		{totalCount}
 		showBackButton={false}
 		maxPage={totalPages}
-		baseRoute={'/church'}
+		baseRoute={'/collaborator'}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
