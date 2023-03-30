@@ -1,4 +1,3 @@
-/// <reference path="../../../node_modules/@types/google.maps/index.d.ts" />
 import type { CollectionPoint } from './collection-point';
 
 export type FieldDto = {
@@ -13,7 +12,7 @@ export type FieldDto = {
     collectionPoints?: CollectionPoint[];
     streetRelation?: string[];
 
-    createdAt: Date;
-    updatedAt: Date;
-    deleted?: Date;
+    createdAt: string;
+    updatedAt: string;
+    deleted?: string;
 }

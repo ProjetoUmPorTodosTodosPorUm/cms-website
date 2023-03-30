@@ -1,5 +1,5 @@
 import { OfferorFamilyGroup, Role } from './enums';
-import type { AgendaDto, AnnouncementDto, MonthlyOfferDto, OfferorFamilyDto, ReportDto, TestimonialDto, UserDto, WelcomedFamilyDto } from './types';
+import type { AgendaDto, AnnouncementDto, FieldDto, MonthlyOfferDto, OfferorFamilyDto, ReportDto, TestimonialDto, UserDto, WelcomedFamilyDto } from './types';
 
 export const widthBreakPointXS = 576;
 export const widthBreakPointMD = 768;
@@ -115,3 +115,15 @@ export const COLLECTED_OFFER_TEMPLATE = {
   othersQnt: 0,
   field: null
 } as MonthlyOfferDto;
+
+export const FIELD_TEMPLATE = {
+  continent: '',
+  country: '',
+  state: '',
+  abbreviation: '',
+  designation: '',
+  mapLocation: undefined,
+  mapArea: undefined,
+  collectionPoints: undefined,
+  streetRelation: ['']
+} as FieldDto;
