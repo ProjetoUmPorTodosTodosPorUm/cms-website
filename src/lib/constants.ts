@@ -1,5 +1,5 @@
-import { ChurchType, OfferorFamilyGroup, Role } from './enums';
-import type { AgendaDto, AnnouncementDto, ChurchDto, CollaboratorDto, FieldDto, MonthlyOfferDto, OfferorFamilyDto, ReportDto, TestimonialDto, UserDto, WelcomedFamilyDto } from './types';
+import { ChurchType, Occupation, OfferorFamilyGroup, Role } from './enums';
+import type { AgendaDto, AnnouncementDto, ChurchDto, CollaboratorDto, FieldDto, MonthlyOfferDto, OfferorFamilyDto, ReportDto, TestimonialDto, UserDto, VolunteerDto, WelcomedFamilyDto } from './types';
 
 export const widthBreakPointXS = 576;
 export const widthBreakPointMD = 768;
@@ -46,6 +46,7 @@ export const TEMPLATES = {
     FIELD: (designation: string) => `Você deseja remover o campo missionário ${designation}?`,
     CHURCH: (name: string) => `Você deseja remover a igreja ${name}?`,
     COLLABORATOR: (title: string) => `Você deseja remover o colaborador ${title}?`,
+    VOLUNTEER: (name: string) => `Você deseja remover o voluntário ${name}?`,
   }
 }
 
@@ -143,3 +144,16 @@ export const COLLABORATOR_TEMPLATE = {
   description: '',
   field: null
 } as CollaboratorDto;
+
+export const VOLUNTEER_TEMPLATE = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  avatar: '',
+  joinedDate: '',
+  occupation: Occupation.WEB_MASTER,
+  church: '',
+  priest: '',
+  observation: '',
+  field: null
+} as VolunteerDto;

@@ -7,16 +7,16 @@ export type VolunteerDto = {
     lastName?: string;
     email?: string;
     avatar?: string;
-    joinedDate: Date;
+    joinedDate: string;
     occupation: Occupation;
     church?: string;
     priest?: string;
     observation?: string;
 
-    createdAt: Date;
-    updatedAt: Date;
-    deleted?: Date;
+    createdAt: string;
+    updatedAt: string;
+    deleted?: string;
 
     fieldId: string;
-    field: FieldDto;
+    field: FieldDto | string | null;
 }
