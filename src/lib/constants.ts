@@ -1,5 +1,5 @@
-import { OfferorFamilyGroup, Role } from './enums';
-import type { AgendaDto, AnnouncementDto, FieldDto, MonthlyOfferDto, OfferorFamilyDto, ReportDto, TestimonialDto, UserDto, WelcomedFamilyDto } from './types';
+import { ChurchType, OfferorFamilyGroup, Role } from './enums';
+import type { AgendaDto, AnnouncementDto, ChurchDto, FieldDto, MonthlyOfferDto, OfferorFamilyDto, ReportDto, TestimonialDto, UserDto, WelcomedFamilyDto } from './types';
 
 export const widthBreakPointXS = 576;
 export const widthBreakPointMD = 768;
@@ -43,6 +43,8 @@ export const TEMPLATES = {
     REPORT: (title: string) => `Você deseja remover o relatório ${title}?`,
     OFFEROR_FAMILY: (name: string) => `Você deseja remover a família ofertante representada pelo(a) ${name}?`,
     WELCOMED_FAMILY: (name: string) => `Você deseja remover a família acolhida representada pelo(a) ${name}?`,
+    FIELD: (designation: string) => `Você deseja remover o campo missionário ${designation}?`,
+    CHURCH: (name: string) => `Você deseja remover a igreja ${name}?`,
   }
 }
 
@@ -127,3 +129,10 @@ export const FIELD_TEMPLATE = {
   collectionPoints: undefined,
   streetRelation: ['']
 } as FieldDto;
+
+export const CHURCH_TEMPLATE = {
+  name: '',
+  description: '',
+  type: ChurchType.PIONEER,
+  field: null
+} as ChurchDto;
