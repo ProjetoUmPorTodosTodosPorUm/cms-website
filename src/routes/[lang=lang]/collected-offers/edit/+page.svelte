@@ -28,7 +28,7 @@
 	export let data: PageData;
 
 	let isLoading = true;
-	let collectedOffferData = COLLECTED_OFFER_TEMPLATE;
+	let collectedOfferData = COLLECTED_OFFER_TEMPLATE;
 	let userStore = getContext<UserStore>('userStore');
 	let isAdminOrVolunteer = true;
 
@@ -87,8 +87,8 @@
 
 		if (id && idMatcher(id) && accessToken) {
 			axios.setAuth(accessToken);
-			collectedOffferData = (await axios.get(`/monthly-offer/${id}`)).data.data;
-			collectedOffferData.field = collectedOffferData.fieldId;
+			collectedOfferData = (await axios.get(`/monthly-offer/${id}`)).data.data;
+			collectedOfferData.field = collectedOfferData.fieldId;
 		}
 		isLoading = false;
 	});
@@ -119,30 +119,30 @@
 		try {
 			const isValid = schema.validateSync(
 				{
-					month: collectedOffferData.month,
-					year: collectedOffferData.year,
-					foodQnt: collectedOffferData.foodQnt,
-					monetaryValue: collectedOffferData.monetaryValue,
-					othersQnt: collectedOffferData.othersQnt,
-					field: collectedOffferData.field
+					month: collectedOfferData.month,
+					year: collectedOfferData.year,
+					foodQnt: collectedOfferData.foodQnt,
+					monetaryValue: collectedOfferData.monetaryValue,
+					othersQnt: collectedOfferData.othersQnt,
+					field: collectedOfferData.field
 				},
 				{ abortEarly: false }
 			);
 
 			if (isValid) {
 				const postData = {
-					month: collectedOffferData.month,
-					year: collectedOffferData.year,
-					foodQnt: collectedOffferData.foodQnt,
-					monetaryValue: collectedOffferData.monetaryValue,
-					othersQnt: collectedOffferData.othersQnt,
-					field: collectedOffferData.field
+					month: collectedOfferData.month,
+					year: collectedOfferData.year,
+					foodQnt: collectedOfferData.foodQnt,
+					monetaryValue: collectedOfferData.monetaryValue,
+					othersQnt: collectedOfferData.othersQnt,
+					field: collectedOfferData.field
 				};
 				if (isAdminOrVolunteer) {
 					// @ts-ignore
 					delete postData.field;
 				}
-				const res = await axios.put(`/monthly-offer/${collectedOffferData.id}`, postData);
+				const res = await axios.put(`/monthly-offer/${collectedOfferData.id}`, postData);
 
 				isLoading = false;
 				messages = generateMessages([{ message: res.data.message, variant: 'success' }]);
@@ -171,7 +171,7 @@
 			<div class="input">
 				<Icon src={HiOutlineShoppingBag} />
 				<input
-					bind:value={collectedOffferData.foodQnt}
+					bind:value={collectedOfferData.foodQnt}
 					name="foodQnt"
 					placeholder="Mantimentos (Qnt.)"
 					type="number"
@@ -181,7 +181,7 @@
 			<div class="input">
 				<Icon src={HiOutlineCurrencyDollar} />
 				<input
-					bind:value={collectedOffferData.monetaryValue}
+					bind:value={collectedOfferData.monetaryValue}
 					name="monetaryValue"
 					placeholder="Valores"
 					type="number"
@@ -192,7 +192,7 @@
 			<div class="input">
 				<Icon src={HiOutlineCube} />
 				<input
-					bind:value={collectedOffferData.othersQnt}
+					bind:value={collectedOfferData.othersQnt}
 					name="foodQnt"
 					placeholder="Outros"
 					type="number"
@@ -203,7 +203,7 @@
 				<Icon src={HiOutlineCalendar} />
 				<div class="number">
 					<input
-						bind:value={collectedOffferData.month}
+						bind:value={collectedOfferData.month}
 						name="month"
 						placeholder="Mês"
 						type="number"
@@ -213,7 +213,7 @@
 				</div>
 				<div class="number">
 					<input
-						bind:value={collectedOffferData.year}
+						bind:value={collectedOfferData.year}
 						name="year"
 						placeholder="Ano"
 						type="number"
@@ -226,7 +226,7 @@
 			{#if !isAdminOrVolunteer}
 				<div class="input">
 					<Icon src={HiOutlineGlobe} />
-					<select bind:value={collectedOffferData.field} name="field" required>
+					<select bind:value={collectedOfferData.field} name="field" required>
 						<option value={null} disabled selected>Campo Missionário</option>
 
 						{#each fields as field}

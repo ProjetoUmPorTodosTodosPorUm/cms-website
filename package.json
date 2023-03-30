@@ -17,6 +17,7 @@
 		"postbuild:docker": "docker push renangalvao/project-cms:latest"
 	},
 	"devDependencies": {
+		"@googlemaps/js-api-loader": "^1.15.1",
 		"@playwright/test": "^1.28.1",
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/adapter-node": "^1.2.3",

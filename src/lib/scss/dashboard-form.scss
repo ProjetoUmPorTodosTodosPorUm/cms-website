@@ -1,4 +1,5 @@
 @import "$lib/scss/_shared";
+@import "$lib/scss/_variables";
 
 .app-form {
   display: flex;
@@ -179,6 +180,37 @@
 
     .number {
       width: 44%;
+    }
+
+    .tags {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      margin-top: .6rem;
+      height: 200px;
+      overflow-y: scroll;
+
+      .item {
+        font-size: .9rem;
+        background-color: var(--action-color);
+        color: var(--app-bg);
+        padding: 0.2rem 0.5rem;
+        width: 100%;
+
+        display: flex;
+        justify-content: space-between;
+
+        &:not(:first-of-type) {
+          margin-top: .2rem;
+        }
+      }
+
+      .btn-close {
+        background-color: transparent;
+        border: 0;
+        padding: 0;
+        cursor: pointer;
+      }
     }
   }
 }
