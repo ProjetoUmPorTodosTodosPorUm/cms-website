@@ -14,6 +14,9 @@
 	export let totalCount = 1;
 	export let showDeleted = false;
 	export let itemsSelected: string[] = [];
+	export let search = '';
+	export let searchMinLength = 3;
+	export let searchType: 'text' | 'number' =  'text';
 
 	// Component Options - forwarding
 	export let isLoading = false;
@@ -30,6 +33,9 @@
 	const refresh = () => dispatch('refresh');
 	const restore = () => dispatch('restore');
 	const remove = () => dispatch('remove');
+	const searchLoad = () => dispatch('searchLoad');
+	const searchClear = () => dispatch('searchClear');
+
 	let appHeader = {
 		name,
 		buttonText,
@@ -50,11 +56,16 @@
 			{maxPage}
 			{totalCount}
 			{baseRoute}
+			{searchMinLength}
+			{searchType}
+			bind:search
 			bind:itemsSelected
 			bind:page
 			bind:showDeleted
 			on:remove={remove}
 			on:restore={restore}
+			on:searchLoad={searchLoad}
+			on:searchClear={searchClear}
 		/>
 	{/if}
 	<div class="products-area-wrapper tableView">

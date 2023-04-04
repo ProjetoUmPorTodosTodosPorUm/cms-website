@@ -1,18 +1,21 @@
 <script lang="ts">
 	import Pagination from '$components/pagination.svelte';
-	import { MESSAGES, USER_TEMPLATE } from '$lib/constants';
+	import SearchInput from '$components/search-input.svelte';
+	import { USER_TEMPLATE } from '$lib/constants';
 	import type { UserStore } from '$lib/store/user';
 	import { Role } from '$lib/enums';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
-	import { getFromLocalStorage } from '$src/lib/utils/functions';
 	import { generateMessages } from '$components/toast.svelte';
 
 	// Component Data - forwarding
 	export let page = 1;
 	export let maxPage = 1;
+	export let search = '';
+	export let searchMinLength = 3;
+	export let searchType: 'text' | 'number' =  'text';
 
 	// Component Data
 	export let totalCount = 1;
@@ -35,6 +38,8 @@
 	const dispatch = createEventDispatcher();
 	const restore = () => dispatch('restore');
 	const remove = () => dispatch('remove');
+	const searchLoad = () => dispatch('searchLoad');
+	const searchClear = () => dispatch('searchClear');
 
 	onMount(() => {
 		user = userStore.get('user');
@@ -49,15 +54,15 @@
 	function handleGridView() {
 		listRef.classList.remove('active');
 		gridRef.classList.add('active');
-		document.querySelector('.products-area-wrapper').classList.add('gridView');
-		document.querySelector('.products-area-wrapper').classList.remove('tableView');
+		document.querySelector('.products-area-wrapper')?.classList.add('gridView');
+		document.querySelector('.products-area-wrapper')?.classList.remove('tableView');
 	}
 
 	function handleListView() {
 		listRef.classList.add('active');
 		gridRef.classList.remove('active');
-		document.querySelector('.products-area-wrapper').classList.remove('gridView');
-		document.querySelector('.products-area-wrapper').classList.add('tableView');
+		document.querySelector('.products-area-wrapper')?.classList.remove('gridView');
+		document.querySelector('.products-area-wrapper')?.classList.add('tableView');
 	}
 
 	async function restoreAll() {
@@ -100,7 +105,13 @@
 </script>
 
 <div class="app-content-actions">
-	<input class="search-bar" placeholder="Search..." type="text" />
+	<SearchInput
+		bind:search
+		minLength={searchMinLength}
+		type={searchType}
+		on:searchLoad={searchLoad}
+		on:searchClear={searchClear}
+	/>
 	<span class="total-items" title="Número total de items">Items: {totalCount}</span>
 	<Pagination bind:page {maxPage} />
 	<div class="app-content-actions-wrapper">

@@ -27,7 +27,7 @@
 	// @TODO fix (usar o data.locale)
 	let Currency = Intl.NumberFormat('pt-BR', {
 		style: 'currency',
-		currency: 'BRL',
+		currency: 'BRL'
 	});
 
 	let monthlyFamilyData: MonthlyOfferDto[] = [];
@@ -57,8 +57,12 @@
 		page: 1,
 		deleted: false,
 		orderKey: 'createdAt',
-		orderValue: 'asc'
+		orderValue: 'desc',
+		search: '',
 	} as Pagination;
+	let searchInput = '';
+	let searchMinLength = 1;
+	let searchType: 'text' | 'number' = 'number';
 
 	$: queryString = fromPaginationToQuery(pagination);
 	$: queryString, loadData();
@@ -192,8 +196,8 @@
 	}
 
 	async function handleRemove(event: CustomEvent) {
-		const { id, data } = event.detail;
-		const remove = confirm(TEMPLATES.REMOVE.WELCOMED_FAMILY(data.representative));
+		const { id, data }: { id: string; data: MonthlyOfferDto } = event.detail;
+		const remove = confirm(TEMPLATES.REMOVE.COLLECTED_OFFER(data.month, data.year));
 
 		if (remove) {
 			isLoading = true;
@@ -238,6 +242,14 @@
 			orderValue
 		} as Pagination;
 	}
+
+	function onSearchLoad() {
+		pagination.search = searchInput;
+	}
+
+	function onSearchClear() {
+		pagination.search = '';
+	}
 </script>
 
 <svelte:head>
@@ -251,9 +263,14 @@
 		showBackButton={false}
 		maxPage={totalPages}
 		baseRoute={'/monthly-offer'}
+		{searchMinLength}
+		{searchType}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
+		on:searchLoad={onSearchLoad}
+		on:searchClear={onSearchClear}
+		bind:search={searchInput}
 		bind:page={pagination.page}
 		bind:showDeleted={pagination.deleted}
 		bind:itemsSelected

@@ -39,10 +39,10 @@
 		const accessToken = userStore.get('accessToken');
 		axios.setAuth(accessToken);
 		isReady = true;
-		
-		if(userStore.isVolunteer() || userStore.isAdmin()) {
+
+		if (userStore.isVolunteer() || userStore.isAdmin()) {
 			pagination.searchSpecificField = 'fieldId';
-			pagination.searchSpecificValue = userStore.get('user.fieldId')
+			pagination.searchSpecificValue = userStore.get('user.fieldId');
 		}
 	});
 
@@ -52,8 +52,10 @@
 		page: 1,
 		deleted: false,
 		orderKey: 'createdAt',
-		orderValue: 'desc'
+		orderValue: 'desc',
+		search: ''
 	} as Pagination;
+	let searchInput = '';
 
 	$: queryString = fromPaginationToQuery(pagination);
 	$: queryString, loadData();
@@ -97,7 +99,7 @@
 		},
 		{
 			label: 'Mensagem',
-			key: 'message',
+			key: 'message'
 		},
 		{
 			label: 'Anexos',
@@ -131,24 +133,24 @@
 				},
 				{
 					label: 'Título',
-			        key: 'title',
+					key: 'title',
 					value: data.title
 				},
 				{
 					label: 'Mensagem',
-			        key: 'message',
+					key: 'message',
 					value: data.message,
-                    textLimit: 100,
+					textLimit: 100
 				},
 				{
 					label: 'Anexos',
-			        key: 'attachments',
+					key: 'attachments',
 					value: data.attachments,
-                    isJson: true,
+					isJson: true
 				},
 				{
 					label: 'Data',
-			        key: 'date',
+					key: 'date',
 					value: data.date,
 					transform: friendlyDateString
 				},
@@ -226,6 +228,14 @@
 			orderValue
 		} as Pagination;
 	}
+
+	function onSearchLoad() {
+		pagination.search = searchInput;
+	}
+
+	function onSearchClear() {
+		pagination.search = '';
+	}
 </script>
 
 <svelte:head>
@@ -242,6 +252,9 @@
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
+		on:searchLoad={onSearchLoad}
+		on:searchClear={onSearchClear}
+		bind:search={searchInput}
 		bind:page={pagination.page}
 		bind:showDeleted={pagination.deleted}
 		bind:itemsSelected
