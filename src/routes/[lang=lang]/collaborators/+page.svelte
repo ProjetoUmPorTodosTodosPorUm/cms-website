@@ -58,9 +58,11 @@
 		itemsPerPage: 20,
 		page: 1,
 		deleted: false,
-		orderKey: 'createdAt',
-		orderValue: 'desc'
+		orderKey: 'title',
+		orderValue: 'asc',
+		search: '',
 	} as Pagination;
+	let searchInput = '';
 
 	$: queryString = fromPaginationToQuery(pagination);
 	$: queryString, loadData();
@@ -226,6 +228,14 @@
 	function onCloseModal() {
 		showModal = false;
 	}
+	
+	function onSearchLoad() {
+		pagination.search = searchInput
+	}
+
+	function onSearchClear() {
+		pagination.search = '';
+	}
 </script>
 
 <svelte:head>
@@ -242,6 +252,9 @@
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
+		on:searchLoad={onSearchLoad}
+		on:searchClear={onSearchClear}
+		bind:search={searchInput}
 		bind:page={pagination.page}
 		bind:showDeleted={pagination.deleted}
 		bind:itemsSelected

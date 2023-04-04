@@ -46,6 +46,7 @@ export const TEMPLATES = {
     FIELD: (designation: string) => `Você deseja remover o campo missionário ${designation}?`,
     CHURCH: (name: string) => `Você deseja remover a igreja ${name}?`,
     COLLABORATOR: (title: string) => `Você deseja remover o colaborador ${title}?`,
+    COLLECTED_OFFER: (month: number, year: number) => `Você deseja remover a oferta coletada do mês ${month} e ano ${year}?`,
     VOLUNTEER: (name: string) => `Você deseja remover o voluntário ${name}?`,
   }
 }
