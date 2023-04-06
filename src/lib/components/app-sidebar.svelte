@@ -20,6 +20,7 @@
 	import HiOutlineArchive from 'svelte-icons-pack/hi/HiOutlineArchive';
 	import HiOutlineChartSquareBar from 'svelte-icons-pack/hi/HiOutlineChartSquareBar';
 	import HiOutlineChat from 'svelte-icons-pack/hi/HiOutlineChat';
+	import HiOutlineTicket from "svelte-icons-pack/hi/HiOutlineTicket";
 	import HiOutlineUsers from 'svelte-icons-pack/hi/HiOutlineUsers';
 	import HiOutlineIdentification from 'svelte-icons-pack/hi/HiOutlineIdentification';
 	import HiOutlineHeart from 'svelte-icons-pack/hi/HiOutlineHeart';
@@ -115,6 +116,11 @@
 			name: 'Testemunhos',
 			href: `/${locale}/testimonials`,
 			icon: HiOutlineChat
+		},
+		{
+			name: 'Tokens',
+			href: `/${locale}/tokens`,
+			icon: HiOutlineTicket
 		},
 		{
 			name: 'Usuários',

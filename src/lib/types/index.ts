@@ -25,3 +25,4 @@ export * from './file.dto';
 export * from './log.dto';
 export * from './send-create-email.dto';
 export * from './create-mail-payload.dto';
+export * from './token.dto';
