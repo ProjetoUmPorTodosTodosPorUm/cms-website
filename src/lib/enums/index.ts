@@ -5,3 +5,4 @@ export * from './report-type';
 export * from './occupation';
 export * from './church-type';
 export * from './role';
+export * from './token-type';
