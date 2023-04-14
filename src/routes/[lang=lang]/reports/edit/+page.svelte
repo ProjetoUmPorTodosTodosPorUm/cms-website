@@ -67,7 +67,7 @@
 
 	const schema = yup.object().shape({
 		title: yup.string().required(TEMPLATES.YUP.REQUIRED('Título')),
-		text: yup.string().optional(),
+		text: yup.string().nullable().optional(),
 		shortDescription: yup.string().required(TEMPLATES.YUP.REQUIRED('Descrição')),
 		attachments: yup
 			.array(yup.string())
@@ -186,7 +186,13 @@
 			isLoading = false;
 
 			if (error instanceof Axios.AxiosError) {
-				messages = generateMessages([{ message: error.response?.data.message }]);
+				if (error.response) {
+					messages = generateMessages(
+						(error.response?.data.data as string[]).map((err) => ({ message: err }))
+					);
+				} else {
+					messages = generateMessages([{ message: error.message }]);
+				}
 			} else if (error instanceof yup.ValidationError) {
 				messages = generateMessages(error.inner.map((err) => ({ message: err.message })));
 			} else {
@@ -223,7 +229,7 @@
 			reportData.attachments = (res.data.data as FileDto[]).map((file) => file.name);
 		} catch (error) {
 			if (error instanceof Axios.AxiosError) {
-				messages = generateMessages([{ message: error.response?.data.message }]);
+				throw new Axios.AxiosError('Os arquivos são muito grandes!');
 			} else {
 				console.warn(error);
 			}
