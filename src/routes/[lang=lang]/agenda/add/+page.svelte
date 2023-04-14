@@ -129,7 +129,7 @@
 			isLoading = false;
 
 			if (error instanceof Axios.AxiosError) {
-				messages = generateMessages([{ message: error.response?.data.message }]);
+				messages = generateMessages([{ message: error.response?.data.message ?? error.message }]);
 			} else if (error instanceof yup.ValidationError) {
 				messages = generateMessages(error.inner.map((err) => ({ message: err.message })));
 			} else {
@@ -169,7 +169,7 @@
 			attachments = (res.data.data as FileDto[]).map((file) => file.name);
 		} catch (error) {
 			if (error instanceof Axios.AxiosError) {
-				messages = generateMessages([{ message: error.response?.data.message }]);
+				throw new Axios.AxiosError('Os arquivos são muito grandes!');
 			} else {
 				console.warn(error);
 			}
