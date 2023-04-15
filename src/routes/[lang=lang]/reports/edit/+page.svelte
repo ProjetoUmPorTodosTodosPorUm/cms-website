@@ -12,6 +12,7 @@
 	import HiOutlineCalendar from 'svelte-icons-pack/hi/HiOutlineCalendar';
 	import HiOutlineTag from 'svelte-icons-pack/hi/HiOutlineTag';
 	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
+	import HiOutlineX from 'svelte-icons-pack/hi/HiOutlineX';
 
 	import { getContext, onMount } from 'svelte';
 
@@ -69,10 +70,7 @@
 		title: yup.string().required(TEMPLATES.YUP.REQUIRED('Título')),
 		text: yup.string().nullable().optional(),
 		shortDescription: yup.string().required(TEMPLATES.YUP.REQUIRED('Descrição')),
-		attachments: yup
-			.array(yup.string())
-			.min(1, TEMPLATES.YUP.MIN_NUMBER('Anexos', 1))
-			.required(TEMPLATES.YUP.REQUIRED('Anexos')),
+		attachments: yup.array(yup.string()).nullable().optional(),
 		month: yup.number().when('type', {
 			is: (val: ReportType) => val !== ReportType.ANNUAL && val !== null,
 			then: (schema) =>
@@ -96,7 +94,9 @@
 		field: yup.string().nullable().optional()
 	});
 
-	let filesToUpload: File[] | null;
+	let filesToUpload: FileList | null;
+	let filesToRemove: string[] = [];
+
 	let messages: any[] = [];
 
 	onMount(async () => {
@@ -179,6 +179,10 @@
 				}
 				const res = await axios.put(`/report/${reportData.id}`, postData);
 
+				if (filesToRemove.length > 0) {
+					await removeFiles(filesToRemove);
+				}
+
 				isLoading = false;
 				messages = generateMessages([{ message: res.data.message, variant: 'success' }]);
 			}
@@ -202,17 +206,16 @@
 	}
 
 	function onFileInputChange(event: Event) {
-		const files = (event.target as any).files as File[];
+		const files = (event.target as any).files as FileList;
+
 		if (files.length > 0) {
 			filesToUpload = files;
-			reportData.attachments = ['yupbypass'];
 		} else {
 			filesToUpload = null;
-			reportData.attachments = [];
 		}
 	}
 
-	async function uploadFiles(files: File[]) {
+	async function uploadFiles(files: FileList) {
 		try {
 			let formData = new FormData();
 			for (let i = 0; i < files.length; i++) {
@@ -226,13 +229,41 @@
 			});
 
 			messages = generateMessages([{ message: res.data.message, variant: 'success' }]);
-			reportData.attachments = (res.data.data as FileDto[]).map((file) => file.name);
+			reportData.attachments = [
+				...reportData.attachments,
+				...(res.data.data as FileDto[]).map((file) => file.name)
+			];
 		} catch (error) {
 			if (error instanceof Axios.AxiosError) {
 				throw new Axios.AxiosError('Os arquivos são muito grandes!');
 			} else {
 				console.warn(error);
 			}
+		}
+	}
+
+	async function removeFiles(filesToRemove: string[]) {
+		try {
+			await axios.delete('/file/bulk', {
+				data: {
+					files: filesToRemove
+				}
+			});
+		} catch (error) {
+			if (error instanceof Axios.AxiosError) {
+				messages = generateMessages([{ message: error.response?.data.message ?? error.message }]);
+			} else {
+				console.warn(error);
+			}
+		}
+	}
+
+	function onRemoveAttachment(index: number) {
+		const remove = confirm(TEMPLATES.REMOVE.FILE(reportData.attachments[index]));
+
+		if (remove) {
+			filesToRemove = reportData.attachments.splice(index, 1);
+			reportData.attachments = reportData.attachments;
 		}
 	}
 </script>
@@ -287,8 +318,13 @@
 				/>
 				{#if reportData.attachments.length > 0}
 					<div class="files">
-						{#each reportData.attachments as attachment}
-							<a href={`/static/${attachment}`}>{attachment}</a>
+						{#each reportData.attachments as attachment, index}
+							<div class="item">
+								<a href={`/static/${attachment}`}>{attachment}</a>
+								<button class="btn-close" on:click|preventDefault={() => onRemoveAttachment(index)}
+									><Icon src={HiOutlineX} /></button
+								>
+							</div>
 						{/each}
 					</div>
 				{/if}

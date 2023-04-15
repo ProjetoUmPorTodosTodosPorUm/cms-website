@@ -11,6 +11,7 @@
 	import HiOutlinePaperClip from 'svelte-icons-pack/hi/HiOutlinePaperClip';
 	import HiOutlineCalendar from 'svelte-icons-pack/hi/HiOutlineCalendar';
 	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
+	import HiOutlineX from 'svelte-icons-pack/hi/HiOutlineX';
 
 	import { getContext, onMount } from 'svelte';
 
@@ -64,6 +65,7 @@
 	});
 
 	let filesToUpload: File[] | null;
+	let filesToRemove: string[] = [];
 
 	let messages: any[] = [];
 
@@ -138,6 +140,10 @@
 				}
 				const res = await axios.put(`/agenda/${agendaData.id}`, postData);
 
+				if (filesToRemove.length > 0) {
+					await removeFiles(filesToRemove);
+				}
+
 				isLoading = false;
 				messages = generateMessages([{ message: res.data.message, variant: 'success' }]);
 			}
@@ -177,13 +183,41 @@
 			});
 
 			messages = generateMessages([{ message: res.data.message, variant: 'success' }]);
-			agendaData.attachments = (res.data.data as FileDto[]).map((file) => file.name);
+			agendaData.attachments = [
+				...agendaData.attachments,
+				...(res.data.data as FileDto[]).map((file) => file.name)
+			];
 		} catch (error) {
 			if (error instanceof Axios.AxiosError) {
 				throw new Axios.AxiosError('Os arquivos são muito grandes!');
 			} else {
 				console.warn(error);
 			}
+		}
+	}
+
+	async function removeFiles(filesToRemove: string[]) {
+		try {
+			await axios.delete('/file/bulk', {
+				data: {
+					files: filesToRemove
+				}
+			});
+		} catch (error) {
+			if (error instanceof Axios.AxiosError) {
+				messages = generateMessages([{ message: error.response?.data.message ?? error.message }]);
+			} else {
+				console.warn(error);
+			}
+		}
+	}
+
+	function onRemoveAttachment(index: number) {
+		const remove = confirm(TEMPLATES.REMOVE.FILE(agendaData.attachments[index]));
+
+		if (remove) {
+			filesToRemove = agendaData.attachments.splice(index, 1);
+			agendaData.attachments = agendaData.attachments;
 		}
 	}
 </script>
@@ -221,8 +255,13 @@
 				<input on:change={onFileInputChange} name="attachments" multiple type="file" />
 				{#if agendaData.attachments.length > 0}
 					<div class="files">
-						{#each agendaData.attachments as attachment}
-							<a href={`/static/${attachment}`}>{attachment}</a>
+						{#each agendaData.attachments as attachment, index}
+							<div class="item">
+								<a href={`/static/${attachment}`}>{attachment}</a>
+								<button class="btn-close" on:click|preventDefault={() => onRemoveAttachment(index)}
+									><Icon src={HiOutlineX} /></button
+								>
+							</div>
 						{/each}
 					</div>
 				{/if}
@@ -232,18 +271,18 @@
 				<input bind:value={agendaData.date} name="email" type="date" autocomplete="off" required />
 			</div>
 			{#if !isAdminOrVolunteer}
-			<div class="input">
-				<Icon src={HiOutlineGlobe} />
-				<select bind:value={agendaData.field} name="field" required>
-					<option value={null} disabled selected>Campo Missionário</option>
+				<div class="input">
+					<Icon src={HiOutlineGlobe} />
+					<select bind:value={agendaData.field} name="field" required>
+						<option value={null} disabled selected>Campo Missionário</option>
 
-					{#each fields as field}
-						<option value={field.id}>
-							{field.abbreviation} - {field.designation}
-						</option>
-					{/each}
-				</select>
-			</div>
+						{#each fields as field}
+							<option value={field.id}>
+								{field.abbreviation} - {field.designation}
+							</option>
+						{/each}
+					</select>
+				</div>
 			{/if}
 		</form>
 	</AppContent>
