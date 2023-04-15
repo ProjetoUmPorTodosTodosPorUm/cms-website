@@ -100,6 +100,7 @@
 	let avatarImageRef: HTMLImageElement;
 	let avatarInputRef: HTMLInputElement;
 	let avatarToUpload: File | null;
+	let avatarToRemove = '';
 
 	let messages: any[] = [];
 
@@ -188,6 +189,10 @@
 				}
 				const res = await axios.put(`/volunteer/${volunteerData.id}`, postData);
 
+				if (avatarToRemove) {
+					await removeFile(avatarToRemove);
+				}
+
 				isLoading = false;
 				messages = generateMessages([{ message: res.data.message, variant: 'success' }]);
 			}
@@ -216,6 +221,10 @@
 		if (file) {
 			avatarToUpload = file;
 			avatarImageRef.src = URL.createObjectURL(file);
+
+			if (volunteerData.avatar) {
+				avatarToRemove = volunteerData.avatar;
+			}
 		} else {
 			avatarToUpload = null;
 			avatarImageRef.src = defaultAvatarSrc;
@@ -237,6 +246,22 @@
 		} catch (error) {
 			if (error instanceof Axios.AxiosError) {
 				throw new Axios.AxiosError('O arquivo é muito grande!');
+			} else {
+				console.warn(error);
+			}
+		}
+	}
+
+	async function removeFile(avatarToRemove: string) {
+		try {
+			await axios.delete('/file/bulk', {
+				data: {
+					files: [avatarToRemove]
+				}
+			});
+		} catch (error) {
+			if (error instanceof Axios.AxiosError) {
+				messages = generateMessages([{ message: error.response?.data.message ?? error.message }]);
 			} else {
 				console.warn(error);
 			}

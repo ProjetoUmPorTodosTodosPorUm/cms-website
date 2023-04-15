@@ -157,17 +157,6 @@
       }
     }
 
-    .files {
-      margin-left: 12%;
-
-      display: flex;
-      flex-direction: column;
-
-      a {
-        font-size: .7rem;
-      }
-    }
-
     .radio {
       margin-left: 1rem;
 
@@ -182,7 +171,8 @@
       width: 44%;
     }
 
-    .tags {
+    .tags,
+    .files {
       display: flex;
       flex-direction: column;
       width: 100%;
