@@ -72,7 +72,7 @@
 							>{rowCell.value}</a
 						>
 					{:else}
-						{rowCell.value}
+						{rowCell.transform ? rowCell.transform(rowCell.value) : rowCell.value}
 					{/if}
 				{:else if rowCell.isTag}
 					<span class="tag">

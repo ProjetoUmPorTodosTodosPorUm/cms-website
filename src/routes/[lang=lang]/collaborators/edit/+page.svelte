@@ -8,7 +8,9 @@
 	import Icon from 'svelte-icons-pack/Icon.svelte';
 	import HiOutlineUserGroup from 'svelte-icons-pack/hi/HiOutlineUserGroup';
 	import HiOutlineMenuAlt2 from 'svelte-icons-pack/hi/HiOutlineMenuAlt2';
+	import HiOutlineCamera from 'svelte-icons-pack/hi/HiOutlineCamera';
 	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
+	import HiOutlineX from 'svelte-icons-pack/hi/HiOutlineX';
 
 	import { getContext, onMount } from 'svelte';
 
@@ -55,8 +57,12 @@
 	const schema = yup.object().shape({
 		title: yup.string().required(TEMPLATES.YUP.REQUIRED('Título')),
 		description: yup.string().required(TEMPLATES.YUP.REQUIRED('Descrição')),
+		image: yup.string().nullable().optional(),
 		field: yup.string().nullable().optional()
 	});
+
+	let fileToUpload: File | null;
+	let fileToRemove: string;
 
 	let messages: any[] = [];
 
@@ -105,15 +111,21 @@
 				{
 					title: collaboratorData.title,
 					description: collaboratorData.description,
+					image: collaboratorData.image,
 					field: collaboratorData.field
 				},
 				{ abortEarly: false }
 			);
 
 			if (isValid) {
+				if (fileToUpload) {
+					await uploadFile(fileToUpload);
+				}
+
 				const postData = {
 					title: collaboratorData.title,
 					description: collaboratorData.description,
+					image: collaboratorData.image,
 					field: collaboratorData.field
 				};
 				if (isAdminOrVolunteer) {
@@ -122,6 +134,10 @@
 				}
 				const res = await axios.put(`/collaborator/${collaboratorData.id}`, postData);
 
+				if (fileToRemove) {
+					await removeFile(fileToRemove);
+				}
+
 				isLoading = false;
 				messages = generateMessages([{ message: res.data.message, variant: 'success' }]);
 			}
@@ -129,12 +145,71 @@
 			isLoading = false;
 
 			if (error instanceof Axios.AxiosError) {
-				messages = generateMessages([{ message: error.response?.data.message }]);
+				messages = generateMessages([{ message: error.response?.data.message ?? error.message }]);
 			} else if (error instanceof yup.ValidationError) {
 				messages = generateMessages(error.inner.map((err) => ({ message: err.message })));
 			} else {
 				console.warn(error);
 			}
+		}
+	}
+
+	function onFileInputChange(event: Event) {
+		const file = (event.target as any).files[0] as File;
+		if (file) {
+			fileToUpload = file;
+
+			if(collaboratorData.image) {
+				fileToRemove = collaboratorData.image;
+			}
+		} else {
+			fileToUpload = null;
+		}
+	}
+
+	async function uploadFile(file: File) {
+		try {
+			let formData = new FormData();
+			formData.append('file', file);
+			const res = await axios.post('/file', formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data'
+				}
+			});
+
+			messages = generateMessages([{ message: res.data.message, variant: 'success' }]);
+			collaboratorData.image = res.data.data.name;
+		} catch (error) {
+			if (error instanceof Axios.AxiosError) {
+				throw new Axios.AxiosError('O arquivo é muito grande!');
+			} else {
+				console.warn(error);
+			}
+		}
+	}
+
+	async function removeFile(fileToRemove: string) {
+		try {
+			await axios.delete('/file/bulk', {
+				data: {
+					files: [fileToRemove]
+				}
+			});
+		} catch (error) {
+			if (error instanceof Axios.AxiosError) {
+				messages = generateMessages([{ message: error.response?.data.message ?? error.message }]);
+			} else {
+				console.warn(error);
+			}
+		}
+	}
+
+	function onRemoveFile() {
+		const remove = confirm(TEMPLATES.REMOVE.FILE(collaboratorData.image));
+
+		if (remove) {
+			fileToRemove = collaboratorData.image
+			collaboratorData.image = '';
 		}
 	}
 </script>
@@ -166,6 +241,22 @@
 					rows="5"
 					required
 				/>
+			</div>
+			<div class="input">
+				<Icon src={HiOutlineCamera} />
+				<input on:change={onFileInputChange} name="images" multiple type="file" />
+				{#if collaboratorData.image}
+					<div class="files">
+						<div class="item">
+							<a href={`/static/${collaboratorData.image}`}>{collaboratorData.image}</a>
+							<button
+								class="btn-close"
+								on:click|preventDefault={() => onRemoveFile()}
+								><Icon src={HiOutlineX} /></button
+							>
+						</div>
+					</div>
+				{/if}
 			</div>
 			{#if !isAdminOrVolunteer}
 				<div class="input">

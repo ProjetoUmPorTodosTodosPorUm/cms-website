@@ -6,6 +6,7 @@ export type ChurchDto = {
     id: string;
     name: string;
     description: string;
+    images: string[];
     type: ChurchType;
 
     createdAt: string;

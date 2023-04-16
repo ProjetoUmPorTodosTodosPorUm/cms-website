@@ -109,6 +109,10 @@
 			key: 'description'
 		},
 		{
+			label: 'Imagem',
+			key: 'image'
+		},
+		{
 			label: 'Criado Em',
 			key: 'createdAt'
 		},
@@ -141,6 +145,13 @@
 					value: data.description,
 					textLimit: 100,
 					isModal: true
+				},
+				{
+					label: 'Imagem',
+					key: 'image',
+					value: data.image,
+					isStatic: true,
+					transform: (value: string) => value ?? ''
 				},
 				{
 					label: 'Criado Em',
