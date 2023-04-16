@@ -60,7 +60,7 @@
 		deleted: false,
 		orderKey: 'name',
 		orderValue: 'asc',
-		search: '',
+		search: ''
 	} as Pagination;
 	let searchInput = '';
 
@@ -109,6 +109,10 @@
 			key: 'description'
 		},
 		{
+			label: 'Imagens',
+			key: 'images'
+		},
+		{
 			label: 'Tipo',
 			key: 'type'
 		},
@@ -145,6 +149,12 @@
 					value: data.description,
 					textLimit: 100,
 					isModal: true
+				},
+				{
+					label: 'Imagens',
+					key: 'images',
+					value: data.images,
+					isJson: true
 				},
 				{
 					label: 'Tipo',
@@ -240,7 +250,7 @@
 	}
 
 	function onSearchLoad() {
-		pagination.search = searchInput
+		pagination.search = searchInput;
 	}
 
 	function onSearchClear() {

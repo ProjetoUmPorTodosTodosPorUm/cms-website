@@ -6,8 +6,9 @@
 	import { generateMessages } from '$components/toast.svelte';
 
 	import Icon from 'svelte-icons-pack/Icon.svelte';
-	import HiOutlineUserGroup from "svelte-icons-pack/hi/HiOutlineUserGroup";
-	import HiOutlineMenuAlt2 from "svelte-icons-pack/hi/HiOutlineMenuAlt2";
+	import HiOutlineUserGroup from 'svelte-icons-pack/hi/HiOutlineUserGroup';
+	import HiOutlineMenuAlt2 from 'svelte-icons-pack/hi/HiOutlineMenuAlt2';
+	import HiOutlineCamera from 'svelte-icons-pack/hi/HiOutlineCamera';
 	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
 
 	import { getContext, onMount } from 'svelte';
@@ -51,13 +52,16 @@
 	const schema = yup.object().shape({
 		title: yup.string().required(TEMPLATES.YUP.REQUIRED('Título')),
 		description: yup.string().required(TEMPLATES.YUP.REQUIRED('Descrição')),
+		image: yup.string().nullable().optional(),
 		field: yup.string().nullable().optional()
 	});
 
 	let title: string;
 	let description: string;
+	let image: string;
 	let field: string | null;
 
+	let fileToUpload: File | null;
 	let messages: any[] = [];
 
 	onMount(async () => {
@@ -90,14 +94,19 @@
 
 		try {
 			const isValid = schema.validateSync(
-				{ title, description, field },
+				{ title, description, image, field },
 				{ abortEarly: false }
 			);
 
 			if (isValid) {
+				if (fileToUpload) {
+					await uploadFile(fileToUpload);
+				}
+
 				const postData = {
 					title,
 					description,
+					image,
 					field
 				};
 				if (isAdminOrVolunteer) {
@@ -114,7 +123,7 @@
 			isLoading = false;
 
 			if (error instanceof Axios.AxiosError) {
-				messages = generateMessages([{ message: error.response?.data.message }]);
+				messages = generateMessages([{ message: error.response?.data.message ?? error.message }]);
 			} else if (error instanceof yup.ValidationError) {
 				messages = generateMessages(error.inner.map((err) => ({ message: err.message })));
 			} else {
@@ -126,6 +135,36 @@
 	function eraseForm() {
 		formRef.reset();
 		field = null;
+	}
+
+	function onFileInputChange(event: Event) {
+		const file = (event.target as any).files[0] as File;
+		if (file) {
+			fileToUpload = file;
+		} else {
+			fileToUpload = null;
+		}
+	}
+
+	async function uploadFile(file: File) {
+		try {
+			let formData = new FormData();
+			formData.append('file', file);
+			const res = await axios.post('/file', formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data'
+				}
+			});
+
+			messages = generateMessages([{ message: res.data.message, variant: 'success' }]);
+			image = res.data.data.name;
+		} catch (error) {
+			if (error instanceof Axios.AxiosError) {
+				throw new Axios.AxiosError('O arquivo é muito grande!');
+			} else {
+				console.warn(error);
+			}
+		}
 	}
 </script>
 
@@ -150,6 +189,10 @@
 					rows="5"
 					required
 				/>
+			</div>
+			<div class="input">
+				<Icon src={HiOutlineCamera} />
+				<input on:change={onFileInputChange} name="image" multiple type="file" />
 			</div>
 			{#if !isAdminOrVolunteer}
 				<div class="input">

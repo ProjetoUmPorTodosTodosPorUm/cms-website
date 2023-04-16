@@ -136,6 +136,7 @@ export const FIELD_TEMPLATE = {
 export const CHURCH_TEMPLATE = {
   name: '',
   description: '',
+  images: [''],
   type: ChurchType.PIONEER,
   field: null
 } as ChurchDto;
@@ -143,6 +144,7 @@ export const CHURCH_TEMPLATE = {
 export const COLLABORATOR_TEMPLATE = {
   title: '',
   description: '',
+  image: '',
   field: null
 } as CollaboratorDto;
 
