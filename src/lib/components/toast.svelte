@@ -9,9 +9,10 @@
 </script>
 
 <script lang="ts">
-	import "$lib/scss/components/toast.scss";
-	import { createEventDispatcher } from 'svelte';
+	import '$lib/scss/components/toast.scss';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
+	import type { Locales } from '$src/i18n/i18n-types';
 
 	export let isOpen = true;
 	export let id = 0;
@@ -19,6 +20,18 @@
 	export let variant = 'danger';
 	export let autoHide = true;
 	export let duration = 5;
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.toast;
+
+	export let locale: Locales;
+
+	onMount(async () => {
+		await loadNamespaceAsync(locale, 'toast');
+		setLocale(locale);
+	});
 
 	const dispatch = createEventDispatcher();
 
@@ -39,6 +52,6 @@
 		<div class="toast-body text-white">
 			<p>{message}</p>
 		</div>
-		<button on:click={close} class={`toast-close text-${variant}`}>Fechar</button>
+		<button on:click={close} class={`toast-close text-${variant}`}>{i18n.closeText()}</button>
 	</div>
 {/if}

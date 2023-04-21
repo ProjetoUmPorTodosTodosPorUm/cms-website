@@ -44,6 +44,7 @@
 		showBackButton={false}
 		showActions={false}
 		showRefreshButton={false}
+		locale={data.locale}
 	>
 		<div class="home">
 			<h2>Bem-vindo, {user.firstName}!</h2>

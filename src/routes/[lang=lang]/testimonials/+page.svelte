@@ -5,6 +5,7 @@
 	import CollectionHeader from '$components/collection-header.svelte';
 	import CollectionRow from '$components/collection-row.svelte';
 	import CollectionRowPlaceholder from '$components/collection-row-placeholder.svelte';
+	import Modal from '$components/modal.svelte';
 
 	import { getContext, onMount } from 'svelte';
 	import type { ColumnCell, Pagination, RowCell, TestimonialDto } from '$lib/types';
@@ -19,9 +20,14 @@
 	import axios from '$lib/axios';
 	import Axios from 'axios';
 	import { goto } from '$app/navigation';
-	import { TEMPLATES } from '$src/lib/constants';
 	import type { PageData } from './$types';
 	import type { UserStore } from '$src/lib/store/user';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.testimonials.list;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 
@@ -35,15 +41,25 @@
 	let messages: any[] = [];
 	let itemsSelected: string[] = [];
 
+	let showModal = false;
+	let modal = {
+		title: '',
+		text: ''
+	};
+
 	onMount(async () => {
 		const accessToken = userStore.get('accessToken');
 		axios.setAuth(accessToken);
 		isReady = true;
 
-		if(userStore.isVolunteer() || userStore.isAdmin()) {
+		if (userStore.isVolunteer() || userStore.isAdmin()) {
 			pagination.searchSpecificField = 'fieldId';
-			pagination.searchSpecificValue = userStore.get('user.fieldId')
+			pagination.searchSpecificValue = userStore.get('user.fieldId');
 		}
+
+		await loadNamespaceAsync(data.locale, 'testimonials');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	// Pagination config
@@ -53,7 +69,7 @@
 		deleted: false,
 		orderKey: 'createdAt',
 		orderValue: 'desc',
-		search: '',
+		search: ''
 	} as Pagination;
 	let searchInput = '';
 
@@ -85,36 +101,36 @@
 	}
 
 	// App Header
-	const appHeader = {
-		name: 'Testemunhos',
-		buttonText: 'Adicionar Testemunho',
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText(),
 		buttonLink: `/${data.locale}/testimonials/add`
 	};
 
 	// Collection Header
-	const collectionHeader = [
+	$: collectionHeader = [
 		{
-			label: 'Nome',
+			label: i18n.collectionHeader.nameLabel(),
 			key: 'name'
 		},
 		{
-			label: 'E-mail',
+			label: i18n.collectionHeader.emailLabel(),
 			key: 'email'
 		},
 		{
-			label: 'Texto',
+			label: i18n.collectionHeader.textLabel(),
 			key: 'text'
 		},
 		{
-			label: 'Criado Em',
+			label: sharedI18n.collectionHeader.createdAtLabel(),
 			key: 'createdAt'
 		},
 		{
-			label: 'Atualizado Em',
+			label: sharedI18n.collectionHeader.updatedAtLabel(),
 			key: 'updatedAt'
 		},
 		{
-			label: 'Deletado Em',
+			label: sharedI18n.collectionHeader.deletedLabel(),
 			key: 'deleted'
 		}
 	] as ColumnCell[];
@@ -128,35 +144,36 @@
 					value: data.id
 				},
 				{
-					label: 'Nome',
+					label: i18n.collectionHeader.nameLabel(),
 					key: 'name',
 					value: data.name
 				},
 				{
-					label: 'E-mail',
+					label: i18n.collectionHeader.emailLabel(),
 					key: 'email',
 					value: data.email
 				},
 				{
-					label: 'Texto',
+					label: i18n.collectionHeader.textLabel(),
 					key: 'text',
 					value: data.text,
-					textLimit: 100
+					textLimit: 100,
+					isModal: true
 				},
 				{
-					label: 'Criado Em',
+					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
 					value: data.createdAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Atualizado Em',
+					label: sharedI18n.collectionHeader.updatedAtLabel(),
 					key: 'updatedAt',
 					value: data.updatedAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Deletado Em',
+					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
 					value: data.deleted,
 					transform: friendlyDateString
@@ -172,7 +189,7 @@
 
 	async function handleRemove(event: CustomEvent) {
 		const { id, data } = event.detail;
-		const remove = confirm(TEMPLATES.REMOVE.TESTIMONIAL(data.name));
+		const remove = confirm(sharedI18n.remove.testimonial({ name: data.name }));
 
 		if (remove) {
 			isLoading = true;
@@ -218,8 +235,20 @@
 		} as Pagination;
 	}
 
+	function onModalOpen(event: CustomEvent) {
+		const { data, key }: { data: TestimonialDto; key: keyof Pick<TestimonialDto, 'text'> } =
+			event.detail;
+		modal.title = data.name;
+		modal.text = data[key] ?? '';
+		showModal = true;
+	}
+
+	function onCloseModal() {
+		showModal = false;
+	}
+
 	function onSearchLoad() {
-		pagination.search = searchInput
+		pagination.search = searchInput;
 	}
 
 	function onSearchClear() {
@@ -228,7 +257,7 @@
 </script>
 
 <svelte:head>
-	<title>Testimonial</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -238,6 +267,7 @@
 		showBackButton={false}
 		maxPage={totalPages}
 		baseRoute={'/testimonial'}
+		locale={data.locale}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
@@ -251,12 +281,15 @@
 	>
 		<CollectionHeader
 			columns={collectionHeader}
+			locale={data.locale}
 			on:click={onSort}
 			bind:showDeleted={pagination.deleted}
 		/>
 		{#each collectionData as row, i (row[0].value)}
 			<CollectionRow
 				rowCells={row}
+				locale={data.locale}
+				on:modalopen={onModalOpen}
 				on:edit={handleEdit}
 				on:remove={handleRemove}
 				on:select={handleSelect}
@@ -270,4 +303,10 @@
 			/>
 		{/if}
 	</AppContent>
+	{#if showModal}
+		<Modal show={true} on:close={onCloseModal}>
+			<h2 slot="header">{modal.title}</h2>
+			<p>{modal.text}</p>
+		</Modal>
+	{/if}
 </AppContainer>

@@ -24,6 +24,12 @@
 	import type { PageData } from './$types';
 	import type { UserStore } from '$src/lib/store/user';
 
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.volunteers.list;
+	$: sharedI18n = $LL.shared;
+
 	export let data: PageData;
 
 	let volunteerData: VolunteerDto[] = [];
@@ -51,6 +57,10 @@
 			pagination.searchSpecificField = 'fieldId';
 			pagination.searchSpecificValue = userStore.get('user.fieldId');
 		}
+
+		await loadNamespaceAsync(data.locale, 'volunteers');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	// Pagination config
@@ -60,7 +70,7 @@
 		deleted: false,
 		orderKey: 'firstName',
 		orderValue: 'asc',
-		search: '',
+		search: ''
 	} as Pagination;
 	let searchInput = '';
 
@@ -92,52 +102,52 @@
 	}
 
 	// App Header
-	const appHeader = {
-		name: 'Voluntários',
-		buttonText: 'Adicionar Voluntário',
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText(),
 		buttonLink: `/${data.locale}/volunteers/add`
 	};
 
 	// Collection Header
-	const collectionHeader = [
+	$: collectionHeader = [
 		{
-			label: 'Nome',
+			label: i18n.collectionHeader.nameLabel(),
 			key: 'firstName'
 		},
 		{
-			label: 'E-mail',
+			label: i18n.collectionHeader.emailLabel(),
 			key: 'email'
 		},
 		{
-			label: 'Data de Admissão',
+			label: i18n.collectionHeader.joinedDateLabel(),
 			key: 'joinedDate'
 		},
 		{
-			label: 'Ocupação',
+			label: i18n.collectionHeader.occupationLabel(),
 			key: 'occupation'
 		},
 		{
-			label: 'Igreja',
+			label: i18n.collectionHeader.churchLabel(),
 			key: 'church'
 		},
 		{
-			label: 'Pastor',
+			label: i18n.collectionHeader.priestLabel(),
 			key: 'priest'
 		},
 		{
-			label: 'Observação',
+			label: i18n.collectionHeader.observationLabel(),
 			key: 'observation'
 		},
 		{
-			label: 'Criado Em',
+			label: sharedI18n.collectionHeader.createdAtLabel(),
 			key: 'createdAt'
 		},
 		{
-			label: 'Atualizado Em',
+			label: sharedI18n.collectionHeader.updatedAtLabel(),
 			key: 'updatedAt'
 		},
 		{
-			label: 'Deletado Em',
+			label: sharedI18n.collectionHeader.deletedLabel(),
 			key: 'deleted'
 		}
 	] as ColumnCell[];
@@ -151,57 +161,57 @@
 					value: data.id
 				},
 				{
-					label: 'Nome',
+					label: i18n.collectionHeader.nameLabel(),
 					key: 'firstName',
-					value: `${data.firstName} ${data.lastName}`
+					value: `${data.firstName} ${data.lastName || ''}`
 				},
 				{
-					label: 'E-mail',
+					label: i18n.collectionHeader.emailLabel(),
 					key: 'email',
 					value: data.email
 				},
 				{
-					label: 'Data de Admissão',
+					label: i18n.collectionHeader.joinedDateLabel(),
 					key: 'joinedData',
 					value: data.joinedDate,
 					transform: (value: string) => (value ? new Date(value).toLocaleDateString() : '')
 				},
 				{
-					label: 'Ocupação',
+					label: i18n.collectionHeader.occupationLabel(),
 					key: 'occupation',
 					value: data.occupation,
 					isTag: true
 				},
 				{
-					label: 'Igreja',
+					label: i18n.collectionHeader.churchLabel(),
 					key: 'church',
 					value: data.church
 				},
 				{
-					label: 'Pastor',
+					label: i18n.collectionHeader.priestLabel(),
 					key: 'priest',
 					value: data.priest
 				},
 				{
-					label: 'Observação',
+					label: i18n.collectionHeader.observationLabel(),
 					key: 'observation',
 					value: data.observation,
 					textLimit: 100
 				},
 				{
-					label: 'Criado Em',
+					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
 					value: data.createdAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Atualizado Em',
+					label: sharedI18n.collectionHeader.updatedAtLabel(),
 					key: 'updatedAt',
 					value: data.updatedAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Deletado Em',
+					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
 					value: data.deleted,
 					transform: friendlyDateString
@@ -217,7 +227,9 @@
 
 	async function handleRemove(event: CustomEvent) {
 		const { id, data }: { id: string; data: VolunteerDto } = event.detail;
-		const remove = confirm(TEMPLATES.REMOVE.VOLUNTEER(`${data.firstName}`));
+		const remove = confirm(
+			sharedI18n.remove.volunteer({ name: `${data.firstName} ${data.lastName || ''}` })
+		);
 
 		if (remove) {
 			isLoading = true;
@@ -276,7 +288,7 @@
 	}
 
 	function onSearchLoad() {
-		pagination.search = searchInput
+		pagination.search = searchInput;
 	}
 
 	function onSearchClear() {
@@ -285,7 +297,7 @@
 </script>
 
 <svelte:head>
-	<title>Volunteers</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -295,6 +307,7 @@
 		showBackButton={false}
 		maxPage={totalPages}
 		baseRoute={'/volunteer'}
+		locale={data.locale}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
@@ -308,12 +321,14 @@
 	>
 		<CollectionHeader
 			columns={collectionHeader}
+			locale={data.locale}
 			on:click={onSort}
 			bind:showDeleted={pagination.deleted}
 		/>
 		{#each collectionData as row, i (row[0].value)}
 			<CollectionRow
 				rowCells={row}
+				locale={data.locale}
 				on:modalopen={onModalOpen}
 				on:edit={handleEdit}
 				on:remove={handleRemove}

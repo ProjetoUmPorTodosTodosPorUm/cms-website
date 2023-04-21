@@ -20,9 +20,14 @@
 	import axios from '$lib/axios';
 	import Axios from 'axios';
 	import { goto } from '$app/navigation';
-	import { TEMPLATES } from '$src/lib/constants';
 	import type { PageData } from './$types';
 	import type { UserStore } from '$src/lib/store/user';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.churches.list;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 
@@ -51,6 +56,10 @@
 			pagination.searchSpecificField = 'fieldId';
 			pagination.searchSpecificValue = userStore.get('user.fieldId');
 		}
+
+		await loadNamespaceAsync(data.locale, 'churches');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	// Pagination config
@@ -92,40 +101,40 @@
 	}
 
 	// App Header
-	const appHeader = {
-		name: 'Igrejas',
-		buttonText: 'Adicionar Igreja Em Unidade',
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText(),
 		buttonLink: `/${data.locale}/churches/add`
 	};
 
 	// Collection Header
-	const collectionHeader = [
+	$: collectionHeader = [
 		{
-			label: 'Nome',
+			label: i18n.collectionHeader.nameLabel(),
 			key: 'name'
 		},
 		{
-			label: 'Descrição',
+			label: i18n.collectionHeader.descriptionLabel(),
 			key: 'description'
 		},
 		{
-			label: 'Imagens',
+			label: i18n.collectionHeader.imagesLabel(),
 			key: 'images'
 		},
 		{
-			label: 'Tipo',
+			label: i18n.collectionHeader.typeLabel(),
 			key: 'type'
 		},
 		{
-			label: 'Criado Em',
+			label: sharedI18n.collectionHeader.createdAtLabel(),
 			key: 'createdAt'
 		},
 		{
-			label: 'Atualizado Em',
+			label: sharedI18n.collectionHeader.updatedAtLabel(),
 			key: 'updatedAt'
 		},
 		{
-			label: 'Deletado Em',
+			label: sharedI18n.collectionHeader.deletedLabel(),
 			key: 'deleted'
 		}
 	] as ColumnCell[];
@@ -139,43 +148,43 @@
 					value: data.id
 				},
 				{
-					label: 'Nome',
+					label: i18n.collectionHeader.nameLabel(),
 					key: 'name',
 					value: data.name
 				},
 				{
-					label: 'Descrição',
+					label: i18n.collectionHeader.descriptionLabel(),
 					key: 'description',
 					value: data.description,
 					textLimit: 100,
 					isModal: true
 				},
 				{
-					label: 'Imagens',
+					label: i18n.collectionHeader.imagesLabel(),
 					key: 'images',
 					value: data.images,
 					isJson: true
 				},
 				{
-					label: 'Tipo',
+					label: i18n.collectionHeader.typeLabel(),
 					key: 'type',
 					value: data.type,
 					isTag: true
 				},
 				{
-					label: 'Criado Em',
+					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
 					value: data.createdAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Atualizado Em',
+					label: sharedI18n.collectionHeader.updatedAtLabel(),
 					key: 'updatedAt',
 					value: data.updatedAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Deletado Em',
+					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
 					value: data.deleted,
 					transform: friendlyDateString
@@ -191,7 +200,7 @@
 
 	async function handleRemove(event: CustomEvent) {
 		const { id, data }: { id: string; data: ChurchDto } = event.detail;
-		const remove = confirm(TEMPLATES.REMOVE.CHURCH(data.name));
+		const remove = confirm(sharedI18n.remove.church({ name: data.name }));
 
 		if (remove) {
 			isLoading = true;
@@ -240,7 +249,7 @@
 	function onModalOpen(event: CustomEvent) {
 		const { data, key }: { data: ChurchDto; key: keyof Pick<ChurchDto, 'description'> } =
 			event.detail;
-		modal.title = 'Descrição';
+		modal.title = i18n.collectionHeader.descriptionLabel();
 		modal.text = data[key] ?? '';
 		showModal = true;
 	}
@@ -259,7 +268,7 @@
 </script>
 
 <svelte:head>
-	<title>Churches</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -269,6 +278,7 @@
 		showBackButton={false}
 		maxPage={totalPages}
 		baseRoute={'/church'}
+		locale={data.locale}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
@@ -282,12 +292,14 @@
 	>
 		<CollectionHeader
 			columns={collectionHeader}
+			locale={data.locale}
 			on:click={onSort}
 			bind:showDeleted={pagination.deleted}
 		/>
 		{#each collectionData as row, i (row[0].value)}
 			<CollectionRow
 				rowCells={row}
+				locale={data.locale}
 				on:modalopen={onModalOpen}
 				on:edit={handleEdit}
 				on:remove={handleRemove}

@@ -7,6 +7,14 @@
 	import JSONTree from 'svelte-json-tree';
 	import { PUBLIC_STATIC_PATH } from '$env/static/public';
 
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import type { Locales } from '$src/i18n/i18n-types';
+
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL['collection-row'];
+	export let locale: Locales;
+
 	// Component Data
 	export let showOptions = true;
 	export let showEdit = true;
@@ -45,6 +53,11 @@
 			key
 		});
 	const select = () => dispatch('select', id);
+
+	onMount(async () => {
+		await loadNamespaceAsync(locale, 'collection-row');
+		setLocale(locale);
+	});
 </script>
 
 <div class="products-row">
@@ -57,8 +70,8 @@
 						{rowCell.transform
 							? rowCell.transform(rowCell.value)
 							: rowCell.value
-							? 'Active'
-							: 'Disabled'}
+							? i18n.isStatusActiveText()
+							: i18n.isStatusDisabledText()}
 					</span>
 				{:else if rowCell.isLink}
 					{#if rowCell.value}
@@ -110,7 +123,7 @@
 			</div>
 		{:else}
 			<div class="product-cell">
-				<span class="tag">NOT DELETED</span>
+				<span class="tag">{i18n.notDeletedText()}</span>
 			</div>
 		{/if}
 	{/if}
@@ -118,12 +131,12 @@
 	{#if showOptions}
 		<div class="product-cell">
 			{#if showEdit}
-				<button class="edit" on:click={edit} disabled={isDeleted}>
+				<button class="edit" title={i18n.editButtonTitle()} on:click={edit} disabled={isDeleted}>
 					<Icon src={FiEdit} />
 				</button>
 			{/if}
 
-			<button class="remove" on:click={remove} disabled={isDeleted}>
+			<button class="remove" title={i18n.removeButtonTitle()} on:click={remove} disabled={isDeleted}>
 				<Icon src={FiTrash2} />
 			</button>
 		</div>

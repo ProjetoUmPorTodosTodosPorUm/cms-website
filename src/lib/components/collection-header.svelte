@@ -1,6 +1,14 @@
 <script lang="ts">
 	import type { ColumnCell } from '$lib/types';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import type { Locales } from '$src/i18n/i18n-types';
+
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL['collection-header'];
+	export let locale: Locales;
 
 	// Component Options
 	export let showOptions = true;
@@ -10,6 +18,11 @@
 	// Events - forwarding
 	const dispatch = createEventDispatcher();
 	const click = (key: string) => dispatch('click', key);
+
+	onMount(async () => {
+		await loadNamespaceAsync(locale, 'collection-header');
+		setLocale(locale);
+	});
 </script>
 
 <div class="products-header">
@@ -41,9 +54,9 @@
 		{/if}
 	{/each}
 	{#if showOptions}
-		<div class="product-cell">Opções</div>
+		<div class="product-cell">{i18n.optionsColumnText()}</div>
 	{/if}
 	{#if showDeleted}
-		<div class="product-cell">Selecionar</div>
+		<div class="product-cell">{i18n.selectionColumnText()}</div>
 	{/if}
 </div>

@@ -11,9 +11,7 @@
 	import HiOutlineChatAlt from 'svelte-icons-pack/hi/HiOutlineChatAlt';
 	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
 
-	import { getContext, onMount } from 'svelte';
-
-	import { TEMPLATES, TESTIMONIAL_TEMPLATE } from '$src/lib/constants';
+	import { TESTIMONIAL_TEMPLATE } from '$src/lib/constants';
 	import * as yup from 'yup';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
@@ -23,6 +21,13 @@
 	import type { UserStore } from '$src/lib/store/user';
 	import { afterNavigate } from '$app/navigation';
 	import type { Navigation } from '@sveltejs/kit';
+	import { getContext, onMount } from 'svelte';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.testimonials.edit;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 
@@ -36,9 +41,9 @@
 	const showRefreshButton = false;
 
 	// App Header
-	const appHeader = {
-		name: 'Editar Testemunho',
-		buttonText: 'Salvar'
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText()
 	};
 
 	const query = {
@@ -54,10 +59,14 @@
 	let formRef: HTMLFormElement;
 	let fields: FieldDto[] = [];
 
-	const schema = yup.object().shape({
-		name: yup.string().required(TEMPLATES.YUP.REQUIRED('Nome')),
-		email: yup.string().email().required(TEMPLATES.YUP.REQUIRED('E-mail')),
-		text: yup.string().required(TEMPLATES.YUP.REQUIRED('Texto')),
+	$: schema = yup.object().shape({
+		name: yup.string().required(sharedI18n.yup.required({ field: i18n.inputs.nameLabel() })),
+		email: yup
+			.string()
+			.nullable()
+			.email(sharedI18n.yup.email({ field: i18n.inputs.emailLabel() }))
+			.optional(),
+		text: yup.string().required(sharedI18n.yup.required({ field: i18n.inputs.textLabel() })),
 		field: yup.string().nullable().optional()
 	});
 
@@ -66,6 +75,10 @@
 	onMount(async () => {
 		await loadData();
 		isAdminOrVolunteer = userStore.isVolunteer() || userStore.isAdmin();
+
+		await loadNamespaceAsync(data.locale, 'testimonials');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	afterNavigate(async (navigation: Navigation) => {
@@ -145,18 +158,25 @@
 </script>
 
 <svelte:head>
-	<title>Testimonial</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
-	<AppContent {...appHeader} {isLoading} on:click={onSubmit} {showActions} {showRefreshButton}>
+	<AppContent
+		{...appHeader}
+		{isLoading}
+		{showActions}
+		{showRefreshButton}
+		locale={data.locale}
+		on:click={onSubmit}
+	>
 		<form bind:this={formRef} on:submit|preventDefault|stopPropagation={onSubmit} class="app-form">
 			<div class="input">
 				<Icon src={HiOutlineUser} />
 				<input
 					bind:value={testimonialData.name}
 					name="name"
-					placeholder="Nome"
+					placeholder={i18n.inputs.nameLabel()}
 					autocomplete="off"
 					required
 				/>
@@ -166,7 +186,7 @@
 				<input
 					bind:value={testimonialData.email}
 					name="email"
-					placeholder="E-mail"
+					placeholder={i18n.inputs.emailLabel()}
 					type="email"
 					autocomplete="off"
 					required
@@ -177,7 +197,7 @@
 				<textarea
 					bind:value={testimonialData.text}
 					name="text"
-					placeholder="Texto"
+					placeholder={i18n.inputs.textLabel()}
 					autocomplete="off"
 					rows="5"
 					required
@@ -187,7 +207,7 @@
 				<div class="input">
 					<Icon src={HiOutlineGlobe} />
 					<select bind:value={testimonialData.field} name="field" required>
-						<option value={null} disabled selected>Campo Missionário</option>
+						<option value={null} disabled selected>{sharedI18n.inputs.fieldLabel()}</option>
 
 						{#each fields as field}
 							<option value={field.id}>

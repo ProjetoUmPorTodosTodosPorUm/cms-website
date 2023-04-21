@@ -12,9 +12,6 @@
 	import HiOutlineCalendar from 'svelte-icons-pack/hi/HiOutlineCalendar';
 	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
 
-	import { getContext, onMount } from 'svelte';
-
-	import { TEMPLATES } from '$src/lib/constants';
 	import * as yup from 'yup';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
@@ -22,6 +19,13 @@
 	import type { FieldDto, Pagination } from '$src/lib/types';
 	import { fromPaginationToQuery } from '$src/lib/utils/functions';
 	import type { UserStore } from '$src/lib/store/user';
+	import { getContext, onMount } from 'svelte';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL['collected-offers'].add;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 	let userStore = getContext<UserStore>('userStore');
@@ -32,9 +36,9 @@
 	const showRefreshButton = true;
 
 	// App Header
-	const appHeader = {
-		name: 'Adicionar Ofertas Coletadas',
-		buttonText: 'Salvar'
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText()
 	};
 
 	const query = {
@@ -50,22 +54,59 @@
 	let formRef: HTMLFormElement;
 	let isLoading = false;
 	let fields: FieldDto[] = [];
-	const schema = yup.object().shape({
+	$: schema = yup.object().shape({
 		month: yup
 			.number()
-			.integer()
-			.min(1, TEMPLATES.YUP.MIN_NUMBER('Mês', 1))
-			.max(12, TEMPLATES.YUP.MAX_NUMBER('Mês', 12))
-			.required(TEMPLATES.YUP.REQUIRED('Mês')),
+			.typeError(sharedI18n.yup.number({ field: i18n.inputs.monthLabel() }))
+			.integer(sharedI18n.yup.integer({ field: i18n.inputs.monthLabel() }))
+			.min(
+				1,
+				sharedI18n.yup.minNumber({
+					field: i18n.inputs.monthLabel(),
+					value: 1
+				})
+			)
+			.max(
+				12,
+				sharedI18n.yup.maxNumber({
+					field: i18n.inputs.monthLabel(),
+					value: 12
+				})
+			)
+			.required(sharedI18n.yup.required({ field: i18n.inputs.monthLabel() })),
 		year: yup
 			.number()
-			.integer()
-			.min(2000, TEMPLATES.YUP.MIN_NUMBER('Ano', 2000))
-			.max(2100, TEMPLATES.YUP.MAX_NUMBER('Ano', 2100))
-			.required(TEMPLATES.YUP.REQUIRED('Ano')),
-		foodQnt: yup.number().integer().required(TEMPLATES.YUP.REQUIRED('Mantimentos')),
-		monetaryValue: yup.number().required(TEMPLATES.YUP.REQUIRED('Valores')),
-		othersQnt: yup.number().integer().required(TEMPLATES.YUP.REQUIRED('Outros')),
+			.typeError(sharedI18n.yup.number({ field: i18n.inputs.yearLabel() }))
+			.integer(sharedI18n.yup.integer({ field: i18n.inputs.yearLabel() }))
+			.min(
+				2000,
+				sharedI18n.yup.minNumber({
+					field: i18n.inputs.yearLabel(),
+					value: 2000
+				})
+			)
+			.max(
+				2100,
+				sharedI18n.yup.maxNumber({
+					field: i18n.inputs.yearLabel(),
+					value: 2100
+				})
+			)
+			.required(sharedI18n.yup.required({ field: i18n.inputs.yearLabel() })),
+		foodQnt: yup
+			.number()
+			.typeError(sharedI18n.yup.number({ field: i18n.inputs.foodQntLabel() }))
+			.integer(sharedI18n.yup.integer({ field: i18n.inputs.foodQntLabel() }))
+			.required(sharedI18n.yup.required({ field: i18n.inputs.foodQntLabel() })),
+		monetaryValue: yup
+			.number()
+			.typeError(sharedI18n.yup.number({ field: i18n.inputs.monetaryValueLabel() }))
+			.required(sharedI18n.yup.required({ field: i18n.inputs.monetaryValueLabel() })),
+		othersQnt: yup
+			.number()
+			.typeError(sharedI18n.yup.number({ field: i18n.inputs.othersQntLabel() }))
+			.integer(sharedI18n.yup.integer({ field: i18n.inputs.othersQntLabel() }))
+			.required(sharedI18n.yup.required({ field: i18n.inputs.othersQntLabel() })),
 		field: yup.string().nullable().optional()
 	});
 
@@ -81,6 +122,10 @@
 	onMount(async () => {
 		await loadData();
 		isAdminOrVolunteer = userStore.isVolunteer() || userStore.isAdmin();
+
+		await loadNamespaceAsync(data.locale, 'collected-offers');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	async function loadData() {
@@ -151,18 +196,25 @@
 </script>
 
 <svelte:head>
-	<title>Collected Offers</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
-	<AppContent {...appHeader} {isLoading} on:click={onSubmit} {showActions} {showRefreshButton}>
+	<AppContent
+		{...appHeader}
+		{isLoading}
+		{showActions}
+		{showRefreshButton}
+		locale={data.locale}
+		on:click={onSubmit}
+	>
 		<form bind:this={formRef} on:submit|preventDefault|stopPropagation={onSubmit} class="app-form">
 			<div class="input">
 				<Icon src={HiOutlineShoppingBag} />
 				<input
 					bind:value={foodQnt}
 					name="foodQnt"
-					placeholder="Mantimentos (Qnt.)"
+					placeholder={i18n.inputs.foodQntLabel()}
 					type="number"
 					min="0"
 				/>
@@ -172,7 +224,7 @@
 				<input
 					bind:value={monetaryValue}
 					name="monetaryValue"
-					placeholder="Valores"
+					placeholder={i18n.inputs.monetaryValueLabel()}
 					type="number"
 					min="0"
 					step="any"
@@ -180,18 +232,31 @@
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineCube} />
-				<input bind:value={othersQnt} name="foodQnt" placeholder="Outros" type="number" min="0" />
+				<input
+					bind:value={othersQnt}
+					name="foodQnt"
+					placeholder={i18n.inputs.othersQntLabel()}
+					type="number"
+					min="0"
+				/>
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineCalendar} />
 				<div class="number">
-					<input bind:value={month} name="month" placeholder="Mês" type="number" min="1" max="12" />
+					<input
+						bind:value={month}
+						name="month"
+						placeholder={i18n.inputs.monthLabel()}
+						type="number"
+						min="1"
+						max="12"
+					/>
 				</div>
 				<div class="number">
 					<input
 						bind:value={year}
 						name="year"
-						placeholder="Ano"
+						placeholder={i18n.inputs.yearLabel()}
 						type="number"
 						min="2000"
 						max="2100"
@@ -203,7 +268,7 @@
 				<div class="input">
 					<Icon src={HiOutlineGlobe} />
 					<select bind:value={field} name="field" required>
-						<option value={null} disabled selected>Campo Missionário</option>
+						<option value={null} disabled selected>{sharedI18n.inputs.fieldLabel()}</option>
 
 						{#each fields as field}
 							<option value={field.id}>

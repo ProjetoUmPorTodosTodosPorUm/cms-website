@@ -19,22 +19,29 @@
 	import axios from '$lib/axios';
 	import Axios from 'axios';
 	import { goto } from '$app/navigation';
-	import { TEMPLATES } from '$src/lib/constants';
 	import type { PageData } from './$types';
 	import type { UserStore } from '$src/lib/store/user';
+	import type { SettingsStore } from '$src/lib/store/settings';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL['collected-offers'].list;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
-	// @TODO fix (usar o data.locale)
-	let Currency = Intl.NumberFormat('pt-BR', {
-		style: 'currency',
-		currency: 'BRL'
-	});
 
 	let monthlyFamilyData: MonthlyOfferDto[] = [];
 	let userStore = getContext<UserStore>('userStore');
+	let settingsStore = getContext<SettingsStore>('settingsStore');
 	let totalCount = 1;
 	let totalPages = 1;
 	let isReady = false;
+
+	$: Currency = Intl.NumberFormat(data.locale, {
+		style: 'currency',
+		currency: settingsStore.get('currency')
+	});
 
 	let isLoading = true;
 	let messages: any[] = [];
@@ -49,6 +56,10 @@
 			pagination.searchSpecificField = 'fieldId';
 			pagination.searchSpecificValue = userStore.get('user.fieldId');
 		}
+
+		await loadNamespaceAsync(data.locale, 'collected-offers');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	// Pagination config
@@ -58,7 +69,7 @@
 		deleted: false,
 		orderKey: 'createdAt',
 		orderValue: 'desc',
-		search: '',
+		search: ''
 	} as Pagination;
 	let searchInput = '';
 	let searchMinLength = 1;
@@ -92,44 +103,44 @@
 	}
 
 	// App Header
-	const appHeader = {
-		name: 'OFertas Coletadas',
-		buttonText: 'Adicionar Ofertas Coletadas',
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText(),
 		buttonLink: `/${data.locale}/collected-offers/add`
 	};
 
 	// Collection Header
-	const collectionHeader = [
+	$: collectionHeader = [
 		{
-			label: 'Mês',
+			label: i18n.collectionHeader.monthLabel(),
 			key: 'month'
 		},
 		{
-			label: 'Ano',
+			label: i18n.collectionHeader.yearLabel(),
 			key: 'year'
 		},
 		{
-			label: 'Mantimentos (Qnt.)',
+			label: i18n.collectionHeader.foodQntLabel(),
 			key: 'foodQnt'
 		},
 		{
-			label: 'Valores',
+			label: i18n.collectionHeader.monetaryValueLabel(),
 			key: 'monetaryValue'
 		},
 		{
-			label: 'Outros (Qnt.)',
+			label: i18n.collectionHeader.othersQntLabel(),
 			key: 'othersQnt'
 		},
 		{
-			label: 'Criado Em',
+			label: sharedI18n.collectionHeader.createdAtLabel(),
 			key: 'createdAt'
 		},
 		{
-			label: 'Atualizado Em',
+			label: sharedI18n.collectionHeader.updatedAtLabel(),
 			key: 'updatedAt'
 		},
 		{
-			label: 'Deletado Em',
+			label: sharedI18n.collectionHeader.deletedLabel(),
 			key: 'deleted'
 		}
 	] as ColumnCell[];
@@ -143,45 +154,45 @@
 					value: data.id
 				},
 				{
-					label: 'Mês',
+					label: i18n.collectionHeader.monthLabel(),
 					key: 'month',
 					value: data.month
 				},
 				{
-					label: 'Ano',
+					label: i18n.collectionHeader.yearLabel(),
 					key: 'year',
 					value: data.year
 				},
 				{
-					label: 'Mantimentos (Qnt.)',
+					label: i18n.collectionHeader.foodQntLabel(),
 					key: 'foodQnt',
 					value: data.foodQnt
 				},
 				{
-					label: 'Valores',
+					label: i18n.collectionHeader.monetaryValueLabel(),
 					key: 'monetaryValue',
 					value: data.monetaryValue,
 					transform: (val: number) => Currency.format(val)
 				},
 				{
-					label: 'Outros (Qnt.)',
+					label: i18n.collectionHeader.othersQntLabel(),
 					key: 'othersQnt',
 					value: data.othersQnt
 				},
 				{
-					label: 'Criado Em',
+					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
 					value: data.createdAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Atualizado Em',
+					label: sharedI18n.collectionHeader.updatedAtLabel(),
 					key: 'updatedAt',
 					value: data.updatedAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Deletado Em',
+					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
 					value: data.deleted,
 					transform: friendlyDateString
@@ -197,7 +208,12 @@
 
 	async function handleRemove(event: CustomEvent) {
 		const { id, data }: { id: string; data: MonthlyOfferDto } = event.detail;
-		const remove = confirm(TEMPLATES.REMOVE.COLLECTED_OFFER(data.month, data.year));
+		const remove = confirm(
+			sharedI18n.remove.collectedOffer({
+				month: data.month,
+				year: data.year
+			})
+		);
 
 		if (remove) {
 			isLoading = true;
@@ -253,7 +269,7 @@
 </script>
 
 <svelte:head>
-	<title>Collected Offers</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -263,6 +279,7 @@
 		showBackButton={false}
 		maxPage={totalPages}
 		baseRoute={'/monthly-offer'}
+		locale={data.locale}
 		{searchMinLength}
 		{searchType}
 		on:refresh={loadData}
@@ -278,12 +295,14 @@
 	>
 		<CollectionHeader
 			columns={collectionHeader}
+			locale={data.locale}
 			on:click={onSort}
 			bind:showDeleted={pagination.deleted}
 		/>
 		{#each collectionData as row, i (row[0].value)}
 			<CollectionRow
 				rowCells={row}
+				locale={data.locale}
 				on:edit={handleEdit}
 				on:remove={handleRemove}
 				on:select={handleSelect}

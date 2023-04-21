@@ -10,12 +10,20 @@
 	import Axios from 'axios';
 	import { generateMessages } from '$components/toast.svelte';
 
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import type { Locales } from '$src/i18n/i18n-types';
+
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL['app-actions'];
+	export let locale: Locales;
+
 	// Component Data - forwarding
 	export let page = 1;
 	export let maxPage = 1;
 	export let search = '';
 	export let searchMinLength = 3;
-	export let searchType: 'text' | 'number' =  'text';
+	export let searchType: 'text' | 'number' = 'text';
 
 	// Component Data
 	export let totalCount = 1;
@@ -41,10 +49,13 @@
 	const searchLoad = () => dispatch('searchLoad');
 	const searchClear = () => dispatch('searchClear');
 
-	onMount(() => {
+	onMount(async () => {
 		user = userStore.get('user');
 		const accessToken = userStore.get('accessToken');
 		axios.setAuth(accessToken);
+
+		await loadNamespaceAsync(locale, 'app-actions');
+		setLocale(locale);
 	});
 
 	function handleFilterMenu() {
@@ -109,15 +120,18 @@
 		bind:search
 		minLength={searchMinLength}
 		type={searchType}
+		placeholder={i18n.searchInputPlaceHolder()}
 		on:searchLoad={searchLoad}
 		on:searchClear={searchClear}
 	/>
-	<span class="total-items" title="Número total de items">Items: {totalCount}</span>
+	<span class="total-items" title={i18n.totalItemsTitle()}
+		>{i18n.totalItemsText()}: {totalCount}</span
+	>
 	<Pagination bind:page {maxPage} />
 	<div class="app-content-actions-wrapper">
 		<div class="filter-button-wrapper">
 			<button on:click={handleFilterMenu} class="action-button filter jsFilter"
-				><span>Filter</span><svg
+				><span>{i18n.filterIconText()}</span><svg
 					xmlns="http://www.w3.org/2000/svg"
 					width="16"
 					height="16"
@@ -132,22 +146,13 @@
 				></button
 			>
 			<div bind:this={filterMenuRef} class="filter-menu">
-				<label>Category</label>
-				<select>
-					<option>All Categories</option>
-					<option>Furniture</option> <option>Decoration</option>
-					<option>Kitchen</option>
-					<option>Bathroom</option>
-				</select>
-				<label>Status</label>
-				<select>
-					<option>All Status</option>
-					<option>Active</option>
-					<option>Disabled</option>
+				<label for="field-select">{i18n.filterFieldLabel()}</label>
+				<select id="field-select">
+					<option>@TODO FIELDS</option>
 				</select>
 				<div class="filter-menu-buttons">
-					<button class="filter-button reset"> Reset </button>
-					<button class="filter-button apply"> Apply </button>
+					<button class="filter-button reset">{i18n.filterResetButton()}</button>
+					<button class="filter-button apply">{i18n.filterApplyButton()}</button>
 				</div>
 			</div>
 		</div>
@@ -155,7 +160,7 @@
 			bind:this={listRef}
 			on:click={handleListView}
 			class="action-button list active"
-			title="List View"
+			title={i18n.listViewTitle()}
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -185,7 +190,7 @@
 			bind:this={gridRef}
 			on:click={handleGridView}
 			class="action-button grid"
-			title="Grid View"
+			title={i18n.gridViewTitle()}
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -211,19 +216,19 @@
 {#if isAdmin || isWebMaster}
 	<div class="app-content-actions-admin">
 		<div class="show-deleted">
-			<span>Mostrar Deletados</span>
+			<span>{i18n.showDeletedText()}</span>
 			<input bind:checked={showDeleted} type="checkbox" name="showDeleted" id="showDeleted" />
 		</div>
 		{#if showDeleted}
 			<div class="buttons" in:fade out:fade>
 				<button on:click={restoreAll}
-					>Restaurar Selecionados
+					>{i18n.showDeletedRestoreButton()}
 					{#if itemsSelected.length > 0}
 						(x {itemsSelected.length})
 					{/if}
 				</button>
 				<button on:click={removeAll}
-					>Remover Selecionados
+					>{i18n.showDeletedHardRemoveButton()}
 					{#if itemsSelected.length > 0}
 						(x {itemsSelected.length})
 					{/if}

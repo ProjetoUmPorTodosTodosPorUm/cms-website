@@ -20,9 +20,14 @@
 	import axios from '$lib/axios';
 	import Axios from 'axios';
 	import { goto } from '$app/navigation';
-	import { TEMPLATES } from '$src/lib/constants';
 	import type { PageData } from './$types';
 	import type { UserStore } from '$src/lib/store/user';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL['welcomed-families'].list;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 
@@ -51,6 +56,10 @@
 			pagination.searchSpecificField = 'fieldId';
 			pagination.searchSpecificValue = userStore.get('user.fieldId');
 		}
+
+		await loadNamespaceAsync(data.locale, 'welcomed-families');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	// Pagination config
@@ -60,7 +69,7 @@
 		deleted: false,
 		orderKey: 'representative',
 		orderValue: 'asc',
-		search: '',
+		search: ''
 	} as Pagination;
 	let searchInput = '';
 
@@ -92,32 +101,32 @@
 	}
 
 	// App Header
-	const appHeader = {
-		name: 'Famílias Acolhidas',
-		buttonText: 'Adicionar Família Acolhida',
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText(),
 		buttonLink: `/${data.locale}/welcomed-families/add`
 	};
 
 	// Collection Header
-	const collectionHeader = [
+	$: collectionHeader = [
 		{
-			label: 'Representante',
+			label: i18n.collectionHeader.representativeLabel(),
 			key: 'representative'
 		},
 		{
-			label: 'Observação',
+			label: i18n.collectionHeader.observationLabel(),
 			key: 'observation'
 		},
 		{
-			label: 'Criado Em',
+			label: sharedI18n.collectionHeader.createdAtLabel(),
 			key: 'createdAt'
 		},
 		{
-			label: 'Atualizado Em',
+			label: sharedI18n.collectionHeader.updatedAtLabel(),
 			key: 'updatedAt'
 		},
 		{
-			label: 'Deletado Em',
+			label: sharedI18n.collectionHeader.deletedLabel(),
 			key: 'deleted'
 		}
 	] as ColumnCell[];
@@ -131,31 +140,31 @@
 					value: data.id
 				},
 				{
-					label: 'Representante',
+					label: i18n.collectionHeader.representativeLabel(),
 					key: 'representative',
 					value: data.representative
 				},
 				{
-					label: 'Observação',
+					label: i18n.collectionHeader.observationLabel(),
 					key: 'observation',
 					value: data.observation,
 					textLimit: 100,
 					isModal: true
 				},
 				{
-					label: 'Criado Em',
+					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
 					value: data.createdAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Atualizado Em',
+					label: sharedI18n.collectionHeader.updatedAtLabel(),
 					key: 'updatedAt',
 					value: data.updatedAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Deletado Em',
+					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
 					value: data.deleted,
 					transform: friendlyDateString
@@ -171,7 +180,7 @@
 
 	async function handleRemove(event: CustomEvent) {
 		const { id, data } = event.detail;
-		const remove = confirm(TEMPLATES.REMOVE.WELCOMED_FAMILY(data.representative));
+		const remove = confirm(sharedI18n.remove.welcomedFamily({ name: data.representative }));
 
 		if (remove) {
 			isLoading = true;
@@ -223,7 +232,7 @@
 			key
 		}: { data: WelcomedFamilyDto; key: keyof Pick<WelcomedFamilyDto, 'observation'> } =
 			event.detail;
-		modal.title = 'Observação';
+		modal.title = i18n.collectionHeader.observationLabel();
 		modal.text = data[key] ?? '';
 		showModal = true;
 	}
@@ -233,7 +242,7 @@
 	}
 
 	function onSearchLoad() {
-		pagination.search = searchInput
+		pagination.search = searchInput;
 	}
 
 	function onSearchClear() {
@@ -242,7 +251,7 @@
 </script>
 
 <svelte:head>
-	<title>Welcomed Families</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -252,6 +261,7 @@
 		showBackButton={false}
 		maxPage={totalPages}
 		baseRoute={'/welcomed-family'}
+		locale={data.locale}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
@@ -265,12 +275,14 @@
 	>
 		<CollectionHeader
 			columns={collectionHeader}
+			locale={data.locale}
 			on:click={onSort}
 			bind:showDeleted={pagination.deleted}
 		/>
 		{#each collectionData as row, i (row[0].value)}
 			<CollectionRow
 				rowCells={row}
+				locale={data.locale}
 				on:modalopen={onModalOpen}
 				on:edit={handleEdit}
 				on:remove={handleRemove}

@@ -12,16 +12,19 @@
 	import HiOutlineX from 'svelte-icons-pack/hi/HiOutlineX';
 
 	import { onMount } from 'svelte';
-
-	import { TEMPLATES } from '$src/lib/constants';
 	import * as yup from 'yup';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
 	import type { PageData } from '../../users/add/$types';
 	import type { CollectionPoint } from '$lib/types';
-
 	import { Loader } from '@googlemaps/js-api-loader';
 	import { PUBLIC_GOOGLE_MAP_API } from '$env/static/public';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.fields.add;
+	$: sharedI18n = $LL.shared;
 
 	// Map
 	let googleMapRef: HTMLDivElement;
@@ -47,21 +50,27 @@
 	const showRefreshButton = true;
 
 	// App Header
-	const appHeader = {
-		name: 'Adicionar Campo Missionário',
-		buttonText: 'Salvar'
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText()
 	};
 
 	// Form
 	let formRef: HTMLFormElement;
 	let isLoading = false;
 
-	const schema = yup.object().shape({
-		continent: yup.string().required(TEMPLATES.YUP.REQUIRED('Continente')),
-		country: yup.string().required(TEMPLATES.YUP.REQUIRED('País')),
-		state: yup.string().required(TEMPLATES.YUP.REQUIRED('Estado')),
-		abbreviation: yup.string().required(TEMPLATES.YUP.REQUIRED('Abreviação')),
-		designation: yup.string().required(TEMPLATES.YUP.REQUIRED('Designação')),
+	$: schema = yup.object().shape({
+		continent: yup
+			.string()
+			.required(sharedI18n.yup.required({ field: i18n.inputs.continentLabel() })),
+		country: yup.string().required(sharedI18n.yup.required({ field: i18n.inputs.countryLabel() })),
+		state: yup.string().required(sharedI18n.yup.required({ field: i18n.inputs.stateLabel() })),
+		abbreviation: yup
+			.string()
+			.required(sharedI18n.yup.required({ field: i18n.inputs.abbreviationLabel() })),
+		designation: yup
+			.string()
+			.required(sharedI18n.yup.required({ field: i18n.inputs.designationLabel() })),
 		mapLocation: yup.object().nullable().optional(),
 		mapArea: yup.array().nullable().optional(),
 		collectionPoints: yup.array().nullable().optional(),
@@ -93,6 +102,10 @@
 		map.addListener('bounds_changed', () => {
 			searchBox.setBounds(map.getBounds() as google.maps.LatLngBounds);
 		});
+
+		await loadNamespaceAsync(data.locale, 'fields');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	async function onSubmit(event: Event) {
@@ -184,31 +197,58 @@
 </script>
 
 <svelte:head>
-	<title>Fields</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
-	<AppContent {...appHeader} {isLoading} on:click={onSubmit} {showActions} {showRefreshButton}>
+	<AppContent
+		{...appHeader}
+		{isLoading}
+		{showActions}
+		{showRefreshButton}
+		locale={data.locale}
+		on:click={onSubmit}
+	>
 		<form bind:this={formRef} on:submit|preventDefault|stopPropagation={onSubmit} class="app-form">
 			<div class="input">
 				<Icon src={HiOutlineGlobe} />
-				<input bind:value={continent} name="continent" placeholder="Continente" required />
+				<input
+					bind:value={continent}
+					name="continent"
+					placeholder={i18n.inputs.continentLabel()}
+					required
+				/>
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineMinus} />
-				<input bind:value={country} name="country" placeholder="País" required />
+				<input
+					bind:value={country}
+					name="country"
+					placeholder={i18n.inputs.countryLabel()}
+					required
+				/>
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineMinus} />
-				<input bind:value={state} name="state" placeholder="Estado" required />
+				<input bind:value={state} name="state" placeholder={i18n.inputs.stateLabel()} required />
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineMinus} />
-				<input bind:value={abbreviation} name="abbreviation" placeholder="Abreviação" required />
+				<input
+					bind:value={abbreviation}
+					name="abbreviation"
+					placeholder={i18n.inputs.abbreviationLabel()}
+					required
+				/>
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineMinus} />
-				<input bind:value={designation} name="designation" placeholder="Designação" required />
+				<input
+					bind:value={designation}
+					name="designation"
+					placeholder={i18n.inputs.designationLabel()}
+					required
+				/>
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineCollection} />
@@ -216,7 +256,7 @@
 					bind:this={inputTagRef}
 					on:keypress={onKeyPress}
 					name="streetRelation"
-					placeholder="Relação de Ruas"
+					placeholder={i18n.inputs.streetRelationLabel()}
 					autocomplete="off"
 				/>
 				{#if streetRelation?.length > 0}

@@ -11,16 +11,20 @@
 	import HiOutlineCamera from 'svelte-icons-pack/hi/HiOutlineCamera';
 	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
 
-	import { getContext, onMount } from 'svelte';
-
-	import { TEMPLATES } from '$src/lib/constants';
 	import * as yup from 'yup';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
 	import type { PageData } from '../../users/add/$types';
-	import type { FieldDto, FileDto, Pagination } from '$src/lib/types';
+	import type { FieldDto, Pagination } from '$src/lib/types';
 	import { fromPaginationToQuery } from '$src/lib/utils/functions';
 	import type { UserStore } from '$src/lib/store/user';
+	import { getContext, onMount } from 'svelte';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.collaborators.add;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 	let userStore = getContext<UserStore>('userStore');
@@ -31,9 +35,9 @@
 	const showRefreshButton = false;
 
 	// App Header
-	const appHeader = {
-		name: 'Adicionar Colaborador',
-		buttonText: 'Salvar'
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText()
 	};
 
 	const query = {
@@ -49,9 +53,11 @@
 	let formRef: HTMLFormElement;
 	let isLoading = false;
 	let fields: FieldDto[] = [];
-	const schema = yup.object().shape({
-		title: yup.string().required(TEMPLATES.YUP.REQUIRED('Título')),
-		description: yup.string().required(TEMPLATES.YUP.REQUIRED('Descrição')),
+	$: schema = yup.object().shape({
+		title: yup.string().required(sharedI18n.yup.required({ field: i18n.inputs.titleLabel() })),
+		description: yup
+			.string()
+			.required(sharedI18n.yup.required({ field: i18n.inputs.descriptionLabel() })),
 		image: yup.string().nullable().optional(),
 		field: yup.string().nullable().optional()
 	});
@@ -67,6 +73,10 @@
 	onMount(async () => {
 		await loadData();
 		isAdminOrVolunteer = userStore.isVolunteer() || userStore.isAdmin();
+
+		await loadNamespaceAsync(data.locale, 'collaborators');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	async function loadData() {
@@ -160,7 +170,7 @@
 			image = res.data.data.name;
 		} catch (error) {
 			if (error instanceof Axios.AxiosError) {
-				throw new Axios.AxiosError('O arquivo é muito grande!');
+				throw new Axios.AxiosError(sharedI18n.axios.fileSizeError());
 			} else {
 				console.warn(error);
 			}
@@ -169,22 +179,35 @@
 </script>
 
 <svelte:head>
-	<title>Collaborators</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
-	<AppContent {...appHeader} {isLoading} on:click={onSubmit} {showActions} {showRefreshButton}>
+	<AppContent
+		{...appHeader}
+		{isLoading}
+		{showActions}
+		{showRefreshButton}
+		locale={data.locale}
+		on:click={onSubmit}
+	>
 		<form bind:this={formRef} on:submit|preventDefault|stopPropagation={onSubmit} class="app-form">
 			<div class="input">
 				<Icon src={HiOutlineUserGroup} />
-				<input bind:value={title} name="title" placeholder="Título" autocomplete="off" required />
+				<input
+					bind:value={title}
+					name="title"
+					placeholder={i18n.inputs.titleLabel()}
+					autocomplete="off"
+					required
+				/>
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineMenuAlt2} />
 				<textarea
 					bind:value={description}
 					name="description"
-					placeholder="Descrição"
+					placeholder={i18n.inputs.descriptionLabel()}
 					autocomplete="off"
 					rows="5"
 					required
@@ -198,7 +221,7 @@
 				<div class="input">
 					<Icon src={HiOutlineGlobe} />
 					<select bind:value={field} name="field" required>
-						<option value={null} disabled selected>Campo Missionário</option>
+						<option value={null} disabled selected>{sharedI18n.inputs.fieldLabel()}</option>
 
 						{#each fields as field}
 							<option value={field.id}>

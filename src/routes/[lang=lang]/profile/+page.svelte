@@ -11,9 +11,10 @@
 	import HiOutlineMail from 'svelte-icons-pack/hi/HiOutlineMail';
 	import HiOutlineLockClosed from 'svelte-icons-pack/hi/HiOutlineLockClosed';
 	import HiOutlineIdentification from 'svelte-icons-pack/hi/HiOutlineIdentification';
+	import HiOutlineMinus from 'svelte-icons-pack/hi/HiOutlineMinus';
 
 	import { getContext, onMount } from 'svelte';
-	import { MESSAGES, TEMPLATES, USER_TEMPLATE } from '$src/lib/constants';
+	import { USER_TEMPLATE } from '$src/lib/constants';
 	import * as yup from 'yup';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
@@ -22,6 +23,12 @@
 	import { translateFromEnum } from '$src/lib/utils/functions';
 	import type { UserStore } from '$src/lib/store/user';
 	import type { PageData } from './$types';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.profile;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 
@@ -34,28 +41,44 @@
 	let showRefreshButton = false;
 
 	// App Header
-	const appHeader = {
-		name: 'Perfil',
-		buttonText: 'Salvar'
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText()
 	};
 
 	// Form
 	let formRef: HTMLFormElement;
 	const defaultAvatarSrc = '/images/fallback-avatar.webp';
-	const roles = {
-		USER: 'Usuário',
-		ADMIN: 'Admin'
+	$: roles = {
+		VOLUNTEER: i18n.roles.volunteer(),
+		ADMIN: i18n.roles.admin(),
+		WEB_MASTER: i18n.roles.webMaster()
 	};
-	const schema = yup.object().shape({
-		firstName: yup.string().required(TEMPLATES.YUP.REQUIRED('Nome')),
-		lastName: yup.string().optional(),
-		avatar: yup.string().optional(),
-		password: yup.string().optional().min(8, TEMPLATES.YUP.MIN('Senha', 8)),
-		confirmPassword: yup
-			.string()
-			.oneOf([yup.ref('password')], MESSAGES.YUP.CONFIRM_PASSWORD)
-			.nullable()
-	});
+
+	$: schema = yup.object().shape(
+		{
+			firstName: yup
+				.string()
+				.required(sharedI18n.yup.required({ field: i18n.inputs.firstNameLabel() })),
+			lastName: yup.string().optional(),
+			avatar: yup.string().optional(),
+			password: yup.string().when('password', {
+				is: (val: string) => val?.length > 0,
+				then: (schema) =>
+					schema.min(8, sharedI18n.yup.min({ field: i18n.inputs.passwordLabel(), length: 8 })),
+				otherwise: (schema) => schema.nullable().optional()
+			}),
+			confirmPassword: yup.string().when('password', {
+				is: (val: string) => val?.length > 0,
+				then: (schema) =>
+					schema
+						.oneOf([yup.ref('password')], i18n.yupMessages.confirmPassword())
+						.required(sharedI18n.yup.required({ field: i18n.inputs.confirmPasswordLabel() })),
+				otherwise: (schema) => schema.nullable().optional()
+			})
+		},
+		[['password', 'password']]
+	);
 
 	let avatarImageRef: HTMLImageElement;
 	let avatarInputRef: HTMLInputElement;
@@ -66,8 +89,12 @@
 
 	let messages: any[] = [];
 
-	onMount(() => {
+	onMount(async () => {
 		avatarImageRef.src = defaultAvatarSrc;
+
+		await loadNamespaceAsync(data.locale, 'profile');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	afterNavigate(async (navigation: Navigation) => {
@@ -109,7 +136,7 @@
 					firstName: userData.firstName,
 					lastName: userData.lastName,
 					avatar: userData.avatar ?? undefined,
-					password: password ?? undefined
+					password: password || undefined
 				});
 
 				userStore.updateUser(res.data.data);
@@ -121,7 +148,7 @@
 			isLoading = false;
 
 			if (error instanceof Axios.AxiosError) {
-				messages = generateMessages([{ message: error.response?.data.message }]);
+				messages = generateMessages([{ message: error.response?.data.message ?? error.message }]);
 			} else if (error instanceof yup.ValidationError) {
 				messages = generateMessages(error.inner.map((err) => ({ message: err.message })));
 			} else {
@@ -162,7 +189,7 @@
 			userData.avatar = res.data.data.name;
 		} catch (error) {
 			if (error instanceof Axios.AxiosError) {
-				messages = generateMessages([{ message: error.response?.data.message }]);
+				throw new Axios.AxiosError(sharedI18n.axios.fileSizeError());
 			} else {
 				console.warn(error);
 			}
@@ -176,17 +203,24 @@
 </script>
 
 <svelte:head>
-	<title>Profile</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
-	<AppContent {...appHeader} {isLoading} on:click={onSubmit} {showActions} {showRefreshButton}>
+	<AppContent
+		{...appHeader}
+		{isLoading}
+		locale={data.locale}
+		{showActions}
+		{showRefreshButton}
+		on:click={onSubmit}
+	>
 		<form bind:this={formRef} on:submit|preventDefault|stopPropagation={onSubmit} class="app-form">
 			<div class="image-preview">
-				<img bind:this={avatarImageRef} src="" alt="Imagem de perfil" />
+				<img bind:this={avatarImageRef} src="" alt={i18n.profilePic.altText()} />
 				<div class="overlay">
 					<!-- svelte-ignore a11y-invalid-attribute -->
-					<a href="#" on:click={onAvatarInput}>Editar</a>
+					<a href="#" on:click={onAvatarInput}>{i18n.profilePic.editText()}</a>
 					<input
 						bind:this={avatarInputRef}
 						on:change={onAvatarChange}
@@ -203,18 +237,18 @@
 					bind:value={userData.firstName}
 					name="firstName"
 					type="text"
-					placeholder="Primeiro Nome"
+					placeholder={i18n.inputs.firstNameLabel()}
 					autocomplete="off"
 					required
 				/>
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineUser} />
+				<Icon src={HiOutlineMinus} />
 				<input
 					bind:value={userData.lastName}
 					name="lastName"
 					type="text"
-					placeholder="Sobrenome"
+					placeholder={i18n.inputs.lastNameLabel()}
 					autocomplete="off"
 				/>
 			</div>
@@ -224,7 +258,7 @@
 					bind:value={userData.email}
 					name="email"
 					type="email"
-					placeholder="Email"
+					placeholder={i18n.inputs.emailLabel()}
 					autocomplete="off"
 					readonly
 				/>
@@ -236,19 +270,19 @@
 					name="password"
 					type="password"
 					minlength={8}
-					placeholder="Senha"
+					placeholder={i18n.inputs.passwordLabel()}
 					autocomplete="new-password"
 					required
 				/>
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineLockClosed} />
+				<Icon src={HiOutlineMinus} />
 				<input
 					bind:value={confirmPassword}
 					name="confirmPassword"
 					type="password"
 					minlength={8}
-					placeholder="Confirme a Senha"
+					placeholder={i18n.inputs.confirmPasswordLabel()}
 					autocomplete="new-password"
 					required
 				/>
@@ -258,7 +292,7 @@
 				<input
 					value={translateFromEnum(userData.role, roles)}
 					name="role"
-					placeholder="Papel"
+					placeholder={i18n.inputs.roleLabel()}
 					autocomplete="off"
 					readonly
 				/>

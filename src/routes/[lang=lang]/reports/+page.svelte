@@ -20,9 +20,14 @@
 	import axios from '$lib/axios';
 	import Axios from 'axios';
 	import { goto } from '$app/navigation';
-	import { TEMPLATES } from '$src/lib/constants';
 	import type { PageData } from './$types';
 	import type { UserStore } from '$src/lib/store/user';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.reports.list;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 
@@ -51,6 +56,10 @@
 			pagination.searchSpecificField = 'fieldId';
 			pagination.searchSpecificValue = userStore.get('user.fieldId');
 		}
+
+		await loadNamespaceAsync(data.locale, 'reports');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	// Pagination config
@@ -60,7 +69,7 @@
 		deleted: false,
 		orderKey: 'createdAt',
 		orderValue: 'desc',
-		search: '',
+		search: ''
 	} as Pagination;
 	let searchInput = '';
 
@@ -92,52 +101,52 @@
 	}
 
 	// App Header
-	const appHeader = {
-		name: 'Relatórios',
-		buttonText: 'Adicionar Relatório',
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText(),
 		buttonLink: `/${data.locale}/reports/add`
 	};
 
 	// Collection Header
-	const collectionHeader = [
+	$: collectionHeader = [
 		{
-			label: 'Título',
+			label: i18n.collectionHeader.titleLabel(),
 			key: 'title'
 		},
 		{
-			label: 'Texto',
+			label: i18n.collectionHeader.textLabel(),
 			key: 'text'
 		},
 		{
-			label: 'Descrição Curta',
+			label: i18n.collectionHeader.shortDescriptionLabel(),
 			key: 'shortDescription'
 		},
 		{
-			label: 'Anexos',
+			label: i18n.collectionHeader.attachmentsLabel(),
 			key: 'attachments'
 		},
 		{
-			label: 'Mês',
+			label: i18n.collectionHeader.monthLabel(),
 			key: 'month'
 		},
 		{
-			label: 'Ano',
+			label: i18n.collectionHeader.yearLabel(),
 			key: 'year'
 		},
 		{
-			label: 'Tipo',
+			label: i18n.collectionHeader.typeLabel(),
 			key: 'type'
 		},
 		{
-			label: 'Criado Em',
+			label: sharedI18n.collectionHeader.createdAtLabel(),
 			key: 'createdAt'
 		},
 		{
-			label: 'Atualizado Em',
+			label: sharedI18n.collectionHeader.updatedAtLabel(),
 			key: 'updatedAt'
 		},
 		{
-			label: 'Deletado Em',
+			label: sharedI18n.collectionHeader.deletedLabel(),
 			key: 'deleted'
 		}
 	] as ColumnCell[];
@@ -151,60 +160,60 @@
 					value: data.id
 				},
 				{
-					label: 'Título',
+					label: i18n.collectionHeader.titleLabel(),
 					key: 'title',
 					value: data.title
 				},
 				{
-					label: 'Texto',
+					label: i18n.collectionHeader.textLabel(),
 					key: 'text',
 					value: data.text,
 					textLimit: 100,
 					isModal: true
 				},
 				{
-					label: 'Descrição Curta',
+					label: i18n.collectionHeader.shortDescriptionLabel(),
 					key: 'shortDescription',
 					value: data.shortDescription,
 					textLimit: 100,
 					isModal: true
 				},
 				{
-					label: 'Anexos',
+					label: i18n.collectionHeader.attachmentsLabel(),
 					key: 'attachments',
 					value: data.attachments,
 					isJson: true
 				},
 				{
-					label: 'Mês',
+					label: i18n.collectionHeader.monthLabel(),
 					key: 'month',
 					value: data.month
 				},
 				{
-					label: 'Ano',
+					label: i18n.collectionHeader.yearLabel(),
 					key: 'year',
 					value: data.year
 				},
 				{
-					label: 'Tipo',
+					label: i18n.collectionHeader.typeLabel(),
 					key: 'type',
 					value: data.type,
 					isTag: true
 				},
 				{
-					label: 'Criado Em',
+					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
 					value: data.createdAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Atualizado Em',
+					label: sharedI18n.collectionHeader.updatedAtLabel(),
 					key: 'updatedAt',
 					value: data.updatedAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Deletado Em',
+					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
 					value: data.deleted,
 					transform: friendlyDateString
@@ -220,7 +229,7 @@
 
 	async function handleRemove(event: CustomEvent) {
 		const { id, data } = event.detail;
-		const remove = confirm(TEMPLATES.REMOVE.REPORT(data.title));
+		const remove = confirm(sharedI18n.remove.report({ title: data.title }));
 
 		if (remove) {
 			isLoading = true;
@@ -267,7 +276,10 @@
 	}
 
 	function onModalOpen(event: CustomEvent) {
-		const { data, key }: { data: ReportDto, key: keyof Pick<ReportDto, 'text' | 'shortDescription'> } = event.detail;
+		const {
+			data,
+			key
+		}: { data: ReportDto; key: keyof Pick<ReportDto, 'text' | 'shortDescription'> } = event.detail;
 		modal.title = data.title;
 		modal.text = data[key] ?? '';
 		showModal = true;
@@ -278,7 +290,7 @@
 	}
 
 	function onSearchLoad() {
-		pagination.search = searchInput
+		pagination.search = searchInput;
 	}
 
 	function onSearchClear() {
@@ -287,7 +299,7 @@
 </script>
 
 <svelte:head>
-	<title>Report</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -297,6 +309,7 @@
 		showBackButton={false}
 		maxPage={totalPages}
 		baseRoute={'/report'}
+		locale={data.locale}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
@@ -310,12 +323,14 @@
 	>
 		<CollectionHeader
 			columns={collectionHeader}
+			locale={data.locale}
 			on:click={onSort}
 			bind:showDeleted={pagination.deleted}
 		/>
 		{#each collectionData as row, i (row[0].value)}
 			<CollectionRow
 				rowCells={row}
+				locale={data.locale}
 				on:modalopen={onModalOpen}
 				on:edit={handleEdit}
 				on:remove={handleRemove}

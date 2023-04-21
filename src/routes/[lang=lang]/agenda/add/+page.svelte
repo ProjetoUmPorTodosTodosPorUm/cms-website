@@ -12,9 +12,6 @@
 	import HiOutlineCalendar from 'svelte-icons-pack/hi/HiOutlineCalendar';
 	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
 
-	import { getContext, onMount } from 'svelte';
-
-	import { TEMPLATES } from '$src/lib/constants';
 	import * as yup from 'yup';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
@@ -22,6 +19,13 @@
 	import type { FieldDto, FileDto, Pagination } from '$src/lib/types';
 	import { fromPaginationToQuery } from '$src/lib/utils/functions';
 	import type { UserStore } from '$src/lib/store/user';
+	import { getContext, onMount } from 'svelte';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.agenda.add;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 	let userStore = getContext<UserStore>('userStore');
@@ -32,9 +36,9 @@
 	const showRefreshButton = false;
 
 	// App Header
-	const appHeader = {
-		name: 'Adicionar Evento',
-		buttonText: 'Salvar'
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText()
 	};
 
 	const query = {
@@ -51,11 +55,11 @@
 	let isLoading = false;
 	let fields: FieldDto[] = [];
 
-	const schema = yup.object().shape({
-		title: yup.string().required(TEMPLATES.YUP.REQUIRED('Título')),
-		message: yup.string().required(TEMPLATES.YUP.REQUIRED('Mensagem')),
+	$: schema = yup.object().shape({
+		title: yup.string().required(sharedI18n.yup.required({ field: i18n.inputs.titleLabel() })),
+		message: yup.string().required(sharedI18n.yup.required({ field: i18n.inputs.messageLabel() })),
 		attachments: yup.array(yup.string()).nullable().optional(),
-		date: yup.string().required(TEMPLATES.YUP.REQUIRED('Data')),
+		date: yup.string().required(sharedI18n.yup.required({ field: i18n.inputs.dateLabel() })),
 		field: yup.string().nullable().optional()
 	});
 
@@ -72,6 +76,10 @@
 	onMount(async () => {
 		await loadData();
 		isAdminOrVolunteer = userStore.isVolunteer() || userStore.isAdmin();
+
+		await loadNamespaceAsync(data.locale, 'agenda');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	async function loadData() {
@@ -169,7 +177,7 @@
 			attachments = (res.data.data as FileDto[]).map((file) => file.name);
 		} catch (error) {
 			if (error instanceof Axios.AxiosError) {
-				throw new Axios.AxiosError('Os arquivos são muito grandes!');
+				throw new Axios.AxiosError(sharedI18n.axios.fileSizeError());
 			} else {
 				console.warn(error);
 			}
@@ -178,22 +186,35 @@
 </script>
 
 <svelte:head>
-	<title>Agenda</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
-	<AppContent {...appHeader} {isLoading} on:click={onSubmit} {showActions} {showRefreshButton}>
+	<AppContent
+		{...appHeader}
+		{isLoading}
+		{showActions}
+		{showRefreshButton}
+		locale={data.locale}
+		on:click={onSubmit}
+	>
 		<form bind:this={formRef} on:submit|preventDefault|stopPropagation={onSubmit} class="app-form">
 			<div class="input">
 				<Icon src={HiOutlineSpeakerphone} />
-				<input bind:value={title} name="title" placeholder="Título" autocomplete="off" required />
+				<input
+					bind:value={title}
+					name="title"
+					placeholder={i18n.inputs.titleLabel()}
+					autocomplete="off"
+					required
+				/>
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineDocument} />
 				<textarea
 					bind:value={message}
 					name="message"
-					placeholder="Mensagem"
+					placeholder={i18n.inputs.messageLabel()}
 					autocomplete="off"
 					rows="5"
 					required
@@ -211,7 +232,7 @@
 				<div class="input">
 					<Icon src={HiOutlineGlobe} />
 					<select bind:value={field} name="field" required>
-						<option value={null} disabled selected>Campo Missionário</option>
+						<option value={null} disabled selected>{sharedI18n.inputs.fieldLabel()}</option>
 
 						{#each fields as field}
 							<option value={field.id}>

@@ -9,5 +9,5 @@ export type FileDto = {
     deleted?: string;
 
     fieldId?: string;
-    field?: FieldDto | string | null;;
+    field?: FieldDto | string | null;
 }
