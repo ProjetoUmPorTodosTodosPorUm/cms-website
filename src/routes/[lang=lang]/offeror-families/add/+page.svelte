@@ -12,9 +12,6 @@
 	import HiOutlineUserGroup from 'svelte-icons-pack/hi/HiOutlineUserGroup';
 	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
 
-	import { getContext, onMount } from 'svelte';
-
-	import { TEMPLATES } from '$src/lib/constants';
 	import * as yup from 'yup';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
@@ -23,6 +20,13 @@
 	import { fromPaginationToQuery } from '$src/lib/utils/functions';
 	import type { UserStore } from '$src/lib/store/user';
 	import { OfferorFamilyGroup } from '$src/lib/enums';
+	import { getContext, onMount } from 'svelte';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL['offeror-families'].add;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 	let userStore = getContext<UserStore>('userStore');
@@ -33,9 +37,9 @@
 	const showRefreshButton = true;
 
 	// App Header
-	const appHeader = {
-		name: 'Adicionar Família Ofertante',
-		buttonText: 'Salvar'
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText()
 	};
 
 	const query = {
@@ -51,20 +55,27 @@
 	let formRef: HTMLFormElement;
 	let isLoading = false;
 	let fields: FieldDto[] = [];
-	const groups = [
-		{ value: 'CHURCH', text: 'Igreja' },
-		{ value: 'COMMUNITY', text: 'Comunidade' },
-		{ value: 'EXTERNAL', text: 'Externo' }
+	$: groups = [
+		{ value: 'CHURCH', text: i18n.groups.church() },
+		{ value: 'COMMUNITY', text: i18n.groups.community() },
+		{ value: 'EXTERNAL', text: i18n.groups.external() }
 	];
 
-	const schema = yup.object().shape({
-		representative: yup.string().required(TEMPLATES.YUP.REQUIRED('Representante')),
-		commitment: yup.string().required(TEMPLATES.YUP.REQUIRED('Compromisso')),
+	$: schema = yup.object().shape({
+		representative: yup
+			.string()
+			.required(sharedI18n.yup.required({ field: i18n.inputs.representativeLabel() })),
+		commitment: yup
+			.string()
+			.required(sharedI18n.yup.required({ field: i18n.inputs.commitmentLabel() })),
 		churchDenomination: yup.string().nullable().optional(),
 		group: yup
 			.string()
-			.oneOf(Object.values(OfferorFamilyGroup), TEMPLATES.YUP.ONE_OF(groups.map((g) => g.text)))
-			.required(TEMPLATES.YUP.REQUIRED('Grupo')),
+			.oneOf(
+				Object.values(OfferorFamilyGroup),
+				sharedI18n.yup.oneOf({ enums: groups.map((g) => g.text).join(', ') })
+			)
+			.required(sharedI18n.yup.required({ field: i18n.inputs.groupLabel() })),
 		field: yup.string().nullable().optional()
 	});
 
@@ -79,6 +90,10 @@
 	onMount(async () => {
 		await loadData();
 		isAdminOrVolunteer = userStore.isVolunteer() || userStore.isAdmin();
+
+		await loadNamespaceAsync(data.locale, 'offeror-families');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	async function loadData() {
@@ -153,18 +168,25 @@
 </script>
 
 <svelte:head>
-	<title>Offeror Families</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
-	<AppContent {...appHeader} {isLoading} on:click={onSubmit} {showActions} {showRefreshButton}>
+	<AppContent
+		{...appHeader}
+		{isLoading}
+		{showActions}
+		{showRefreshButton}
+		locale={data.locale}
+		on:click={onSubmit}
+	>
 		<form bind:this={formRef} on:submit|preventDefault|stopPropagation={onSubmit} class="app-form">
 			<div class="input">
 				<Icon src={HiOutlineUser} />
 				<input
 					bind:value={representative}
 					name="representative"
-					placeholder="Representante"
+					placeholder={i18n.inputs.representativeLabel()}
 					autocomplete="off"
 					required
 				/>
@@ -174,7 +196,7 @@
 				<input
 					bind:value={commitment}
 					name="commitment"
-					placeholder="Compromisso"
+					placeholder={i18n.inputs.commitmentLabel()}
 					autocomplete="off"
 					required
 				/>
@@ -184,14 +206,14 @@
 				<input
 					bind:value={churchDenomination}
 					name="churchDenomination"
-					placeholder="Igreja"
+					placeholder={i18n.inputs.churchLabel()}
 					autocomplete="off"
 				/>
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineUserGroup} />
 				<select bind:value={group} name="group" required>
-					<option value={null} disabled selected>Grupo</option>
+					<option value={null} disabled selected>{i18n.inputs.groupLabel()}</option>
 
 					{#each groups as group}
 						<option value={group.value}>
@@ -204,7 +226,7 @@
 				<div class="input">
 					<Icon src={HiOutlineGlobe} />
 					<select bind:value={field} name="field" required>
-						<option value={null} disabled selected>Campo Missionário</option>
+						<option value={null} disabled selected>{sharedI18n.inputs.fieldLabel()}</option>
 
 						{#each fields as field}
 							<option value={field.id}>

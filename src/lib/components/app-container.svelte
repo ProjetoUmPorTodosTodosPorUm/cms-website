@@ -15,7 +15,7 @@
 
 	<div class="messages-container">
 		{#each messages as message (message.id)}
-			<Toast {...message} />
+			<Toast {...message} {locale} />
 		{/each}
 	</div>
 </div>

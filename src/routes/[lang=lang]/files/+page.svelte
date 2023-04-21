@@ -7,16 +7,33 @@
 
 	import { getContext, onMount } from 'svelte';
 	import type { RowCell, FileDto, Pagination } from '$lib/types';
-	import { delay, friendlyDateString, fromPaginationToQuery, removeItemById } from '$lib/utils/functions';
+	import {
+		delay,
+		friendlyDateString,
+		fromPaginationToQuery,
+		removeItemById
+	} from '$lib/utils/functions';
 
 	import { generateMessages } from '$components/toast.svelte';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
-	import { TEMPLATES } from '$src/lib/constants';
 	import type { UserStore } from '$src/lib/store/user';
 	import type { PageData } from './$types';
 
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.files.list;
+	$: sharedI18n = $LL.shared;
+
 	export let data: PageData;
+
+	const sizeFormat = new Intl.NumberFormat('en', {
+		notation: 'compact',
+		style: 'unit',
+		unit: 'byte',
+		unitDisplay: 'narrow'
+	});
 
 	let fileData: FileDto[] = [];
 	let userStore = getContext<UserStore>('userStore');
@@ -33,6 +50,10 @@
 		const accessToken = userStore.get('accessToken');
 		axios.setAuth(accessToken);
 		isReady = true;
+
+		await loadNamespaceAsync(data.locale, 'files');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	// Pagination config
@@ -42,7 +63,7 @@
 		deleted: false,
 		orderKey: 'createdAt',
 		orderValue: 'desc',
-		search: '',
+		search: ''
 	} as Pagination;
 	let searchInput = '';
 
@@ -74,39 +95,33 @@
 	}
 
 	// App Header
-	const appHeader = {
-		name: 'Arquivos'
+	$: appHeader = {
+		name: i18n.appHeader.name()
 	};
 
 	// Collection Header
-	const collectionHeader = [
+	$: collectionHeader = [
 		{
-			label: 'Nome',
+			label: i18n.collectionHeader.nameLabel(),
 			key: 'name'
 		},
 		{
-			label: 'MimeType',
+			label: i18n.collectionHeader.mimeTypeLabel(),
 			key: 'mimeType'
 		},
 		{
-			label: 'Tamanho',
+			label: i18n.collectionHeader.sizeLabel(),
 			key: 'size'
 		},
 		{
-			label: 'Criado Em',
+			label: sharedI18n.collectionHeader.createdAtLabel(),
 			key: 'createdAt'
 		},
 		{
-			label: 'Deletado Em',
+			label: sharedI18n.collectionHeader.deletedLabel(),
 			key: 'deleted'
 		}
 	];
-	const numberFormat = new Intl.NumberFormat('en', {
-		notation: 'compact',
-		style: 'unit',
-		unit: 'byte',
-		unitDisplay: 'narrow'
-	});
 
 	// Collection Data
 	$: collectionData = Object.entries(fileData).map(
@@ -118,31 +133,31 @@
 					value: file.id
 				},
 				{
-					label: 'Nome',
+					label: i18n.collectionHeader.nameLabel(),
 					key: 'name',
 					value: file.name,
 					isStatic: true
 				},
 				{
-					label: 'MimeType',
+					label: i18n.collectionHeader.mimeTypeLabel(),
 					key: 'mimeType',
 					value: file.mimeType,
 					isTag: true
 				},
 				{
-					label: 'Tamanho',
+					label: i18n.collectionHeader.sizeLabel(),
 					key: 'size',
 					value: file.size,
-					transform: numberFormat.format
+					transform: sizeFormat.format
 				},
 				{
-					label: 'Criado Em',
+					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
 					value: file.createdAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Deletado Em',
+					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
 					value: file.deleted,
 					transform: friendlyDateString
@@ -153,7 +168,7 @@
 	// On Event Functions
 	async function handleRemove(event: CustomEvent) {
 		const { id, data } = event.detail;
-		const remove = confirm(TEMPLATES.REMOVE.FILE(data.name));
+		const remove = confirm(sharedI18n.remove.file({ name: data.name }));
 
 		if (remove) {
 			isLoading = true;
@@ -200,7 +215,7 @@
 	}
 
 	function onSearchLoad() {
-		pagination.search = searchInput
+		pagination.search = searchInput;
 	}
 
 	function onSearchClear() {
@@ -209,7 +224,7 @@
 </script>
 
 <svelte:head>
-	<title>Files</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -219,6 +234,7 @@
 		showBackButton={false}
 		maxPage={totalPages}
 		baseRoute={'/file'}
+		locale={data.locale}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
@@ -232,12 +248,14 @@
 	>
 		<CollectionHeader
 			columns={collectionHeader}
+			locale={data.locale}
 			on:click={onSort}
 			bind:showDeleted={pagination.deleted}
 		/>
 		{#each collectionData as row, i (row[0].value)}
 			<CollectionRow
 				rowCells={row}
+				locale={data.locale}
 				{showEdit}
 				on:remove={handleRemove}
 				on:select={handleSelect}

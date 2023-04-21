@@ -13,11 +13,18 @@
 	import HiOutlineUser from 'svelte-icons-pack/hi/HiOutlineUser';
 	import HiOutlineMail from 'svelte-icons-pack/hi/HiOutlineMail';
 	import HiOutlineLockClosed from 'svelte-icons-pack/hi/HiOutlineLockClosed';
+	import HiOutlineMinus from 'svelte-icons-pack/hi/HiOutlineMinus';
 
 	import type { Navigation } from '@sveltejs/kit';
-	import { MESSAGES, TEMPLATES } from '$src/lib/constants';
 	import type { PageData } from './$types';
 	import { page } from '$app/stores';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	import { onMount } from 'svelte';
+	$: i18n = $LL.signup;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 
@@ -28,6 +35,12 @@
 	const MAX_STEP = 3;
 	const stepQueryName = 'step';
 	let step = 1;
+
+	onMount(async () => {
+		await loadNamespaceAsync(data.locale, 'signup');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
+	});
 
 	// Make Sure all data is gathered from query if available (link from email)
 	afterNavigate((navigation: Navigation) => {
@@ -58,13 +71,11 @@
 	});
 
 	// AuthModal
-	const title = ['Criar Conta', 'Verificação', 'Último Passo'];
-	const subTitle = [
-		'Por favor, insira seu e-mail',
-		'Digite o seu token',
-		'Preencha os dados faltantes'
-	];
-	const buttonText = ['Próximo', 'Validar', 'Criar Conta'];
+	$: authModal = {
+		title: i18n.authModal[step - 1].title(),
+		subTitle: i18n.authModal[step - 1].subTitle(),
+		buttonText: i18n.authModal[step - 1].buttonText()
+	};
 
 	$: if (step === 1) {
 		if (email !== '') {
@@ -91,18 +102,21 @@
 	let isSending = false;
 	let isSubmitDisabled = true;
 
-	const firstStepSchema = yup.object().shape({
-		email: yup.string().required(TEMPLATES.YUP.REQUIRED('Email')).email(MESSAGES.YUP.EMAIL)
+	$: firstStepSchema = yup.object().shape({
+		email: yup
+			.string()
+			.email(sharedI18n.yup.email({ field: i18n.inputs.emailLabel() }))
+			.required(sharedI18n.yup.required({ field: i18n.inputs.emailLabel() }))
 	});
 
 	// Form - step 2
 	const TOKEN_SIZE = 6;
 	let token = Array(TOKEN_SIZE).fill('');
-	const secondStepSchema = yup.object().shape({
+	$: secondStepSchema = yup.object().shape({
 		token: yup
 			.string()
-			.required()
-			.matches(/^[A-Z0-9]{6}$/, MESSAGES.YUP.TOKEN_MATCH)
+			.matches(/^[A-Z0-9]{6}$/, i18n.yupMessages.tokenMatch())
+			.required(sharedI18n.yup.required({ field: i18n.inputs.tokenLabel() }))
 	});
 
 	let tokenInputs: HTMLDivElement;
@@ -144,17 +158,19 @@
 	let password = '';
 	let confirmPassword = '';
 
-	const thirdStepSchema = yup.object().shape({
-		firstName: yup.string().required(TEMPLATES.YUP.REQUIRED('Nome')),
+	$: thirdStepSchema = yup.object().shape({
+		firstName: yup
+			.string()
+			.required(sharedI18n.yup.required({ field: i18n.inputs.firstNameLabel() })),
 		lastName: yup.string().optional(),
 		password: yup
 			.string()
-			.required(TEMPLATES.YUP.REQUIRED('Senha'))
-			.min(8, TEMPLATES.YUP.MIN('Senha', 8)),
+			.min(8, sharedI18n.yup.min({ field: i18n.inputs.passwordLabel(), length: 8 }))
+			.required(sharedI18n.yup.required({ field: i18n.inputs.passwordLabel() })),
 		confirmPassword: yup
 			.string()
-			.oneOf([yup.ref('password')], MESSAGES.YUP.CONFIRM_PASSWORD)
-			.required(TEMPLATES.YUP.REQUIRED('Confirmação da senha')),
+			.oneOf([yup.ref('password')], i18n.yupMessages.confirmPassword())
+			.required(sharedI18n.yup.required({ field: i18n.inputs.confirmPasswordLabel() }))
 	});
 
 	// Toast Messages
@@ -205,7 +221,7 @@
 			if (isValid) {
 				const res = await axios.post('/auth/token-validate', { email, token: token.join('') });
 				if (!res) {
-					messages = generateMessages([{ message: 'Servidor não está disponível' }]);
+					messages = generateMessages([{ message: sharedI18n.axios.serverNotAvailable() }]);
 					isSending = false;
 					return;
 				}
@@ -222,7 +238,7 @@
 					goto(`?${$page.url.searchParams.toString()}`);
 				} else {
 					messages = generateMessages([
-						{ message: MESSAGES.AUTH.TOKEN_INVALID, variant: 'danger' }
+						{ message: i18n.yupMessages.tokenInvalid(), variant: 'danger' }
 					]);
 					await delay(1000);
 				}
@@ -254,10 +270,10 @@
 					lastName,
 					email,
 					token: token.join(''),
-					password,
+					password
 				});
 				if (!res) {
-					messages = generateMessages([{ message: 'Servidor não está disponível' }]);
+					messages = generateMessages([{ message: sharedI18n.axios.serverNotAvailable() }]);
 					isSending = false;
 					return;
 				}
@@ -289,15 +305,13 @@
 </script>
 
 <svelte:head>
-	<title>Create Account</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AuthModal
 	on:submit={onSubmitProxy}
 	on:toastClose={onClose}
-	title={title[step - 1]}
-	subTitle={subTitle[step - 1]}
-	buttonText={buttonText[step - 1]}
+	{...authModal}
 	{isSending}
 	{isSubmitDisabled}
 	{messages}
@@ -312,7 +326,7 @@
 					name="email"
 					type="email"
 					autocomplete="off"
-					placeholder="Email"
+					placeholder={i18n.inputs.emailLabel()}
 					required
 				/>
 			</div>
@@ -381,18 +395,18 @@
 					bind:value={firstName}
 					name="firstName"
 					type="text"
-					placeholder="Primeiro Nome"
+					placeholder={i18n.inputs.firstNameLabel()}
 					autocomplete="off"
 					required
 				/>
 			</div>
 			<div class="form-input" in:fade>
-				<Icon src={HiOutlineUser} />
+				<Icon src={HiOutlineMinus} />
 				<input
 					bind:value={lastName}
 					name="lastName"
 					type="text"
-					placeholder="Sobrenome"
+					placeholder={i18n.inputs.lastNameLabel()}
 					autocomplete="off"
 				/>
 			</div>
@@ -403,18 +417,18 @@
 					name="password"
 					type="password"
 					autocomplete="new-password"
-					placeholder="Senha"
+					placeholder={i18n.inputs.passwordLabel()}
 					required
 				/>
 			</div>
 			<div class="form-input" in:fade>
-				<Icon src={HiOutlineLockClosed} />
+				<Icon src={HiOutlineMinus} />
 				<input
 					bind:value={confirmPassword}
 					name="confirmPassword"
 					type="password"
 					autocomplete="new-password"
-					placeholder="Repita a Senha"
+					placeholder={i18n.inputs.confirmPasswordLabel()}
 					required
 				/>
 			</div>
@@ -422,7 +436,7 @@
 	</svelte:fragment>
 
 	<svelte:fragment slot="links">
-		<a href={`/${data.locale}/login`}>Login</a>
-		<a href={`/${data.locale}/forgot-password`}>Recuperar Conta</a>
+		<a href={`/${data.locale}/login`}>{i18n.links.loginText()}</a>
+		<a href={`/${data.locale}/forgot-password`}>{i18n.links.forgotPasswordText()}</a>
 	</svelte:fragment>
 </AuthModal>

@@ -19,9 +19,14 @@
 	import axios from '$lib/axios';
 	import Axios from 'axios';
 	import { goto } from '$app/navigation';
-	import { TEMPLATES } from '$src/lib/constants';
 	import type { PageData } from './$types';
 	import type { UserStore } from '$src/lib/store/user';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.agenda.list;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 
@@ -44,6 +49,10 @@
 			pagination.searchSpecificField = 'fieldId';
 			pagination.searchSpecificValue = userStore.get('user.fieldId');
 		}
+
+		await loadNamespaceAsync(data.locale, 'agenda');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	// Pagination config
@@ -85,40 +94,40 @@
 	}
 
 	// App Header
-	const appHeader = {
-		name: 'Agenda',
-		buttonText: 'Adicionar Evento',
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText(),
 		buttonLink: `/${data.locale}/agenda/add`
 	};
 
 	// Collection Header
-	const collectionHeader = [
+	$: collectionHeader = [
 		{
-			label: 'Título',
+			label: i18n.collectionHeader.titleLabel(),
 			key: 'title'
 		},
 		{
-			label: 'Mensagem',
+			label: i18n.collectionHeader.messageLabel(),
 			key: 'message'
 		},
 		{
-			label: 'Anexos',
+			label: i18n.collectionHeader.attachmentsLabel(),
 			key: 'attachments'
 		},
 		{
-			label: 'Data',
+			label: i18n.collectionHeader.dateLabel(),
 			key: 'date'
 		},
 		{
-			label: 'Criado Em',
+			label: sharedI18n.collectionHeader.createdAtLabel(),
 			key: 'createdAt'
 		},
 		{
-			label: 'Atualizado Em',
+			label: sharedI18n.collectionHeader.updatedAtLabel(),
 			key: 'updatedAt'
 		},
 		{
-			label: 'Deletado Em',
+			label: sharedI18n.collectionHeader.deletedLabel(),
 			key: 'deleted'
 		}
 	] as ColumnCell[];
@@ -132,42 +141,42 @@
 					value: data.id
 				},
 				{
-					label: 'Título',
+					label: i18n.collectionHeader.titleLabel(),
 					key: 'title',
 					value: data.title
 				},
 				{
-					label: 'Mensagem',
+					label: i18n.collectionHeader.messageLabel(),
 					key: 'message',
 					value: data.message,
 					textLimit: 100
 				},
 				{
-					label: 'Anexos',
+					label: i18n.collectionHeader.attachmentsLabel(),
 					key: 'attachments',
 					value: data.attachments,
 					isJson: true
 				},
 				{
-					label: 'Data',
+					label: i18n.collectionHeader.dateLabel(),
 					key: 'date',
 					value: data.date,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Criado Em',
+					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
 					value: data.createdAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Atualizado Em',
+					label: sharedI18n.collectionHeader.updatedAtLabel(),
 					key: 'updatedAt',
 					value: data.updatedAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Deletado Em',
+					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
 					value: data.deleted,
 					transform: friendlyDateString
@@ -183,7 +192,7 @@
 
 	async function handleRemove(event: CustomEvent) {
 		const { id, data } = event.detail;
-		const remove = confirm(TEMPLATES.REMOVE.AGENDA(data.title));
+		const remove = confirm(sharedI18n.remove.agenda({ title: data.title }));
 
 		if (remove) {
 			isLoading = true;
@@ -239,7 +248,7 @@
 </script>
 
 <svelte:head>
-	<title>Agenda</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -249,6 +258,7 @@
 		showBackButton={false}
 		maxPage={totalPages}
 		baseRoute={'/agenda'}
+		locale={data.locale}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
@@ -262,12 +272,14 @@
 	>
 		<CollectionHeader
 			columns={collectionHeader}
+			locale={data.locale}
 			on:click={onSort}
 			bind:showDeleted={pagination.deleted}
 		/>
 		{#each collectionData as row, i (row[0].value)}
 			<CollectionRow
 				rowCells={row}
+				locale={data.locale}
 				on:edit={handleEdit}
 				on:remove={handleRemove}
 				on:select={handleSelect}

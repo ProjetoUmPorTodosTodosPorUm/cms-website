@@ -20,9 +20,14 @@
 	import axios from '$lib/axios';
 	import Axios from 'axios';
 	import { goto } from '$app/navigation';
-	import { TEMPLATES } from '$src/lib/constants';
 	import type { PageData } from './$types';
 	import type { UserStore } from '$src/lib/store/user';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.collaborators.list;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 
@@ -51,6 +56,10 @@
 			pagination.searchSpecificField = 'fieldId';
 			pagination.searchSpecificValue = userStore.get('user.fieldId');
 		}
+
+		await loadNamespaceAsync(data.locale, 'collaborators');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	// Pagination config
@@ -60,7 +69,7 @@
 		deleted: false,
 		orderKey: 'title',
 		orderValue: 'asc',
-		search: '',
+		search: ''
 	} as Pagination;
 	let searchInput = '';
 
@@ -92,36 +101,36 @@
 	}
 
 	// App Header
-	const appHeader = {
-		name: 'Colaboradores',
-		buttonText: 'Adicionar Colaborador',
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText(),
 		buttonLink: `/${data.locale}/collaborators/add`
 	};
 
 	// Collection Header
-	const collectionHeader = [
+	$: collectionHeader = [
 		{
-			label: 'Título',
+			label: i18n.collectionHeader.titleLabel(),
 			key: 'title'
 		},
 		{
-			label: 'Descrição',
+			label: i18n.collectionHeader.descriptionLabel(),
 			key: 'description'
 		},
 		{
-			label: 'Imagem',
+			label: i18n.collectionHeader.imageLabel(),
 			key: 'image'
 		},
 		{
-			label: 'Criado Em',
+			label: sharedI18n.collectionHeader.createdAtLabel(),
 			key: 'createdAt'
 		},
 		{
-			label: 'Atualizado Em',
+			label: sharedI18n.collectionHeader.updatedAtLabel(),
 			key: 'updatedAt'
 		},
 		{
-			label: 'Deletado Em',
+			label: sharedI18n.collectionHeader.deletedLabel(),
 			key: 'deleted'
 		}
 	] as ColumnCell[];
@@ -135,38 +144,38 @@
 					value: data.id
 				},
 				{
-					label: 'Título',
+					label: i18n.collectionHeader.titleLabel(),
 					key: 'title',
 					value: data.title
 				},
 				{
-					label: 'Descrição',
+					label: i18n.collectionHeader.descriptionLabel(),
 					key: 'description',
 					value: data.description,
 					textLimit: 100,
 					isModal: true
 				},
 				{
-					label: 'Imagem',
+					label: i18n.collectionHeader.imageLabel(),
 					key: 'image',
 					value: data.image,
 					isStatic: true,
 					transform: (value: string) => value ?? ''
 				},
 				{
-					label: 'Criado Em',
+					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
 					value: data.createdAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Atualizado Em',
+					label: sharedI18n.collectionHeader.updatedAtLabel(),
 					key: 'updatedAt',
 					value: data.updatedAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Deletado Em',
+					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
 					value: data.deleted,
 					transform: friendlyDateString
@@ -182,7 +191,7 @@
 
 	async function handleRemove(event: CustomEvent) {
 		const { id, data }: { id: string; data: CollaboratorDto } = event.detail;
-		const remove = confirm(TEMPLATES.REMOVE.COLLABORATOR(data.title));
+		const remove = confirm(sharedI18n.remove.collaborator({ title: data.title }));
 
 		if (remove) {
 			isLoading = true;
@@ -229,9 +238,11 @@
 	}
 
 	function onModalOpen(event: CustomEvent) {
-		const { data, key }: { data: CollaboratorDto; key: keyof Pick<CollaboratorDto, 'description'> } =
-			event.detail;
-		modal.title = 'Descrição';
+		const {
+			data,
+			key
+		}: { data: CollaboratorDto; key: keyof Pick<CollaboratorDto, 'description'> } = event.detail;
+		modal.title = i18n.collectionHeader.descriptionLabel();
 		modal.text = data[key] ?? '';
 		showModal = true;
 	}
@@ -239,9 +250,9 @@
 	function onCloseModal() {
 		showModal = false;
 	}
-	
+
 	function onSearchLoad() {
-		pagination.search = searchInput
+		pagination.search = searchInput;
 	}
 
 	function onSearchClear() {
@@ -250,7 +261,7 @@
 </script>
 
 <svelte:head>
-	<title>Collaborators</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -260,6 +271,7 @@
 		showBackButton={false}
 		maxPage={totalPages}
 		baseRoute={'/collaborator'}
+		locale={data.locale}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
@@ -273,12 +285,14 @@
 	>
 		<CollectionHeader
 			columns={collectionHeader}
+			locale={data.locale}
 			on:click={onSort}
 			bind:showDeleted={pagination.deleted}
 		/>
 		{#each collectionData as row, i (row[0].value)}
 			<CollectionRow
 				rowCells={row}
+				locale={data.locale}
 				on:modalopen={onModalOpen}
 				on:edit={handleEdit}
 				on:remove={handleRemove}

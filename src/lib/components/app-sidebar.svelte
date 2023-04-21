@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { USER_TEMPLATE } from '$lib/constants';
+	import type { AppSidebarMenuItem } from '$lib/types';
 	import { Role } from '$lib/enums';
-	import type { UserDto } from '$lib/types';
-	import { UserStore } from '$lib/store/user';
+	import type { UserStore } from '$lib/store/user';
 	import { afterNavigate } from '$app/navigation';
 	import type { Navigation } from '@sveltejs/kit';
 	import { fade } from 'svelte/transition';
@@ -20,14 +20,19 @@
 	import HiOutlineArchive from 'svelte-icons-pack/hi/HiOutlineArchive';
 	import HiOutlineChartSquareBar from 'svelte-icons-pack/hi/HiOutlineChartSquareBar';
 	import HiOutlineChat from 'svelte-icons-pack/hi/HiOutlineChat';
-	import HiOutlineTicket from "svelte-icons-pack/hi/HiOutlineTicket";
+	import HiOutlineTicket from 'svelte-icons-pack/hi/HiOutlineTicket';
 	import HiOutlineUsers from 'svelte-icons-pack/hi/HiOutlineUsers';
 	import HiOutlineIdentification from 'svelte-icons-pack/hi/HiOutlineIdentification';
 	import HiOutlineHeart from 'svelte-icons-pack/hi/HiOutlineHeart';
 	import HiSolidUserCircle from 'svelte-icons-pack/hi/HiSolidUserCircle';
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import { VERSION } from 'svelte/compiler';
 	import type { Locales } from '$src/i18n/i18n-types';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL['app-sidebar'];
 
 	export let locale: Locales;
 
@@ -35,15 +40,17 @@
 	const APP_VERSION = __APP_VERSION__;
 
 	let user = USER_TEMPLATE;
-	let userStore: UserStore;
+	let userStore = getContext<UserStore>('userStore');
 	let active: string = 'painel';
 	let isAccoutMenuOpen = false;
 	let accountInfoRef: HTMLDivElement;
 
-	onMount(() => {
-		userStore = new UserStore();
+	onMount(async () => {
 		user = userStore.get('user');
 		accountInfoRef.classList.toggle('margin-top-auto');
+
+		await loadNamespaceAsync(locale, 'app-sidebar');
+		setLocale(locale);
 	});
 
 	afterNavigate(async (navigation: Navigation) => {
@@ -53,94 +60,96 @@
 		}
 	});
 
-	const menu = [
+	$: menu = [
 		{
-			name: 'Início',
+			name: i18n.menu.dashboard(),
 			href: `/${locale}`,
 			icon: HiOutlineHome
 		},
 		{
-			name: 'Agenda',
+			name: i18n.menu.agenda(),
 			href: `/${locale}/agenda`,
 			icon: HiOutlineCalendar
 		},
 		{
-			name: 'Anúncios',
+			name: i18n.menu.announcements(),
 			href: `/${locale}/announcements`,
 			icon: HiOutlineSpeakerphone
 		},
 		{
-			name: 'Igrejas',
+			name: i18n.menu.churches(),
 			href: `/${locale}/churches`,
 			icon: HiOutlineLibrary
 		},
 		{
-			name: 'Colaboradores',
+			name: i18n.menu.collaborators(),
 			href: `/${locale}/collaborators`,
 			icon: HiOutlineUserGroup
 		},
 		{
-			name: 'Ofertas Coletadas',
+			name: i18n.menu.collectedOffers(),
 			href: `/${locale}/collected-offers`,
 			icon: HiOutlineHand
 		},
 		{
-			name: 'Campos Missionários',
+			name: i18n.menu.fields(),
 			href: `/${locale}/fields`,
 			icon: HiOutlineGlobe,
-			role: 'WEB_ADMIN'
+			role: Role.WEB_MASTER
 		},
 		{
-			name: 'Arquivos',
+			name: i18n.menu.files(),
 			href: `/${locale}/files`,
 			icon: HiOutlineFolderOpen,
-			role: 'ADMIN'
+			role: Role.ADMIN
 		},
 		{
-			name: 'Logs',
+			name: i18n.menu.logs(),
 			href: `/${locale}/logs`,
 			icon: HiOutlineArchive,
-			role: 'ADMIN'
+			role: Role.ADMIN
 		},
 		{
-			name: 'Famílias Ofertantes',
+			name: i18n.menu.offerorFamilies(),
 			href: `/${locale}/offeror-families`,
 			icon: HiOutlineUserGroup
 		},
 		{
-			name: 'Relatórios',
+			name: i18n.menu.reports(),
 			href: `/${locale}/reports`,
 			icon: HiOutlineChartSquareBar
 		},
 		{
-			name: 'Testemunhos',
+			name: i18n.menu.testimonials(),
 			href: `/${locale}/testimonials`,
 			icon: HiOutlineChat
 		},
 		{
-			name: 'Tokens',
+			name: i18n.menu.tokens(),
 			href: `/${locale}/tokens`,
 			icon: HiOutlineTicket
 		},
 		{
-			name: 'Usuários',
+			name: i18n.menu.users(),
 			href: `/${locale}/users`,
 			icon: HiOutlineUsers,
-			role: 'ADMIN'
+			role: Role.ADMIN
 		},
 		{
-			name: 'Voluntários',
+			name: i18n.menu.volunteers(),
 			href: `/${locale}/volunteers`,
 			icon: HiOutlineIdentification
 		},
 		{
-			name: 'Famílias Acolhidas',
+			name: i18n.menu.welcomedFamilies(),
 			href: `/${locale}/welcomed-families`,
 			icon: HiOutlineHeart
 		}
-	];
+	] as AppSidebarMenuItem[];
 
-	function filterMenuByRole(user: UserDto) {
+	$: menuFilteredByRole = filterMenuByRole(menu);
+
+	function filterMenuByRole(menu: AppSidebarMenuItem[]) {
 		return menu.filter((item) => {
 			if (item.role) {
 				return user.role === item.role || user.role === Role.WEB_MASTER;
@@ -150,11 +159,19 @@
 		});
 	}
 
-	$: menuFilteredByRole = filterMenuByRole(user);
-
 	async function toggleAccountMenu(event: MouseEvent) {
 		isAccoutMenuOpen = !isAccoutMenuOpen;
 		accountInfoRef.classList.toggle('margin-top-auto');
+	}
+
+	function isActive(itemHref: string) {
+		let pageRootName = active.split('/')[2] || '';
+
+		if (pageRootName) {
+			return itemHref.match(pageRootName);
+		} else {
+			return itemHref.split('/').length == 2;
+		}
 	}
 </script>
 
@@ -171,7 +188,7 @@
 	</div>
 	<ul class="sidebar-list">
 		{#each menuFilteredByRole as item}
-			<li class={`sidebar-list-item ${active == item.href ? 'active' : ''}`}>
+			<li class={`sidebar-list-item ${isActive(item.href) ? 'active' : ''}`}>
 				<a href={item.href}>
 					<Icon src={item.icon} size="1.4rem" />
 					<span>{item.name}</span>
@@ -182,22 +199,21 @@
 
 	{#if isAccoutMenuOpen}
 		<ul in:fade class="account-menu">
-			<li><a href={`/${locale}/profile`}>Perfil</a></li>
-			<li><a href={`/${locale}`}>Voltar Ao Início</a></li>
-			<li><a href={`/${locale}/logout`}>Sair</a></li>
+			<li><a href={`/${locale}/profile`}>{i18n.accountMenu.links.profile()}</a></li>
+			<li><a href={`/${locale}/logout`}>{i18n.accountMenu.links.logout()}</a></li>
 		</ul>
 	{/if}
 
 	<div bind:this={accountInfoRef} class="account-info">
 		<div class="account-info-picture">
 			{#if user.avatar}
-				<img src={`${PUBLIC_STATIC_PATH}/${user.avatar}`} alt="Account" />
+				<img src={`${PUBLIC_STATIC_PATH}/${user.avatar}`} alt="Avatar" />
 			{:else}
 				<Icon src={HiSolidUserCircle} size="2rem" />
 			{/if}
 		</div>
-		<div class="account-info-name" title={`${user.firstName} ${user.lastName}`}>
-			{`${user.firstName} ${user.lastName}`}
+		<div class="account-info-name" title={`${user.firstName} ${user.lastName || ''}`}>
+			{`${user.firstName} ${user.lastName || ''}`}
 		</div>
 		<button class="account-info-more" on:click={toggleAccountMenu}>
 			<svg

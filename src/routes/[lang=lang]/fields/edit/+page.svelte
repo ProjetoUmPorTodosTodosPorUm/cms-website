@@ -12,8 +12,7 @@
 	import HiOutlineX from 'svelte-icons-pack/hi/HiOutlineX';
 
 	import { getContext, onMount } from 'svelte';
-
-	import { FIELD_TEMPLATE, TEMPLATES } from '$src/lib/constants';
+	import { FIELD_TEMPLATE } from '$src/lib/constants';
 	import * as yup from 'yup';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
@@ -22,9 +21,14 @@
 	import type { UserStore } from '$src/lib/store/user';
 	import { afterNavigate } from '$app/navigation';
 	import type { Navigation } from '@sveltejs/kit';
-
 	import { Loader } from '@googlemaps/js-api-loader';
 	import { PUBLIC_GOOGLE_MAP_API } from '$env/static/public';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.fields.edit;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 
@@ -54,20 +58,26 @@
 	const showRefreshButton = false;
 
 	// App Header
-	const appHeader = {
-		name: 'Editar Campo Missionário',
-		buttonText: 'Salvar'
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText()
 	};
 
 	// Form
 	let formRef: HTMLFormElement;
 
-	const schema = yup.object().shape({
-		continent: yup.string().required(TEMPLATES.YUP.REQUIRED('Continente')),
-		country: yup.string().required(TEMPLATES.YUP.REQUIRED('País')),
-		state: yup.string().required(TEMPLATES.YUP.REQUIRED('Estado')),
-		abbreviation: yup.string().required(TEMPLATES.YUP.REQUIRED('Abreviação')),
-		designation: yup.string().required(TEMPLATES.YUP.REQUIRED('Designação')),
+	$: schema = yup.object().shape({
+		continent: yup
+			.string()
+			.required(sharedI18n.yup.required({ field: i18n.inputs.continentLabel() })),
+		country: yup.string().required(sharedI18n.yup.required({ field: i18n.inputs.countryLabel() })),
+		state: yup.string().required(sharedI18n.yup.required({ field: i18n.inputs.stateLabel() })),
+		abbreviation: yup
+			.string()
+			.required(sharedI18n.yup.required({ field: i18n.inputs.abbreviationLabel() })),
+		designation: yup
+			.string()
+			.required(sharedI18n.yup.required({ field: i18n.inputs.designationLabel() })),
 		mapLocation: yup.object().nullable().optional(),
 		mapArea: yup.array().nullable().optional(),
 		collectionPoints: yup.array().nullable().optional(),
@@ -89,6 +99,10 @@
 		map.addListener('bounds_changed', () => {
 			searchBox.setBounds(map.getBounds() as google.maps.LatLngBounds);
 		});
+
+		await loadNamespaceAsync(data.locale, 'fields');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	afterNavigate(async (navigation: Navigation) => {
@@ -177,35 +191,52 @@
 </script>
 
 <svelte:head>
-	<title>Fields</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
-	<AppContent {...appHeader} {isLoading} on:click={onSubmit} {showActions} {showRefreshButton}>
+	<AppContent
+		{...appHeader}
+		{isLoading}
+		{showActions}
+		{showRefreshButton}
+		locale={data.locale}
+		on:click={onSubmit}
+	>
 		<form bind:this={formRef} on:submit|preventDefault|stopPropagation={onSubmit} class="app-form">
 			<div class="input">
 				<Icon src={HiOutlineGlobe} />
 				<input
 					bind:value={fieldData.continent}
 					name="continent"
-					placeholder="Continente"
+					placeholder={i18n.inputs.continentLabel()}
 					required
 				/>
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineMinus} />
-				<input bind:value={fieldData.country} name="country" placeholder="País" required />
+				<input
+					bind:value={fieldData.country}
+					name="country"
+					placeholder={i18n.inputs.countryLabel()}
+					required
+				/>
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineMinus} />
-				<input bind:value={fieldData.state} name="state" placeholder="Estado" required />
+				<input
+					bind:value={fieldData.state}
+					name="state"
+					placeholder={i18n.inputs.stateLabel()}
+					required
+				/>
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineMinus} />
 				<input
 					bind:value={fieldData.abbreviation}
 					name="abbreviation"
-					placeholder="Abreviação"
+					placeholder={i18n.inputs.abbreviationLabel()}
 					required
 				/>
 			</div>
@@ -214,7 +245,7 @@
 				<input
 					bind:value={fieldData.designation}
 					name="designation"
-					placeholder="Designação"
+					placeholder={i18n.inputs.designationLabel()}
 					required
 				/>
 			</div>
@@ -224,7 +255,7 @@
 					bind:this={inputTagRef}
 					on:keypress={onKeyPress}
 					name="streetRelation"
-					placeholder="Relação de Ruas"
+					placeholder={i18n.inputs.streetRelationLabel()}
 					autocomplete="off"
 				/>
 				{#if fieldData.streetRelation && fieldData.streetRelation?.length > 0}

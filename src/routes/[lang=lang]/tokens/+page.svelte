@@ -15,6 +15,12 @@
 	import type { UserStore } from '$src/lib/store/user';
 	import type { PageData } from './$types';
 
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.tokens.list;
+	$: sharedI18n = $LL.shared;
+
 	export let data: PageData;
 
 	let tokenData: TokenDto[] = [];
@@ -31,6 +37,10 @@
 		const accessToken = userStore.get('accessToken');
 		axios.setAuth(accessToken);
 		isReady = true;
+
+		await loadNamespaceAsync(data.locale, 'tokens');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	// Pagination config
@@ -40,7 +50,7 @@
 		deleted: false,
 		orderKey: 'createdAt',
 		orderValue: 'desc',
-		search: '',
+		search: ''
 	} as Pagination;
 	let searchInput = '';
 
@@ -72,46 +82,46 @@
 	}
 
 	// App Header
-	const appHeader = {
-		name: 'Tokens'
+	$: appHeader = {
+		name: i18n.appHeader.name()
 	};
 
 	// Collection Header
-	const collectionHeader = [
+	$: collectionHeader = [
 		{
-			label: 'Token',
+			label: i18n.collectionHeader.tokenLabel(),
 			key: 'token'
 		},
 		{
-			label: 'E-mail',
+			label: i18n.collectionHeader.emailLabel(),
 			key: 'email'
 		},
 		{
-			label: 'Usado',
+			label: i18n.collectionHeader.usedLabel(),
 			key: 'used'
 		},
 		{
-			label: 'Tipo',
+			label: i18n.collectionHeader.typeLabel(),
 			key: 'tokenType'
 		},
 		{
-			label: 'Payload',
+			label: i18n.collectionHeader.payloadLabel(),
 			key: 'payload'
 		},
 		{
-			label: 'Expiração',
+			label: i18n.collectionHeader.expirationLabel(),
 			key: 'expiration'
 		},
 		{
-			label: 'Criado Em',
+			label: sharedI18n.collectionHeader.createdAtLabel(),
 			key: 'createdAt'
 		},
 		{
-			label: 'Atualizado Em',
+			label: sharedI18n.collectionHeader.updatedAtLabel(),
 			key: 'updatedAt'
 		},
 		{
-			label: 'Deletado Em',
+			label: sharedI18n.collectionHeader.deletedLabel(),
 			key: 'deleted'
 		}
 	];
@@ -125,54 +135,54 @@
 					value: data.id
 				},
 				{
-					label: 'Token',
+					label: i18n.collectionHeader.tokenLabel(),
 					key: 'token',
 					value: data.token
 				},
 				{
-					label: 'E-mail',
+					label: i18n.collectionHeader.emailLabel(),
 					key: 'email',
 					value: data.email,
 					isTag: true
 				},
 				{
-					label: 'Usado',
+					label: i18n.collectionHeader.usedLabel(),
 					key: 'used',
 					value: data.used,
 					isTag: true
 				},
 				{
-					label: 'Tipo',
+					label: i18n.collectionHeader.typeLabel(),
 					key: 'tokenType',
 					value: data.tokenType,
-					isTag: true,
+					isTag: true
 				},
 				{
-					label: 'Payload',
+					label: i18n.collectionHeader.payloadLabel(),
 					key: 'payload',
 					value: data.payload,
 					isJson: true
 				},
 				{
-					label: 'Expiração',
+					label: i18n.collectionHeader.expirationLabel(),
 					key: 'expiration',
 					value: data.expiration,
 					transform: (value: number) => friendlyDateString(new Date(Date.now() + value))
 				},
 				{
-					label: 'Criado Em',
+					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
 					value: data.createdAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Atualizado Em',
+					label: sharedI18n.collectionHeader.updatedAtLabel(),
 					key: 'updatedAt',
 					value: data.updatedAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Deletado Em',
+					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
 					value: data.deleted,
 					transform: friendlyDateString
@@ -198,7 +208,7 @@
 	}
 
 	function onSearchLoad() {
-		pagination.search = searchInput
+		pagination.search = searchInput;
 	}
 
 	function onSearchClear() {
@@ -207,7 +217,7 @@
 </script>
 
 <svelte:head>
-	<title>Tokens</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -217,6 +227,7 @@
 		showBackButton={false}
 		maxPage={totalPages}
 		baseRoute={'/token'}
+		locale={data.locale}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
@@ -231,11 +242,17 @@
 		<CollectionHeader
 			columns={collectionHeader}
 			showOptions={false}
+			locale={data.locale}
 			on:click={onSort}
 			bind:showDeleted={pagination.deleted}
 		/>
 		{#each collectionData as row, i (row[0].value)}
-			<CollectionRow rowCells={row} showOptions={false} bind:showDeleted={pagination.deleted} />
+			<CollectionRow
+				rowCells={row}
+				showOptions={false}
+				locale={data.locale}
+				bind:showDeleted={pagination.deleted}
+			/>
 		{/each}
 	</AppContent>
 </AppContainer>

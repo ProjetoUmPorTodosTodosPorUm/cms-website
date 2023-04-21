@@ -13,9 +13,7 @@
 	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
 	import HiOutlineX from 'svelte-icons-pack/hi/HiOutlineX';
 
-	import { getContext, onMount } from 'svelte';
-
-	import { ANNOUNCEMENT_TEMPLATE, TEMPLATES } from '$src/lib/constants';
+	import { ANNOUNCEMENT_TEMPLATE } from '$src/lib/constants';
 	import * as yup from 'yup';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
@@ -25,6 +23,13 @@
 	import type { UserStore } from '$src/lib/store/user';
 	import { afterNavigate } from '$app/navigation';
 	import type { Navigation } from '@sveltejs/kit';
+	import { getContext, onMount } from 'svelte';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.announcements.edit;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 
@@ -38,9 +43,9 @@
 	const showRefreshButton = false;
 
 	// App Header
-	const appHeader = {
-		name: 'Editar Anúncio',
-		buttonText: 'Salvar'
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText()
 	};
 
 	const query = {
@@ -56,11 +61,11 @@
 	let formRef: HTMLFormElement;
 	let fields: FieldDto[] = [];
 
-	const schema = yup.object().shape({
-		title: yup.string().required(TEMPLATES.YUP.REQUIRED('Título')),
-		message: yup.string().required(TEMPLATES.YUP.REQUIRED('Mensagem')),
+	$: schema = yup.object().shape({
+		title: yup.string().required(sharedI18n.yup.required({ field: i18n.inputs.titleLabel() })),
+		message: yup.string().required(sharedI18n.yup.required({ field: i18n.inputs.messageLabel() })),
 		attachments: yup.array(yup.string()).nullable().optional(),
-		fixed: yup.boolean().required(TEMPLATES.YUP.REQUIRED('Fixado')),
+		fixed: yup.boolean().required(sharedI18n.yup.required({ field: i18n.inputs.fixedLabel() })),
 		field: yup.string().nullable().optional()
 	});
 
@@ -72,6 +77,10 @@
 	onMount(async () => {
 		await loadData();
 		isAdminOrVolunteer = userStore.isVolunteer() || userStore.isAdmin();
+
+		await loadNamespaceAsync(data.locale, 'announcements');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	afterNavigate(async (navigation: Navigation) => {
@@ -188,7 +197,7 @@
 			];
 		} catch (error) {
 			if (error instanceof Axios.AxiosError) {
-				throw new Axios.AxiosError('Os arquivos são muito grandes!');
+				throw new Axios.AxiosError(sharedI18n.axios.fileSizeError());
 			} else {
 				console.warn(error);
 			}
@@ -212,7 +221,7 @@
 	}
 
 	function onRemoveAttachment(index: number) {
-		const remove = confirm(TEMPLATES.REMOVE.FILE(announcementData.attachments[index]));
+		const remove = confirm(sharedI18n.remove.file({ name: announcementData.attachments[index] }));
 
 		if (remove) {
 			filesToRemove = announcementData.attachments.splice(index, 1);
@@ -222,18 +231,25 @@
 </script>
 
 <svelte:head>
-	<title>Announcement</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
-	<AppContent {...appHeader} {isLoading} on:click={onSubmit} {showActions} {showRefreshButton}>
+	<AppContent
+		{...appHeader}
+		{isLoading}
+		{showActions}
+		{showRefreshButton}
+		locale={data.locale}
+		on:click={onSubmit}
+	>
 		<form bind:this={formRef} on:submit|preventDefault|stopPropagation={onSubmit} class="app-form">
 			<div class="input">
 				<Icon src={HiOutlineSpeakerphone} />
 				<input
 					bind:value={announcementData.title}
 					name="title"
-					placeholder="Título"
+					placeholder={i18n.inputs.titleLabel()}
 					autocomplete="off"
 					required
 				/>
@@ -243,7 +259,7 @@
 				<textarea
 					bind:value={announcementData.message}
 					name="message"
-					placeholder="Mensagem"
+					placeholder={i18n.inputs.messageLabel()}
 					autocomplete="off"
 					rows="5"
 					required
@@ -268,11 +284,11 @@
 			<div class="input">
 				<Icon src={BsPinAngle} />
 				<div class="radio">
-					<label for="#">Sim</label>
+					<label for="#">{i18n.inputs.yes()}</label>
 					<input bind:group={announcementData.fixed} name="fixed" type="radio" value={true} />
 				</div>
 				<div class="radio">
-					<label for="#">Não</label>
+					<label for="#">{i18n.inputs.no()}</label>
 					<input bind:group={announcementData.fixed} name="fixed" type="radio" value={false} />
 				</div>
 			</div>
@@ -280,7 +296,7 @@
 				<div class="input">
 					<Icon src={HiOutlineGlobe} />
 					<select bind:value={announcementData.field} name="field" required>
-						<option value={null} disabled selected>Campo Missionário</option>
+						<option value={null} disabled selected>{sharedI18n.inputs.fieldLabel()}</option>
 
 						{#each fields as field}
 							<option value={field.id}>

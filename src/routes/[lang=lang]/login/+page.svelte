@@ -1,11 +1,11 @@
 <script lang="ts">
 	import AuthModal from '$components/auth-modal.svelte';
 	import { generateMessages } from '$components/toast.svelte';
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 
 	import { delay } from '$lib/utils/functions';
-	import { UserStore } from '$lib/store/user';
+	import type { UserStore } from '$lib/store/user';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
 	import * as yup from 'yup';
@@ -14,19 +14,28 @@
 	import HiOutlineMail from 'svelte-icons-pack/hi/HiOutlineMail';
 	import HiOutlineLockClosed from 'svelte-icons-pack/hi/HiOutlineLockClosed';
 	import type { PageData } from './$types';
-	import { MESSAGES, TEMPLATES } from '$src/lib/constants';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.login;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
+	let userStore = getContext<UserStore>('userStore');
 
-	let userStore: UserStore;
-	onMount(() => {
-		userStore = new UserStore();
+	onMount(async () => {
+		await loadNamespaceAsync(data.locale, 'login');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	// AuthModal
-	const title = 'Projeto Um Por Todos! Todos Por Um.';
-	const subTitle = 'Bem-vindo de Volta';
-	const buttonText = 'Entrar';
+	$: authModal = {
+		title: i18n.authModal.title(),
+		subTitle: i18n.authModal.subTitle(),
+		buttonText: i18n.authModal.buttonText()
+	};
 
 	// Form
 	let email = '';
@@ -34,9 +43,15 @@
 	let isSending = false;
 	$: isSubmitDisabled = password.length < 8 || email === '';
 
-	const schema = yup.object().shape({
-		email: yup.string().required(TEMPLATES.YUP.REQUIRED('Email')).email(MESSAGES.YUP.EMAIL),
-		password: yup.string().required().min(8, TEMPLATES.YUP.MIN('Senha', 8))
+	$: schema = yup.object().shape({
+		email: yup
+			.string()
+			.email(sharedI18n.yup.email({ field: i18n.inputs.emailLabel() }))
+			.required(sharedI18n.yup.required({ field: i18n.inputs.emailLabel() })),
+		password: yup
+			.string()
+			.min(8, sharedI18n.yup.min({ field: i18n.inputs.passwordLabel(), length: 8 }))
+			.required(sharedI18n.yup.required({ field: i18n.inputs.passwordLabel() }))
 	});
 
 	// Toast Messages
@@ -72,18 +87,10 @@
 </script>
 
 <svelte:head>
-	<title>Login</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
-<AuthModal
-	on:submit={onSubmit}
-	{title}
-	{subTitle}
-	{buttonText}
-	{isSending}
-	{isSubmitDisabled}
-	{messages}
->
+<AuthModal on:submit={onSubmit} {...authModal} {isSending} {isSubmitDisabled} {messages}>
 	<svelte:fragment slot="body">
 		<div class="form-input">
 			<Icon src={HiOutlineMail} />
@@ -91,7 +98,7 @@
 				bind:value={email}
 				name="email"
 				type="email"
-				placeholder="Email"
+				placeholder={i18n.inputs.emailLabel()}
 				autocomplete="email"
 				required
 			/>
@@ -103,7 +110,7 @@
 				name="password"
 				type="password"
 				minlength={8}
-				placeholder="Senha"
+				placeholder={i18n.inputs.passwordLabel()}
 				autocomplete="current-password"
 				required
 			/>
@@ -111,7 +118,7 @@
 	</svelte:fragment>
 
 	<svelte:fragment slot="links">
-		<a href={`/${data.locale}/signup`}>Criar Conta</a>
-		<a href={`/${data.locale}/forgot-password`}>Recuperar Conta</a>
+		<a href={`/${data.locale}/signup`}>{i18n.links.signupText()}</a>
+		<a href={`/${data.locale}/forgot-password`}>{i18n.links.forgotPasswordText()}</a>
 	</svelte:fragment>
 </AuthModal>

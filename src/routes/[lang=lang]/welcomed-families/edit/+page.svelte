@@ -10,9 +10,7 @@
 	import HiOutlineInformationCircle from 'svelte-icons-pack/hi/HiOutlineInformationCircle';
 	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
 
-	import { getContext, onMount } from 'svelte';
-
-	import { TEMPLATES, WELCOMED_FAMILY_TEMPLATE } from '$src/lib/constants';
+	import { WELCOMED_FAMILY_TEMPLATE } from '$src/lib/constants';
 	import * as yup from 'yup';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
@@ -22,6 +20,13 @@
 	import type { UserStore } from '$src/lib/store/user';
 	import { afterNavigate } from '$app/navigation';
 	import type { Navigation } from '@sveltejs/kit';
+	import { getContext, onMount } from 'svelte';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL['welcomed-families'].edit;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 
@@ -35,9 +40,9 @@
 	const showRefreshButton = false;
 
 	// App Header
-	const appHeader = {
-		name: 'Editar Família Acolhida',
-		buttonText: 'Salvar'
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText()
 	};
 
 	const query = {
@@ -53,9 +58,13 @@
 	let formRef: HTMLFormElement;
 	let fields: FieldDto[] = [];
 
-	const schema = yup.object().shape({
-		representative: yup.string().required(TEMPLATES.YUP.REQUIRED('Representante')),
-		observation: yup.string().required(TEMPLATES.YUP.REQUIRED('Observação')),
+	$: schema = yup.object().shape({
+		representative: yup
+			.string()
+			.required(sharedI18n.yup.required({ field: i18n.inputs.representativeLabel() })),
+		observation: yup
+			.string()
+			.required(sharedI18n.yup.required({ field: i18n.inputs.observationLabel() })),
 		field: yup.string().nullable().optional()
 	});
 
@@ -64,6 +73,10 @@
 	onMount(async () => {
 		await loadData();
 		isAdminOrVolunteer = userStore.isVolunteer() || userStore.isAdmin();
+
+		await loadNamespaceAsync(data.locale, 'welcomed-families');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	afterNavigate(async (navigation: Navigation) => {
@@ -141,18 +154,25 @@
 </script>
 
 <svelte:head>
-	<title>Welcomed Families</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
-	<AppContent {...appHeader} {isLoading} on:click={onSubmit} {showActions} {showRefreshButton}>
+	<AppContent
+		{...appHeader}
+		{isLoading}
+		{showActions}
+		{showRefreshButton}
+		locale={data.locale}
+		on:click={onSubmit}
+	>
 		<form bind:this={formRef} on:submit|preventDefault|stopPropagation={onSubmit} class="app-form">
 			<div class="input">
 				<Icon src={HiOutlineUser} />
 				<input
 					bind:value={welcomedFamilyData.representative}
 					name="representative"
-					placeholder="Representante"
+					placeholder={i18n.inputs.representativeLabel()}
 					autocomplete="off"
 					required
 				/>
@@ -162,7 +182,7 @@
 				<textarea
 					bind:value={welcomedFamilyData.observation}
 					name="observation"
-					placeholder="Observação"
+					placeholder={i18n.inputs.observationLabel()}
 					autocomplete="off"
 					rows="5"
 					required
@@ -172,7 +192,7 @@
 				<div class="input">
 					<Icon src={HiOutlineGlobe} />
 					<select bind:value={welcomedFamilyData.field} name="field" required>
-						<option value={null} disabled selected>Campo Missionário</option>
+						<option value={null} disabled selected>{sharedI18n.inputs.fieldLabel()}</option>
 
 						{#each fields as field}
 							<option value={field.id}>

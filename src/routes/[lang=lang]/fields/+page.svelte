@@ -23,6 +23,12 @@
 	import type { PageData } from './$types';
 	import type { UserStore } from '$src/lib/store/user';
 
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.fields.list;
+	$: sharedI18n = $LL.shared;
+
 	export let data: PageData;
 
 	let fieldData: FieldDto[] = [];
@@ -39,6 +45,10 @@
 		const accessToken = userStore.get('accessToken');
 		axios.setAuth(accessToken);
 		isReady = true;
+
+		await loadNamespaceAsync(data.locale, 'fields');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	// Pagination config
@@ -48,7 +58,7 @@
 		deleted: false,
 		orderKey: 'abbreviation',
 		orderValue: 'asc',
-		search: '',
+		search: ''
 	} as Pagination;
 	let searchInput = '';
 
@@ -80,52 +90,52 @@
 	}
 
 	// App Header
-	const appHeader = {
-		name: 'Campos Missionários',
-		buttonText: 'Adicionar Campo Missionário',
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText(),
 		buttonLink: `/${data.locale}/fields/add`
 	};
 
 	// Collection Header
-	const collectionHeader = [
+	$: collectionHeader = [
 		{
-			label: 'Continente',
+			label: i18n.collectionHeader.continentLabel(),
 			key: 'continent'
 		},
 		{
-			label: 'País',
+			label: i18n.collectionHeader.countryLabel(),
 			key: 'country'
 		},
 		{
-			label: 'Estado',
+			label: i18n.collectionHeader.stateLabel(),
 			key: 'state'
 		},
 		{
-			label: 'Abreviação',
+			label: i18n.collectionHeader.abbreviationLabel(),
 			key: 'abbreviation'
 		},
 		{
-			label: 'Designação',
+			label: i18n.collectionHeader.designationLabel(),
 			key: 'designation'
 		},
 		{
-			label: 'Pontos de Coleta',
+			label: i18n.collectionHeader.collectionPointsLabel(),
 			key: 'collectionPoints'
 		},
 		{
-			label: 'Relação de Ruas',
+			label: i18n.collectionHeader.streetRelationLabel(),
 			key: 'streetRelation'
 		},
 		{
-			label: 'Criado Em',
+			label: sharedI18n.collectionHeader.createdAtLabel(),
 			key: 'createdAt'
 		},
 		{
-			label: 'Atualizado Em',
+			label: sharedI18n.collectionHeader.updatedAtLabel(),
 			key: 'updatedAt'
 		},
 		{
-			label: 'Deletado Em',
+			label: sharedI18n.collectionHeader.deletedLabel(),
 			key: 'deleted'
 		}
 	] as ColumnCell[];
@@ -139,57 +149,57 @@
 					value: data.id
 				},
 				{
-					label: 'Continente',
+					label: i18n.collectionHeader.continentLabel(),
 					key: 'continent',
 					value: data.continent
 				},
 				{
-					label: 'País',
+					label: i18n.collectionHeader.countryLabel(),
 					key: 'country',
 					value: data.country
 				},
 				{
-					label: 'Estado',
+					label: i18n.collectionHeader.stateLabel(),
 					key: 'state',
 					value: data.state
 				},
 				{
-					label: 'Abreviação',
+					label: i18n.collectionHeader.abbreviationLabel(),
 					key: 'abbreviation',
 					value: data.abbreviation,
 					isTag: true
 				},
 				{
-					label: 'Designação',
+					label: i18n.collectionHeader.designationLabel(),
 					key: 'designation',
 					value: data.designation
 				},
 				{
-					label: 'Pontos de Coleta',
+					label: i18n.collectionHeader.collectionPointsLabel(),
 					key: 'collectionPoints',
 					value: data.collectionPoints,
 					isJson: true
 				},
 				{
-					abel: 'Relação de Ruas',
+					abel: i18n.collectionHeader.streetRelationLabel(),
 					key: 'streetRelation',
 					value: data.streetRelation,
 					isJson: true
 				},
 				{
-					label: 'Criado Em',
+					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
 					value: data.createdAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Atualizado Em',
+					label: sharedI18n.collectionHeader.updatedAtLabel(),
 					key: 'updatedAt',
 					value: data.updatedAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Deletado Em',
+					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
 					value: data.deleted,
 					transform: friendlyDateString
@@ -252,7 +262,7 @@
 	}
 
 	function onSearchLoad() {
-		pagination.search = searchInput
+		pagination.search = searchInput;
 	}
 
 	function onSearchClear() {
@@ -261,7 +271,7 @@
 </script>
 
 <svelte:head>
-	<title>Fields</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -271,6 +281,7 @@
 		showBackButton={false}
 		maxPage={totalPages}
 		baseRoute={'/field'}
+		locale={data.locale}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
@@ -284,12 +295,14 @@
 	>
 		<CollectionHeader
 			columns={collectionHeader}
+			locale={data.locale}
 			on:click={onSort}
 			bind:showDeleted={pagination.deleted}
 		/>
 		{#each collectionData as row, i (row[0].value)}
 			<CollectionRow
 				rowCells={row}
+				locale={data.locale}
 				on:edit={handleEdit}
 				on:remove={handleRemove}
 				on:select={handleSelect}

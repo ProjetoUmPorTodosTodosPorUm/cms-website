@@ -14,9 +14,7 @@
 	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
 	import HiOutlineX from 'svelte-icons-pack/hi/HiOutlineX';
 
-	import { getContext, onMount } from 'svelte';
-
-	import { REPORT_TEMPLATE, TEMPLATES } from '$src/lib/constants';
+	import { REPORT_TEMPLATE } from '$src/lib/constants';
 	import * as yup from 'yup';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
@@ -27,6 +25,13 @@
 	import { afterNavigate } from '$app/navigation';
 	import type { Navigation } from '@sveltejs/kit';
 	import { ReportType } from '$src/lib/enums';
+	import { getContext, onMount } from 'svelte';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.reports.edit;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 
@@ -40,9 +45,9 @@
 	const showRefreshButton = false;
 
 	// App Header
-	const appHeader = {
-		name: 'Editar Relatório',
-		buttonText: 'Salvar'
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText()
 	};
 
 	const query = {
@@ -60,37 +65,49 @@
 	// Form
 	let fields: FieldDto[] = [];
 
-	const reportTypes = [
-		{ value: 'ORDINARY', text: 'Comum' },
-		{ value: 'SEMESTER', text: 'Semenstral' },
-		{ value: 'ANNUAL', text: 'Anual' }
+	$: reportTypes = [
+		{ value: 'ORDINARY', text: i18n.reportTypes.ordinary() },
+		{ value: 'SEMESTER', text: i18n.reportTypes.semester() },
+		{ value: 'ANNUAL', text: i18n.reportTypes.annual() }
 	];
 
-	const schema = yup.object().shape({
-		title: yup.string().required(TEMPLATES.YUP.REQUIRED('Título')),
+	$: schema = yup.object().shape({
+		title: yup.string().required(sharedI18n.yup.required({ field: i18n.inputs.titleLabel() })),
 		text: yup.string().nullable().optional(),
-		shortDescription: yup.string().required(TEMPLATES.YUP.REQUIRED('Descrição')),
-		attachments: yup.array(yup.string()).nullable().optional(),
-		month: yup.number().when('type', {
-			is: (val: ReportType) => val !== ReportType.ANNUAL && val !== null,
-			then: (schema) =>
-				schema
-					.integer()
-					.min(1, TEMPLATES.YUP.MIN_NUMBER('Mês', 1))
-					.max(12, TEMPLATES.YUP.MAX_NUMBER('Mês', 12))
-					.required(TEMPLATES.YUP.REQUIRED('Mês')),
-			otherwise: (schema) => schema.nullable().optional()
-		}),
+		shortDescription: yup
+			.string()
+			.required(sharedI18n.yup.required({ field: i18n.inputs.shortDescriptionLabel() })),
+		attachments: yup
+			.array(yup.string())
+			.min(1, sharedI18n.yup.min({ field: i18n.inputs.attachmentsLabel(), length: 1 }))
+			.required(sharedI18n.yup.required({ field: i18n.inputs.attachmentsLabel() })),
+		month: yup
+			.number()
+			.typeError(sharedI18n.yup.number({ field: i18n.inputs.monthLabel() }))
+			.when('type', {
+				is: (val: ReportType) => val !== ReportType.ANNUAL && val !== null,
+				then: (schema) =>
+					schema
+						.integer(sharedI18n.yup.integer({ field: i18n.inputs.monthLabel() }))
+						.min(1, sharedI18n.yup.minNumber({ field: i18n.inputs.monthLabel(), value: 1 }))
+						.max(12, sharedI18n.yup.maxNumber({ field: i18n.inputs.monthLabel(), value: 1 }))
+						.required(sharedI18n.yup.required({ field: i18n.inputs.monthLabel() })),
+				otherwise: (schema) => schema.nullable().optional()
+			}),
 		year: yup
 			.number()
-			.integer()
-			.min(2000, TEMPLATES.YUP.MIN_NUMBER('Ano', 2000))
-			.max(2100, TEMPLATES.YUP.MAX_NUMBER('Ano', 2100))
-			.required(TEMPLATES.YUP.REQUIRED('Ano')),
+			.typeError(sharedI18n.yup.number({ field: i18n.inputs.yearLabel() }))
+			.integer(sharedI18n.yup.integer({ field: i18n.inputs.yearLabel() }))
+			.min(2000, sharedI18n.yup.minNumber({ field: i18n.inputs.yearLabel(), value: 2000 }))
+			.max(2100, sharedI18n.yup.maxNumber({ field: i18n.inputs.yearLabel(), value: 2100 }))
+			.required(sharedI18n.yup.required({ field: i18n.inputs.yearLabel() })),
 		type: yup
 			.string()
-			.oneOf(Object.values(ReportType), TEMPLATES.YUP.ONE_OF(reportTypes.map((r) => r.text)))
-			.required(TEMPLATES.YUP.REQUIRED('Tipo')),
+			.oneOf(
+				Object.values(ReportType),
+				sharedI18n.yup.oneOf({ enums: reportTypes.map((r) => r.text).join(', ') })
+			)
+			.required(sharedI18n.yup.required({ field: i18n.inputs.typeLabel() })),
 		field: yup.string().nullable().optional()
 	});
 
@@ -102,6 +119,10 @@
 	onMount(async () => {
 		await loadData();
 		isAdminOrVolunteer = userStore.isVolunteer() || userStore.isAdmin();
+
+		await loadNamespaceAsync(data.locale, 'reports');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	afterNavigate(async (navigation: Navigation) => {
@@ -235,7 +256,7 @@
 			];
 		} catch (error) {
 			if (error instanceof Axios.AxiosError) {
-				throw new Axios.AxiosError('Os arquivos são muito grandes!');
+				throw new Axios.AxiosError(sharedI18n.axios.fileSizeError());
 			} else {
 				console.warn(error);
 			}
@@ -259,7 +280,7 @@
 	}
 
 	function onRemoveAttachment(index: number) {
-		const remove = confirm(TEMPLATES.REMOVE.FILE(reportData.attachments[index]));
+		const remove = confirm(sharedI18n.remove.file({ name: reportData.attachments[index] }));
 
 		if (remove) {
 			filesToRemove = reportData.attachments.splice(index, 1);
@@ -269,18 +290,25 @@
 </script>
 
 <svelte:head>
-	<title>Report</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
-	<AppContent {...appHeader} {isLoading} on:click={onSubmit} {showActions} {showRefreshButton}>
+	<AppContent
+		{...appHeader}
+		{isLoading}
+		{showActions}
+		{showRefreshButton}
+		locale={data.locale}
+		on:click={onSubmit}
+	>
 		<form on:submit|preventDefault|stopPropagation={onSubmit} class="app-form">
 			<div class="input">
 				<Icon src={HiOutlinePencil} />
 				<input
 					bind:value={reportData.title}
 					name="title"
-					placeholder="Título"
+					placeholder={i18n.inputs.titleLabel()}
 					autocomplete="off"
 					required
 				/>
@@ -290,7 +318,7 @@
 				<textarea
 					bind:value={reportData.shortDescription}
 					name="shortDescription"
-					placeholder="Descrição"
+					placeholder={i18n.inputs.shortDescriptionLabel()}
 					autocomplete="off"
 					rows="5"
 					required
@@ -301,7 +329,7 @@
 				<textarea
 					bind:value={reportData.text}
 					name="text"
-					placeholder="Texto"
+					placeholder={i18n.inputs.textLabel()}
 					autocomplete="off"
 					rows="5"
 					required
@@ -335,7 +363,7 @@
 					<input
 						bind:value={reportData.month}
 						name="month"
-						placeholder="Mês"
+						placeholder={i18n.inputs.monthLabel()}
 						type="number"
 						min="1"
 						max="12"
@@ -346,7 +374,7 @@
 					<input
 						bind:value={reportData.year}
 						name="year"
-						placeholder="Ano"
+						placeholder={i18n.inputs.yearLabel()}
 						type="number"
 						min="2000"
 						max="2100"
@@ -357,7 +385,7 @@
 			<div class="input">
 				<Icon src={HiOutlineTag} />
 				<select bind:value={reportData.type} name="type" required>
-					<option value={null} disabled selected>Tipo</option>
+					<option value={null} disabled selected>{i18n.inputs.typeLabel()}</option>
 
 					{#each reportTypes as reportType}
 						<option value={reportType.value}>{reportType.text}</option>
@@ -368,7 +396,7 @@
 				<div class="input">
 					<Icon src={HiOutlineGlobe} />
 					<select bind:value={reportData.field} name="field" required>
-						<option value={null} disabled selected>Campo Missionário</option>
+						<option value={null} disabled selected>{sharedI18n.inputs.fieldLabel()}</option>
 
 						{#each fields as field}
 							<option value={field.id}>

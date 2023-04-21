@@ -15,6 +15,12 @@
 	import type { UserStore } from '$src/lib/store/user';
 	import type { PageData } from './$types';
 
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.logs.list;
+	$: sharedI18n = $LL.shared;
+
 	export let data: PageData;
 
 	let logData: LogDto[] = [];
@@ -31,6 +37,10 @@
 		const accessToken = userStore.get('accessToken');
 		axios.setAuth(accessToken);
 		isReady = true;
+
+		await loadNamespaceAsync(data.locale, 'logs');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	// Pagination config
@@ -40,7 +50,7 @@
 		deleted: false,
 		orderKey: 'createdAt',
 		orderValue: 'desc',
-		search: '',
+		search: ''
 	} as Pagination;
 	let searchInput = '';
 
@@ -72,50 +82,50 @@
 	}
 
 	// App Header
-	const appHeader = {
-		name: 'Logs'
+	$: appHeader = {
+		name: i18n.appHeader.name()
 	};
 
 	// Collection Header
-	const collectionHeader = [
+	$: collectionHeader = [
 		{
-			label: 'IP',
+			label: i18n.collectionHeader.ipLabel(),
 			key: 'ip'
 		},
 		{
-			label: 'METHOD',
+			label: i18n.collectionHeader.methodLabel(),
 			key: 'method'
 		},
 		{
-			label: 'URL',
+			label: i18n.collectionHeader.urlLabel(),
 			key: 'url'
 		},
 		{
-			label: 'Body',
+			label: i18n.collectionHeader.bodyLabel(),
 			key: 'body'
 		},
 		{
-			label: 'Files',
+			label: i18n.collectionHeader.filesLabel(),
 			key: 'files'
 		},
 		{
-			label: 'Query',
+			label: i18n.collectionHeader.queryLabel(),
 			key: 'query'
 		},
 		{
-			label: 'Status Code',
+			label: i18n.collectionHeader.statusCodeLabel(),
 			key: 'statusCode'
 		},
 		{
-			label: 'Usuário',
+			label: i18n.collectionHeader.userLabel(),
 			key: 'user'
 		},
 		{
-			label: 'Criado Em',
+			label: sharedI18n.collectionHeader.createdAtLabel(),
 			key: 'createdAt'
 		},
 		{
-			label: 'Deletado Em',
+			label: sharedI18n.collectionHeader.deletedLabel(),
 			key: 'deleted'
 		}
 	];
@@ -129,57 +139,57 @@
 					value: log.id
 				},
 				{
-					label: 'IP',
+					label: i18n.collectionHeader.ipLabel(),
 					key: 'ip',
 					value: log.ip
 				},
 				{
-					label: 'METHOD',
+					label: i18n.collectionHeader.methodLabel(),
 					key: 'method',
 					value: log.method,
 					isTag: true
 				},
 				{
-					label: 'URL',
+					label: i18n.collectionHeader.urlLabel(),
 					key: 'url',
 					value: log.url
 				},
 				{
-					label: 'Body',
+					label: i18n.collectionHeader.bodyLabel(),
 					key: 'body',
 					value: log.body,
 					isJson: true
 				},
 				{
-					label: 'Files',
+					label: i18n.collectionHeader.filesLabel(),
 					key: 'files',
 					value: log.files,
 					isJson: true
 				},
 				{
-					label: 'Query',
+					label: i18n.collectionHeader.queryLabel(),
 					key: 'query',
 					value: log.query
 				},
 				{
-					label: 'Status Code',
+					label: i18n.collectionHeader.statusCodeLabel(),
 					key: 'statusCode',
 					value: log.statusCode
 				},
 				{
-					label: 'Usuário',
+					label: i18n.collectionHeader.userLabel(),
 					key: 'user',
 					value: log.user,
 					isJson: true
 				},
 				{
-					label: 'Criado Em',
+					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
 					value: log.createdAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Deletado Em',
+					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
 					value: log.deleted,
 					transform: friendlyDateString
@@ -205,7 +215,7 @@
 	}
 
 	function onSearchLoad() {
-		pagination.search = searchInput
+		pagination.search = searchInput;
 	}
 
 	function onSearchClear() {
@@ -214,7 +224,7 @@
 </script>
 
 <svelte:head>
-	<title>Logs</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -224,6 +234,7 @@
 		showBackButton={false}
 		maxPage={totalPages}
 		baseRoute={'/log'}
+		locale={data.locale}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
@@ -238,11 +249,17 @@
 		<CollectionHeader
 			columns={collectionHeader}
 			showOptions={false}
+			locale={data.locale}
 			on:click={onSort}
 			bind:showDeleted={pagination.deleted}
 		/>
 		{#each collectionData as row, i (row[0].value)}
-			<CollectionRow rowCells={row} showOptions={false} bind:showDeleted={pagination.deleted} />
+			<CollectionRow
+				rowCells={row}
+				showOptions={false}
+				locale={data.locale}
+				bind:showDeleted={pagination.deleted}
+			/>
 		{/each}
 	</AppContent>
 </AppContainer>

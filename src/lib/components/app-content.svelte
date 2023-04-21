@@ -4,6 +4,7 @@
 
 	import AppContentLoading from '$components/app-content-loading.svelte';
 	import { createEventDispatcher } from 'svelte';
+	import type { Locales } from '$src/i18n/i18n-types';
 
 	// Component Data - forwarding
 	export let name: string;
@@ -16,7 +17,8 @@
 	export let itemsSelected: string[] = [];
 	export let search = '';
 	export let searchMinLength = 3;
-	export let searchType: 'text' | 'number' =  'text';
+	export let searchType: 'text' | 'number' = 'text';
+	export let locale: Locales;
 
 	// Component Options - forwarding
 	export let isLoading = false;
@@ -36,7 +38,7 @@
 	const searchLoad = () => dispatch('searchLoad');
 	const searchClear = () => dispatch('searchClear');
 
-	let appHeader = {
+	$: appHeader = {
 		name,
 		buttonText,
 		buttonLink
@@ -48,6 +50,7 @@
 		{...appHeader}
 		{showBackButton}
 		{showRefreshButton}
+		{locale}
 		on:click={click}
 		on:refresh={refresh}
 	/>
@@ -58,6 +61,7 @@
 			{baseRoute}
 			{searchMinLength}
 			{searchType}
+			{locale}
 			bind:search
 			bind:itemsSelected
 			bind:page

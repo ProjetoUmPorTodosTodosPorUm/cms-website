@@ -1,0 +1,21 @@
+@import "$lib/scss/_shared";
+
+.switch-locale {
+    display: flex;
+    
+    .icon {
+        margin-right: .2rem;
+        fill: var(--contrast-primary-background);
+    }
+
+    select {
+        background: transparent;
+        color: var(--contrast-primary-background);
+        border-color: var(--contrast-primary-background);
+        outline: none;
+
+        option {
+            color: var(--font-color);
+        }
+    }
+}

@@ -2,10 +2,18 @@
 	import { goto } from '$app/navigation';
 	import { getFromLocalStorage, saveToLocalStorage } from '$src/lib/utils/functions';
 	import { createEventDispatcher, onMount } from 'svelte';
+	import type { Locales } from '$src/i18n/i18n-types';
 
 	import Icon from 'svelte-icons-pack';
 	import FaSolidArrowLeft from 'svelte-icons-pack/fa/FaSolidArrowLeft';
 	import FiRefreshCw from 'svelte-icons-pack/fi/FiRefreshCw';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL['app-header'];
+
+	export let locale: Locales;
 
 	// Component Data
 	export let name: string;
@@ -19,10 +27,13 @@
 	let modeSwitchRef: HTMLButtonElement;
 	let currentTheme = 'light';
 
-	onMount(() => {
+	onMount(async () => {
 		const theme = getFromLocalStorage('theme') || currentTheme;
 		currentTheme = theme === 'dark' ? 'dark' : 'light';
 		applySavedTheme();
+
+		await loadNamespaceAsync(locale, 'app-header');
+		setLocale(locale);
 	});
 
 	// Events
@@ -58,7 +69,7 @@
 
 	<h1 class="app-content-headerText">{name}</h1>
 	{#if showRefreshButton}
-		<button on:click={refresh} class="app-content-refresh" title="Atualizar">
+		<button on:click={refresh} class="app-content-refresh" title={i18n.refreshButtonTitle()}>
 			<Icon src={FiRefreshCw} />
 		</button>
 	{/if}
@@ -66,7 +77,7 @@
 		bind:this={modeSwitchRef}
 		on:click={onToggleStyle}
 		class="mode-switch"
-		title="Alternar Tema"
+		title={i18n.switchThemeButtonTitle()}
 	>
 		<svg
 			class="moon"

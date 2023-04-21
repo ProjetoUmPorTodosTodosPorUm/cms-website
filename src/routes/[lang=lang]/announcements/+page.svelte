@@ -19,9 +19,14 @@
 	import axios from '$lib/axios';
 	import Axios from 'axios';
 	import { goto } from '$app/navigation';
-	import { TEMPLATES } from '$src/lib/constants';
 	import type { PageData } from './$types';
 	import type { UserStore } from '$src/lib/store/user';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.announcements.list;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 
@@ -40,10 +45,14 @@
 		axios.setAuth(accessToken);
 		isReady = true;
 
-		if(userStore.isVolunteer() || userStore.isAdmin()) {
+		if (userStore.isVolunteer() || userStore.isAdmin()) {
 			pagination.searchSpecificField = 'fieldId';
-			pagination.searchSpecificValue = userStore.get('user.fieldId')
+			pagination.searchSpecificValue = userStore.get('user.fieldId');
 		}
+
+		await loadNamespaceAsync(data.locale, 'announcements');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	// Pagination config
@@ -53,7 +62,7 @@
 		deleted: false,
 		orderKey: 'createdAt',
 		orderValue: 'desc',
-		search: '',
+		search: ''
 	} as Pagination;
 	let searchInput = '';
 
@@ -85,40 +94,40 @@
 	}
 
 	// App Header
-	const appHeader = {
-		name: 'Anúncios',
-		buttonText: 'Adicionar Anúncio',
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText(),
 		buttonLink: `/${data.locale}/announcements/add`
 	};
 
 	// Collection Header
-	const collectionHeader = [
+	$: collectionHeader = [
 		{
-			label: 'Título',
+			label: i18n.collectionHeader.titleLabel(),
 			key: 'title'
 		},
 		{
-			label: 'Mensagem',
-			key: 'message',
+			label: i18n.collectionHeader.messageLabel(),
+			key: 'message'
 		},
 		{
-			label: 'Anexos',
+			label: i18n.collectionHeader.attachmentsLabel(),
 			key: 'attachments'
 		},
 		{
-			label: 'Fixado',
+			label: i18n.collectionHeader.fixedLabel(),
 			key: 'fixed'
 		},
 		{
-			label: 'Criado Em',
+			label: sharedI18n.collectionHeader.createdAtLabel(),
 			key: 'createdAt'
 		},
 		{
-			label: 'Atualizado Em',
+			label: sharedI18n.collectionHeader.updatedAtLabel(),
 			key: 'updatedAt'
 		},
 		{
-			label: 'Deletado Em',
+			label: sharedI18n.collectionHeader.deletedLabel(),
 			key: 'deleted'
 		}
 	] as ColumnCell[];
@@ -132,43 +141,43 @@
 					value: data.id
 				},
 				{
-					label: 'Título',
-			        key: 'title',
+					label: i18n.collectionHeader.titleLabel(),
+					key: 'title',
 					value: data.title
 				},
 				{
-					label: 'Mensagem',
-			        key: 'message',
+					label: i18n.collectionHeader.messageLabel(),
+					key: 'message',
 					value: data.message,
-                    textLimit: 100,
+					textLimit: 100
 				},
 				{
-					label: 'Anexos',
-			        key: 'attachments',
+					label: i18n.collectionHeader.attachmentsLabel(),
+					key: 'attachments',
 					value: data.attachments,
-                    isJson: true,
+					isJson: true
 				},
 				{
-					label: 'Fixado',
-			        key: 'fixed',
+					label: i18n.collectionHeader.fixedLabel(),
+					key: 'fixed',
 					value: data.fixed,
 					isStatus: true,
-					transform: val => val ? 'Sim' : 'Não'
+					transform: (val) => (val ? sharedI18n.isStatusTransform.true() : sharedI18n.isStatusTransform.false())
 				},
 				{
-					label: 'Criado Em',
+					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
 					value: data.createdAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Atualizado Em',
+					label: sharedI18n.collectionHeader.updatedAtLabel(),
 					key: 'updatedAt',
 					value: data.updatedAt,
 					transform: friendlyDateString
 				},
 				{
-					label: 'Deletado Em',
+					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
 					value: data.deleted,
 					transform: friendlyDateString
@@ -184,7 +193,7 @@
 
 	async function handleRemove(event: CustomEvent) {
 		const { id, data } = event.detail;
-		const remove = confirm(TEMPLATES.REMOVE.AGENDA(data.title));
+		const remove = confirm(sharedI18n.remove.announcement({ title: data.title }));
 
 		if (remove) {
 			isLoading = true;
@@ -231,7 +240,7 @@
 	}
 
 	function onSearchLoad() {
-		pagination.search = searchInput
+		pagination.search = searchInput;
 	}
 
 	function onSearchClear() {
@@ -240,7 +249,7 @@
 </script>
 
 <svelte:head>
-	<title>Announcements</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
@@ -250,6 +259,7 @@
 		showBackButton={false}
 		maxPage={totalPages}
 		baseRoute={'/announcement'}
+		locale={data.locale}
 		on:refresh={loadData}
 		on:restore={loadData}
 		on:remove={loadData}
@@ -263,12 +273,14 @@
 	>
 		<CollectionHeader
 			columns={collectionHeader}
+			locale={data.locale}
 			on:click={onSort}
 			bind:showDeleted={pagination.deleted}
 		/>
 		{#each collectionData as row, i (row[0].value)}
 			<CollectionRow
 				rowCells={row}
+				locale={data.locale}
 				on:edit={handleEdit}
 				on:remove={handleRemove}
 				on:select={handleSelect}

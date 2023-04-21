@@ -12,9 +12,7 @@
 	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
 	import HiOutlineX from 'svelte-icons-pack/hi/HiOutlineX';
 
-	import { getContext, onMount } from 'svelte';
-
-	import { COLLABORATOR_TEMPLATE, TEMPLATES } from '$src/lib/constants';
+	import { COLLABORATOR_TEMPLATE } from '$src/lib/constants';
 	import * as yup from 'yup';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
@@ -24,6 +22,13 @@
 	import type { UserStore } from '$src/lib/store/user';
 	import { afterNavigate } from '$app/navigation';
 	import type { Navigation } from '@sveltejs/kit';
+	import { getContext, onMount } from 'svelte';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.collaborators.edit;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 
@@ -37,9 +42,9 @@
 	const showRefreshButton = false;
 
 	// App Header
-	const appHeader = {
-		name: 'Editar Colaborador',
-		buttonText: 'Salvar'
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText()
 	};
 
 	const query = {
@@ -54,9 +59,11 @@
 	// Form
 	let fields: FieldDto[] = [];
 
-	const schema = yup.object().shape({
-		title: yup.string().required(TEMPLATES.YUP.REQUIRED('Título')),
-		description: yup.string().required(TEMPLATES.YUP.REQUIRED('Descrição')),
+	$: schema = yup.object().shape({
+		title: yup.string().required(sharedI18n.yup.required({ field: i18n.inputs.titleLabel() })),
+		description: yup
+			.string()
+			.required(sharedI18n.yup.required({ field: i18n.inputs.descriptionLabel() })),
 		image: yup.string().nullable().optional(),
 		field: yup.string().nullable().optional()
 	});
@@ -69,6 +76,10 @@
 	onMount(async () => {
 		await loadData();
 		isAdminOrVolunteer = userStore.isVolunteer() || userStore.isAdmin();
+
+		await loadNamespaceAsync(data.locale, 'collaborators');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	afterNavigate(async (navigation: Navigation) => {
@@ -159,7 +170,7 @@
 		if (file) {
 			fileToUpload = file;
 
-			if(collaboratorData.image) {
+			if (collaboratorData.image) {
 				fileToRemove = collaboratorData.image;
 			}
 		} else {
@@ -181,7 +192,7 @@
 			collaboratorData.image = res.data.data.name;
 		} catch (error) {
 			if (error instanceof Axios.AxiosError) {
-				throw new Axios.AxiosError('O arquivo é muito grande!');
+				throw new Axios.AxiosError(sharedI18n.axios.fileSizeError());
 			} else {
 				console.warn(error);
 			}
@@ -205,28 +216,35 @@
 	}
 
 	function onRemoveFile() {
-		const remove = confirm(TEMPLATES.REMOVE.FILE(collaboratorData.image));
+		const remove = confirm(sharedI18n.remove.file({ name: collaboratorData.image }));
 
 		if (remove) {
-			fileToRemove = collaboratorData.image
+			fileToRemove = collaboratorData.image;
 			collaboratorData.image = '';
 		}
 	}
 </script>
 
 <svelte:head>
-	<title>Collaborators</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
-	<AppContent {...appHeader} {isLoading} on:click={onSubmit} {showActions} {showRefreshButton}>
+	<AppContent
+		{...appHeader}
+		{isLoading}
+		{showActions}
+		{showRefreshButton}
+		locale={data.locale}
+		on:click={onSubmit}
+	>
 		<form on:submit|preventDefault|stopPropagation={onSubmit} class="app-form">
 			<div class="input">
 				<Icon src={HiOutlineUserGroup} />
 				<input
 					bind:value={collaboratorData.title}
 					name="title"
-					placeholder="Título"
+					placeholder={i18n.inputs.titleLabel()}
 					autocomplete="off"
 					required
 				/>
@@ -236,7 +254,7 @@
 				<textarea
 					bind:value={collaboratorData.description}
 					name="description"
-					placeholder="Descrição"
+					placeholder={i18n.inputs.descriptionLabel()}
 					autocomplete="off"
 					rows="5"
 					required
@@ -249,9 +267,7 @@
 					<div class="files">
 						<div class="item">
 							<a href={`/static/${collaboratorData.image}`}>{collaboratorData.image}</a>
-							<button
-								class="btn-close"
-								on:click|preventDefault={() => onRemoveFile()}
+							<button class="btn-close" on:click|preventDefault={() => onRemoveFile()}
 								><Icon src={HiOutlineX} /></button
 							>
 						</div>
@@ -262,7 +278,7 @@
 				<div class="input">
 					<Icon src={HiOutlineGlobe} />
 					<select bind:value={collaboratorData.field} name="field" required>
-						<option value={null} disabled selected>Campo Missionário</option>
+						<option value={null} disabled selected>{sharedI18n.inputs.fieldLabel()}</option>
 
 						{#each fields as field}
 							<option value={field.id}>

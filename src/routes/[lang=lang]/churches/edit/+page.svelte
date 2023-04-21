@@ -13,9 +13,7 @@
 	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
 	import HiOutlineX from 'svelte-icons-pack/hi/HiOutlineX';
 
-	import { getContext, onMount } from 'svelte';
-
-	import { CHURCH_TEMPLATE, TEMPLATES } from '$src/lib/constants';
+	import { CHURCH_TEMPLATE } from '$src/lib/constants';
 	import * as yup from 'yup';
 	import axios from '$lib/axios';
 	import Axios from 'axios';
@@ -26,6 +24,13 @@
 	import { afterNavigate } from '$app/navigation';
 	import type { Navigation } from '@sveltejs/kit';
 	import { ChurchType } from '$src/lib/enums';
+	import { getContext, onMount } from 'svelte';
+
+	// i18n
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	$: i18n = $LL.churches.edit;
+	$: sharedI18n = $LL.shared;
 
 	export let data: PageData;
 
@@ -39,9 +44,9 @@
 	const showRefreshButton = false;
 
 	// App Header
-	const appHeader = {
-		name: 'Editar Igreja',
-		buttonText: 'Salvar'
+	$: appHeader = {
+		name: i18n.appHeader.name(),
+		buttonText: i18n.appHeader.buttonText()
 	};
 
 	const query = {
@@ -55,21 +60,26 @@
 
 	// Form
 	let fields: FieldDto[] = [];
-	const churchTypes = [
-		{ value: 'PIONEER', text: 'Pioneira' },
-		{ value: 'EXPANSION', text: 'Expansionista' },
-		{ value: 'SUPPORT', text: 'Apoio' },
-		{ value: 'RESPONSIBLE', text: 'Responsável' }
+	$: churchTypes = [
+		{ value: 'PIONEER', text: i18n.churchTypes.pioneer() },
+		{ value: 'EXPANSION', text: i18n.churchTypes.expansion() },
+		{ value: 'SUPPORT', text: i18n.churchTypes.support() },
+		{ value: 'RESPONSIBLE', text: i18n.churchTypes.responsible() }
 	];
 
-	const schema = yup.object().shape({
-		name: yup.string().required(TEMPLATES.YUP.REQUIRED('Nome')),
-		description: yup.string().required(TEMPLATES.YUP.REQUIRED('Descrição')),
+	$: schema = yup.object().shape({
+		name: yup.string().required(sharedI18n.yup.required({ field: i18n.inputs.nameLabel() })),
+		description: yup
+			.string()
+			.required(sharedI18n.yup.required({ field: i18n.inputs.descriptionLabel() })),
 		images: yup.array(yup.string()).nullable().optional(),
 		type: yup
 			.string()
-			.oneOf(Object.values(ChurchType), TEMPLATES.YUP.ONE_OF(churchTypes.map((r) => r.text)))
-			.required(TEMPLATES.YUP.REQUIRED('Tipo')),
+			.oneOf(
+				Object.values(ChurchType),
+				sharedI18n.yup.oneOf({ enums: churchTypes.map((r) => r.text).join(', ') })
+			)
+			.required(sharedI18n.yup.required({ field: i18n.inputs.typeLabel() })),
 		field: yup.string().nullable().optional()
 	});
 
@@ -81,6 +91,10 @@
 	onMount(async () => {
 		await loadData();
 		isAdminOrVolunteer = userStore.isVolunteer() || userStore.isAdmin();
+
+		await loadNamespaceAsync(data.locale, 'churches');
+		await loadNamespaceAsync(data.locale, 'shared');
+		setLocale(data.locale);
 	});
 
 	afterNavigate(async (navigation: Navigation) => {
@@ -197,7 +211,7 @@
 			];
 		} catch (error) {
 			if (error instanceof Axios.AxiosError) {
-				throw new Axios.AxiosError('Os arquivos são muito grandes!');
+				throw new Axios.AxiosError(sharedI18n.axios.fileSizeError());
 			} else {
 				console.warn(error);
 			}
@@ -221,7 +235,7 @@
 	}
 
 	function onRemoveFile(index: number) {
-		const remove = confirm(TEMPLATES.REMOVE.FILE(churchData.images[index]));
+		const remove = confirm(sharedI18n.remove.file({ name: churchData.images[index] }));
 
 		if (remove) {
 			filesToRemove = churchData.images.splice(index, 1);
@@ -231,18 +245,25 @@
 </script>
 
 <svelte:head>
-	<title>Churches</title>
+	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
 <AppContainer {messages} locale={data.locale}>
-	<AppContent {...appHeader} {isLoading} on:click={onSubmit} {showActions} {showRefreshButton}>
+	<AppContent
+		{...appHeader}
+		{isLoading}
+		{showActions}
+		{showRefreshButton}
+		locale={data.locale}
+		on:click={onSubmit}
+	>
 		<form on:submit|preventDefault|stopPropagation={onSubmit} class="app-form">
 			<div class="input">
 				<Icon src={HiOutlineLibrary} />
 				<input
 					bind:value={churchData.name}
 					name="name"
-					placeholder="Nome"
+					placeholder={i18n.inputs.nameLabel()}
 					autocomplete="off"
 					required
 				/>
@@ -252,7 +273,7 @@
 				<textarea
 					bind:value={churchData.description}
 					name="description"
-					placeholder="Descrição"
+					placeholder={i18n.inputs.descriptionLabel()}
 					autocomplete="off"
 					rows="5"
 					required
@@ -277,7 +298,7 @@
 			<div class="input">
 				<Icon src={HiOutlineTag} />
 				<select bind:value={churchData.type} name="type" required>
-					<option value={null} disabled selected>Tipo</option>
+					<option value={null} disabled selected>{i18n.inputs.typeLabel()}</option>
 
 					{#each churchTypes as churchType}
 						<option value={churchType.value}>{churchType.text}</option>
@@ -288,7 +309,7 @@
 				<div class="input">
 					<Icon src={HiOutlineGlobe} />
 					<select bind:value={churchData.field} name="field" required>
-						<option value={null} disabled selected>Campo Missionário</option>
+						<option value={null} disabled selected>{sharedI18n.inputs.fieldLabel()}</option>
 
 						{#each fields as field}
 							<option value={field.id}>

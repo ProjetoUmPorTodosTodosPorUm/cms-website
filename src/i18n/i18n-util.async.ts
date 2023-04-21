@@ -2,11 +2,71 @@
 /* eslint-disable */
 
 import { initFormatters } from './formatters'
-import type { Locales, Translations } from './i18n-types'
+import type { Locales, Namespaces, Translations } from './i18n-types'
 import { loadedFormatters, loadedLocales, locales } from './i18n-util'
 
 const localeTranslationLoaders = {
 	en: () => import('./en'),
+	'pt-BR': () => import('./pt-BR'),
+}
+
+const localeNamespaceLoaders = {
+	en: {
+		agenda: () => import('./en/agenda'),
+		announcements: () => import('./en/announcements'),
+		'app-actions': () => import('./en/app-actions'),
+		'app-header': () => import('./en/app-header'),
+		'app-sidebar': () => import('./en/app-sidebar'),
+		churches: () => import('./en/churches'),
+		collaborators: () => import('./en/collaborators'),
+		'collected-offers': () => import('./en/collected-offers'),
+		'collection-header': () => import('./en/collection-header'),
+		'collection-row': () => import('./en/collection-row'),
+		fields: () => import('./en/fields'),
+		files: () => import('./en/files'),
+		'forgot-password': () => import('./en/forgot-password'),
+		login: () => import('./en/login'),
+		logs: () => import('./en/logs'),
+		'offeror-families': () => import('./en/offeror-families'),
+		profile: () => import('./en/profile'),
+		reports: () => import('./en/reports'),
+		shared: () => import('./en/shared'),
+		signup: () => import('./en/signup'),
+		testimonials: () => import('./en/testimonials'),
+		toast: () => import('./en/toast'),
+		tokens: () => import('./en/tokens'),
+		users: () => import('./en/users'),
+		volunteers: () => import('./en/volunteers'),
+		'welcomed-families': () => import('./en/welcomed-families')
+	},
+	'pt-BR': {
+		agenda: () => import('./pt-BR/agenda'),
+		announcements: () => import('./pt-BR/announcements'),
+		'app-actions': () => import('./pt-BR/app-actions'),
+		'app-header': () => import('./pt-BR/app-header'),
+		'app-sidebar': () => import('./pt-BR/app-sidebar'),
+		churches: () => import('./pt-BR/churches'),
+		collaborators: () => import('./pt-BR/collaborators'),
+		'collected-offers': () => import('./pt-BR/collected-offers'),
+		'collection-header': () => import('./pt-BR/collection-header'),
+		'collection-row': () => import('./pt-BR/collection-row'),
+		fields: () => import('./pt-BR/fields'),
+		files: () => import('./pt-BR/files'),
+		'forgot-password': () => import('./pt-BR/forgot-password'),
+		login: () => import('./pt-BR/login'),
+		logs: () => import('./pt-BR/logs'),
+		'offeror-families': () => import('./pt-BR/offeror-families'),
+		profile: () => import('./pt-BR/profile'),
+		reports: () => import('./pt-BR/reports'),
+		shared: () => import('./pt-BR/shared'),
+		signup: () => import('./pt-BR/signup'),
+		testimonials: () => import('./pt-BR/testimonials'),
+		toast: () => import('./pt-BR/toast'),
+		tokens: () => import('./pt-BR/tokens'),
+		users: () => import('./pt-BR/users'),
+		volunteers: () => import('./pt-BR/volunteers'),
+		'welcomed-families': () => import('./pt-BR/welcomed-families')
+	}
 }
 
 const updateDictionary = (locale: Locales, dictionary: Partial<Translations>): Translations =>
@@ -24,3 +84,9 @@ export const loadAllLocalesAsync = (): Promise<void[]> => Promise.all(locales.ma
 
 export const loadFormatters = (locale: Locales): void =>
 	void (loadedFormatters[locale] = initFormatters(locale))
+
+export const importNamespaceAsync = async<Namespace extends Namespaces>(locale: Locales, namespace: Namespace) =>
+	(await localeNamespaceLoaders[locale][namespace]()).default as unknown as Translations[Namespace]
+
+export const loadNamespaceAsync = async <Namespace extends Namespaces>(locale: Locales, namespace: Namespace): Promise<void> =>
+	void updateDictionary(locale, { [namespace]: await importNamespaceAsync(locale, namespace )})
