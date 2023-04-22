@@ -1,7 +1,7 @@
 import type { NamespaceToastTranslation } from '../../i18n-types'
 
 const en_toast = {
-	// TODO: insert translations
+	closeText: 'Close'
 
 } satisfies NamespaceToastTranslation
 

@@ -90,7 +90,14 @@
 	<title>{i18n.pageTitle()}</title>
 </svelte:head>
 
-<AuthModal on:submit={onSubmit} {...authModal} {isSending} {isSubmitDisabled} {messages}>
+<AuthModal
+	on:submit={onSubmit}
+	{...authModal}
+	{isSending}
+	{isSubmitDisabled}
+	{messages}
+	locale={data.locale}
+>
 	<svelte:fragment slot="body">
 		<div class="form-input">
 			<Icon src={HiOutlineMail} />

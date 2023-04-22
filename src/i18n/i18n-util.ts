@@ -26,6 +26,8 @@ export const namespaces: Namespaces[] = [
 	'collected-offers',
 	'collection-header',
 	'collection-row',
+	'collection-row-placeholder',
+	'dashboard',
 	'fields',
 	'files',
 	'forgot-password',

@@ -125,42 +125,42 @@
 
 	// Collection Data
 	$: collectionData = Object.entries(fileData).map(
-		([key, file]) =>
+		([key, item]) =>
 			[
 				{
 					label: 'id',
 					key: 'id',
-					value: file.id
+					value: item.id
 				},
 				{
 					label: i18n.collectionHeader.nameLabel(),
 					key: 'name',
-					value: file.name,
+					value: item.name,
 					isStatic: true
 				},
 				{
 					label: i18n.collectionHeader.mimeTypeLabel(),
 					key: 'mimeType',
-					value: file.mimeType,
+					value: item.mimeType,
 					isTag: true
 				},
 				{
 					label: i18n.collectionHeader.sizeLabel(),
 					key: 'size',
-					value: file.size,
+					value: item.size,
 					transform: sizeFormat.format
 				},
 				{
 					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
-					value: file.createdAt,
-					transform: friendlyDateString
+					value: item.createdAt,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
-					value: file.deleted,
-					transform: friendlyDateString
+					value: item.deleted,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				}
 			] as RowCell[]
 	);

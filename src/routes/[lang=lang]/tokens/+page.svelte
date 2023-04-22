@@ -127,65 +127,66 @@
 	];
 
 	$: collectionData = Object.entries(tokenData).map(
-		([key, data]) =>
+		([key, item]) =>
 			[
 				{
 					label: 'id',
 					key: 'id',
-					value: data.id
+					value: item.id
 				},
 				{
 					label: i18n.collectionHeader.tokenLabel(),
 					key: 'token',
-					value: data.token
+					value: item.token
 				},
 				{
 					label: i18n.collectionHeader.emailLabel(),
 					key: 'email',
-					value: data.email,
+					value: item.email,
 					isTag: true
 				},
 				{
 					label: i18n.collectionHeader.usedLabel(),
 					key: 'used',
-					value: data.used,
+					value: item.used,
 					isTag: true
 				},
 				{
 					label: i18n.collectionHeader.typeLabel(),
 					key: 'tokenType',
-					value: data.tokenType,
+					value: item.tokenType,
 					isTag: true
 				},
 				{
 					label: i18n.collectionHeader.payloadLabel(),
 					key: 'payload',
-					value: data.payload,
+					value: item.payload,
 					isJson: true
 				},
 				{
 					label: i18n.collectionHeader.expirationLabel(),
 					key: 'expiration',
-					value: data.expiration,
-					transform: (value: number) => friendlyDateString(new Date(Date.now() + value))
+					value: item.expiration,
+					transform: (value: number) =>
+						friendlyDateString(new Date(Date.now() + value), data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
-					value: data.createdAt,
-					transform: friendlyDateString
+					value: item.createdAt,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.updatedAtLabel(),
 					key: 'updatedAt',
-					value: data.updatedAt,
-					transform: friendlyDateString
+					value: item.updatedAt,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
-					value: data.deleted,
-					transform: friendlyDateString
+					value: item.deleted,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				}
 			] as RowCell[]
 	);

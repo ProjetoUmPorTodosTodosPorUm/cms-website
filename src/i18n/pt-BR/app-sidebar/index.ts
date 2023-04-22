@@ -2,7 +2,7 @@ import type { BaseTranslation } from '../../i18n-types'
 
 const pt_BR_app_sidebar = {
     menu: {
-        dashboard: 'Início',
+        dashboard: 'Dashboard',
         agenda: 'Agenda',
         announcements: 'Anúncios',
         churches: 'Igrejas',
@@ -23,7 +23,7 @@ const pt_BR_app_sidebar = {
     accountMenu: {
         links: {
             profile: 'Perfil',
-            logout: 'Sair'
+            logout: 'Logout'
         },
     }
 } as BaseTranslation

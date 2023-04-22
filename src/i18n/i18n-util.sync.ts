@@ -18,6 +18,8 @@ import en_collaborators from './en/collaborators'
 import en_collected_offers from './en/collected-offers'
 import en_collection_header from './en/collection-header'
 import en_collection_row from './en/collection-row'
+import en_collection_row_placeholder from './en/collection-row-placeholder'
+import en_dashboard from './en/dashboard'
 import en_fields from './en/fields'
 import en_files from './en/files'
 import en_forgot_password from './en/forgot-password'
@@ -44,6 +46,8 @@ import pt_BR_collaborators from './pt-BR/collaborators'
 import pt_BR_collected_offers from './pt-BR/collected-offers'
 import pt_BR_collection_header from './pt-BR/collection-header'
 import pt_BR_collection_row from './pt-BR/collection-row'
+import pt_BR_collection_row_placeholder from './pt-BR/collection-row-placeholder'
+import pt_BR_dashboard from './pt-BR/dashboard'
 import pt_BR_fields from './pt-BR/fields'
 import pt_BR_files from './pt-BR/files'
 import pt_BR_forgot_password from './pt-BR/forgot-password'
@@ -74,6 +78,8 @@ const localeTranslations = {
 		'collected-offers': en_collected_offers,
 		'collection-header': en_collection_header,
 		'collection-row': en_collection_row,
+		'collection-row-placeholder': en_collection_row_placeholder,
+		dashboard: en_dashboard,
 		fields: en_fields,
 		files: en_files,
 		'forgot-password': en_forgot_password,
@@ -103,6 +109,8 @@ const localeTranslations = {
 		'collected-offers': pt_BR_collected_offers,
 		'collection-header': pt_BR_collection_header,
 		'collection-row': pt_BR_collection_row,
+		'collection-row-placeholder': pt_BR_collection_row_placeholder,
+		dashboard: pt_BR_dashboard,
 		fields: pt_BR_fields,
 		files: pt_BR_files,
 		'forgot-password': pt_BR_forgot_password,

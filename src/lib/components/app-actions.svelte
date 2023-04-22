@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Pagination from '$components/pagination.svelte';
 	import SearchInput from '$components/search-input.svelte';
-	import { USER_TEMPLATE } from '$lib/constants';
 	import type { UserStore } from '$lib/store/user';
 	import { Role } from '$lib/enums';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
@@ -9,13 +8,13 @@
 	import axios from '$lib/axios';
 	import Axios from 'axios';
 	import { generateMessages } from '$components/toast.svelte';
+	import type { Locales } from '$src/i18n/i18n-types';
 
 	// i18n
 	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
-	import type { Locales } from '$src/i18n/i18n-types';
-
 	import LL, { setLocale } from '$i18n/i18n-svelte';
 	$: i18n = $LL['app-actions'];
+
 	export let locale: Locales;
 
 	// Component Data - forwarding
@@ -33,8 +32,8 @@
 	export let messages: any = [];
 	export let baseRoute = '';
 
-	let user = USER_TEMPLATE;
 	let userStore = getContext<UserStore>('userStore');
+	let user = userStore.get('user');
 	$: isAdmin = user.role === Role.ADMIN;
 	$: isWebMaster = user.role === Role.WEB_MASTER;
 
@@ -50,7 +49,6 @@
 	const searchClear = () => dispatch('searchClear');
 
 	onMount(async () => {
-		user = userStore.get('user');
 		const accessToken = userStore.get('accessToken');
 		axios.setAuth(accessToken);
 
@@ -130,31 +128,33 @@
 	<Pagination bind:page {maxPage} />
 	<div class="app-content-actions-wrapper">
 		<div class="filter-button-wrapper">
-			<button on:click={handleFilterMenu} class="action-button filter jsFilter"
-				><span>{i18n.filterIconText()}</span><svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="16"
-					height="16"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					class="feather feather-filter"
-					><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" /></svg
-				></button
-			>
-			<div bind:this={filterMenuRef} class="filter-menu">
-				<label for="field-select">{i18n.filterFieldLabel()}</label>
-				<select id="field-select">
-					<option>@TODO FIELDS</option>
-				</select>
-				<div class="filter-menu-buttons">
-					<button class="filter-button reset">{i18n.filterResetButton()}</button>
-					<button class="filter-button apply">{i18n.filterApplyButton()}</button>
+			{#if isWebMaster}
+				<button on:click={handleFilterMenu} class="action-button filter jsFilter"
+					><span>{i18n.filterIconText()}</span><svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="feather feather-filter"
+						><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" /></svg
+					></button
+				>
+				<div bind:this={filterMenuRef} class="filter-menu">
+					<label for="field-select">{i18n.filterFieldLabel()}</label>
+					<select id="field-select">
+						<option>@TODO FIELDS</option>
+					</select>
+					<div class="filter-menu-buttons">
+						<button class="filter-button reset">{i18n.filterResetButton()}</button>
+						<button class="filter-button apply">{i18n.filterApplyButton()}</button>
+					</div>
 				</div>
-			</div>
+			{/if}
 		</div>
 		<button
 			bind:this={listRef}

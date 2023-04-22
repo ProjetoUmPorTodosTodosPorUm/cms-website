@@ -137,57 +137,57 @@
 	];
 
 	$: collectionData = Object.entries(userData).map(
-		([key, user]) =>
+		([key, item]) =>
 			[
 				{
 					label: 'id',
 					key: 'id',
-					value: user.id
+					value: item.id
 				},
 				{
 					label: i18n.collectionHeader.firstNameLabel(),
 					key: 'firstName',
-					value: user.firstName
+					value: item.firstName
 				},
 				{
 					label: i18n.collectionHeader.lastNameLabel(),
 					key: 'lastName',
-					value: user.lastName ?? i18n.lastNamePlaceholder()
+					value: item.lastName ?? i18n.lastNamePlaceholder()
 				},
 				{
 					label: i18n.collectionHeader.emailLabel(),
 					key: 'email',
-					value: user.email
+					value: item.email
 				},
 				{
 					label: i18n.collectionHeader.roleLabel(),
 					key: 'role',
-					value: user.role,
+					value: item.role,
 					isTag: true
 				},
 				{
 					label: i18n.collectionHeader.lastAccessLabel(),
 					key: 'lastAccess',
-					value: user.lastAccess,
-					transform: friendlyDateString
+					value: item.lastAccess,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
-					value: user.createdAt,
-					transform: friendlyDateString
+					value: item.createdAt,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.updatedAtLabel(),
 					key: 'updatedAt',
-					value: user.updatedAt,
-					transform: friendlyDateString
+					value: item.updatedAt,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
-					value: user.deleted,
-					transform: friendlyDateString
+					value: item.deleted,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				}
 			] as RowCell[]
 	);
@@ -200,7 +200,7 @@
 
 	async function handleRemove(event: CustomEvent) {
 		const { id, data } = event.detail;
-		const remove = confirm(sharedI18n.remove.user({email: data.email}));
+		const remove = confirm(sharedI18n.remove.user({ email: data.email }));
 
 		if (remove) {
 			isLoading = true;
@@ -294,8 +294,9 @@
 				bind:showDeleted={pagination.deleted}
 			/>
 		{/each}
-		{#if collectionData.length === 0}
+		{#if collectionData.length === 0 && !isLoading}
 			<CollectionRowPlaceholder
+				locale={data.locale}
 				buttonLink={appHeader.buttonLink}
 				buttonText={appHeader.buttonText}
 			/>

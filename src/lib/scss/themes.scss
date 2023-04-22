@@ -52,7 +52,7 @@ $theme-map-light: (
     $--filter-reset: #2c394f,
     $--filter-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px,
 
-    $--svg-color: invert(9%) sepia(7%) saturate(4160%) hue-rotate(210deg) brightness(93%) contrast(92%),
+    $--svg-color: brightness(0) saturate(100%) invert(30%) sepia(38%) saturate(3718%) hue-rotate(212deg) brightness(105%) contrast(101%),
     $--input-background-color: #fff,
     $--input-border-color-initial: rgb(29, 40, 60, .3),
     $--input-border-color-full: #1d283c,

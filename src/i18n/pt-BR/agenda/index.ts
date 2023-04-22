@@ -37,7 +37,6 @@ const pt_BR_agenda = {
         },
         inputs: shared.labels,
     }
-
 } as BaseTranslation
 
 export default pt_BR_agenda

@@ -131,68 +131,68 @@
 	];
 
 	$: collectionData = Object.entries(logData).map(
-		([key, log]) =>
+		([key, item]) =>
 			[
 				{
 					label: 'id',
 					key: 'id',
-					value: log.id
+					value: item.id
 				},
 				{
 					label: i18n.collectionHeader.ipLabel(),
 					key: 'ip',
-					value: log.ip
+					value: item.ip
 				},
 				{
 					label: i18n.collectionHeader.methodLabel(),
 					key: 'method',
-					value: log.method,
+					value: item.method,
 					isTag: true
 				},
 				{
 					label: i18n.collectionHeader.urlLabel(),
 					key: 'url',
-					value: log.url
+					value: item.url
 				},
 				{
 					label: i18n.collectionHeader.bodyLabel(),
 					key: 'body',
-					value: log.body,
+					value: item.body,
 					isJson: true
 				},
 				{
 					label: i18n.collectionHeader.filesLabel(),
 					key: 'files',
-					value: log.files,
+					value: item.files,
 					isJson: true
 				},
 				{
 					label: i18n.collectionHeader.queryLabel(),
 					key: 'query',
-					value: log.query
+					value: item.query
 				},
 				{
 					label: i18n.collectionHeader.statusCodeLabel(),
 					key: 'statusCode',
-					value: log.statusCode
+					value: item.statusCode
 				},
 				{
 					label: i18n.collectionHeader.userLabel(),
 					key: 'user',
-					value: log.user,
+					value: item.user,
 					isJson: true
 				},
 				{
 					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
-					value: log.createdAt,
-					transform: friendlyDateString
+					value: item.createdAt,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
-					value: log.deleted,
-					transform: friendlyDateString
+					value: item.deleted,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				}
 			] as RowCell[]
 	);

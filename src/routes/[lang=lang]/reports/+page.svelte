@@ -152,71 +152,71 @@
 	] as ColumnCell[];
 
 	$: collectionData = Object.entries(reportData).map(
-		([key, data]) =>
+		([key, item]) =>
 			[
 				{
 					label: 'id',
 					key: 'id',
-					value: data.id
+					value: item.id
 				},
 				{
 					label: i18n.collectionHeader.titleLabel(),
 					key: 'title',
-					value: data.title
+					value: item.title
 				},
 				{
 					label: i18n.collectionHeader.textLabel(),
 					key: 'text',
-					value: data.text,
+					value: item.text,
 					textLimit: 100,
 					isModal: true
 				},
 				{
 					label: i18n.collectionHeader.shortDescriptionLabel(),
 					key: 'shortDescription',
-					value: data.shortDescription,
+					value: item.shortDescription,
 					textLimit: 100,
 					isModal: true
 				},
 				{
 					label: i18n.collectionHeader.attachmentsLabel(),
 					key: 'attachments',
-					value: data.attachments,
+					value: item.attachments,
 					isJson: true
 				},
 				{
 					label: i18n.collectionHeader.monthLabel(),
 					key: 'month',
-					value: data.month
+					value: item.month
 				},
 				{
 					label: i18n.collectionHeader.yearLabel(),
 					key: 'year',
-					value: data.year
+					value: item.year
 				},
 				{
 					label: i18n.collectionHeader.typeLabel(),
 					key: 'type',
-					value: data.type,
+					value: item.type,
 					isTag: true
 				},
 				{
 					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
-					value: data.createdAt,
-					transform: friendlyDateString
+					value: item.createdAt,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.updatedAtLabel(),
 					key: 'updatedAt',
-					value: data.updatedAt,
-					transform: friendlyDateString
+					value: item.updatedAt,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
-					value: data.deleted,
-					transform: friendlyDateString
+					value: item.deleted,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				}
 			] as RowCell[]
 	);
@@ -280,7 +280,10 @@
 			data,
 			key
 		}: { data: ReportDto; key: keyof Pick<ReportDto, 'text' | 'shortDescription'> } = event.detail;
-		modal.title = data.title;
+		modal.title =
+			key == 'text'
+				? i18n.collectionHeader.textLabel()
+				: i18n.collectionHeader.shortDescriptionLabel();
 		modal.text = data[key] ?? '';
 		showModal = true;
 	}
@@ -338,8 +341,9 @@
 				bind:showDeleted={pagination.deleted}
 			/>
 		{/each}
-		{#if collectionData.length === 0}
+		{#if collectionData.length === 0 && !isLoading}
 			<CollectionRowPlaceholder
+				locale={data.locale}
 				buttonLink={appHeader.buttonLink}
 				buttonText={appHeader.buttonText}
 			/>

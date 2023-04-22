@@ -45,7 +45,6 @@ const pt_BR_churches = {
         inputs: shared.labels,
         churchTypes: shared.churchTypes,
     }
-
 } as BaseTranslation
 
 export default pt_BR_churches

@@ -146,56 +146,56 @@
 	] as ColumnCell[];
 
 	$: collectionData = Object.entries(monthlyFamilyData).map(
-		([key, data]) =>
+		([key, item]) =>
 			[
 				{
 					label: 'id',
 					key: 'id',
-					value: data.id
+					value: item.id
 				},
 				{
 					label: i18n.collectionHeader.monthLabel(),
 					key: 'month',
-					value: data.month
+					value: item.month
 				},
 				{
 					label: i18n.collectionHeader.yearLabel(),
 					key: 'year',
-					value: data.year
+					value: item.year
 				},
 				{
 					label: i18n.collectionHeader.foodQntLabel(),
 					key: 'foodQnt',
-					value: data.foodQnt
+					value: item.foodQnt
 				},
 				{
 					label: i18n.collectionHeader.monetaryValueLabel(),
 					key: 'monetaryValue',
-					value: data.monetaryValue,
+					value: item.monetaryValue,
 					transform: (val: number) => Currency.format(val)
 				},
 				{
 					label: i18n.collectionHeader.othersQntLabel(),
 					key: 'othersQnt',
-					value: data.othersQnt
+					value: item.othersQnt
 				},
 				{
 					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
-					value: data.createdAt,
-					transform: friendlyDateString
+					value: item.createdAt,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.updatedAtLabel(),
 					key: 'updatedAt',
-					value: data.updatedAt,
-					transform: friendlyDateString
+					value: item.updatedAt,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
-					value: data.deleted,
-					transform: friendlyDateString
+					value: item.deleted,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				}
 			] as RowCell[]
 	);
@@ -309,8 +309,9 @@
 				bind:showDeleted={pagination.deleted}
 			/>
 		{/each}
-		{#if collectionData.length === 0}
+		{#if collectionData.length === 0 && !isLoading}
 			<CollectionRowPlaceholder
+				locale={data.locale}
 				buttonLink={appHeader.buttonLink}
 				buttonText={appHeader.buttonText}
 			/>

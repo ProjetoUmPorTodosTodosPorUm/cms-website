@@ -133,54 +133,55 @@
 	] as ColumnCell[];
 
 	$: collectionData = Object.entries(announcementData).map(
-		([key, data]) =>
+		([key, item]) =>
 			[
 				{
 					label: 'id',
 					key: 'id',
-					value: data.id
+					value: item.id
 				},
 				{
 					label: i18n.collectionHeader.titleLabel(),
 					key: 'title',
-					value: data.title
+					value: item.title
 				},
 				{
 					label: i18n.collectionHeader.messageLabel(),
 					key: 'message',
-					value: data.message,
+					value: item.message,
 					textLimit: 100
 				},
 				{
 					label: i18n.collectionHeader.attachmentsLabel(),
 					key: 'attachments',
-					value: data.attachments,
+					value: item.attachments,
 					isJson: true
 				},
 				{
 					label: i18n.collectionHeader.fixedLabel(),
 					key: 'fixed',
-					value: data.fixed,
+					value: item.fixed,
 					isStatus: true,
-					transform: (val) => (val ? sharedI18n.isStatusTransform.true() : sharedI18n.isStatusTransform.false())
+					transform: (val) =>
+						val ? sharedI18n.isStatusTransform.true() : sharedI18n.isStatusTransform.false()
 				},
 				{
 					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
-					value: data.createdAt,
-					transform: friendlyDateString
+					value: item.createdAt,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.updatedAtLabel(),
 					key: 'updatedAt',
-					value: data.updatedAt,
-					transform: friendlyDateString
+					value: item.updatedAt,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
-					value: data.deleted,
-					transform: friendlyDateString
+					value: item.deleted,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				}
 			] as RowCell[]
 	);
@@ -287,8 +288,9 @@
 				bind:showDeleted={pagination.deleted}
 			/>
 		{/each}
-		{#if collectionData.length === 0}
+		{#if collectionData.length === 0 && !isLoading}
 			<CollectionRowPlaceholder
+				locale={data.locale}
 				buttonLink={appHeader.buttonLink}
 				buttonText={appHeader.buttonText}
 			/>

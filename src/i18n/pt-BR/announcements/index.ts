@@ -39,7 +39,6 @@ const pt_BR_announcements = {
         },
         inputs: shared.labels,
     }
-
 } as BaseTranslation
 
 export default pt_BR_announcements
