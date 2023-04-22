@@ -141,68 +141,68 @@
 	] as ColumnCell[];
 
 	$: collectionData = Object.entries(fieldData).map(
-		([key, data]) =>
+		([key, item]) =>
 			[
 				{
 					label: 'id',
 					key: 'id',
-					value: data.id
+					value: item.id
 				},
 				{
 					label: i18n.collectionHeader.continentLabel(),
 					key: 'continent',
-					value: data.continent
+					value: item.continent
 				},
 				{
 					label: i18n.collectionHeader.countryLabel(),
 					key: 'country',
-					value: data.country
+					value: item.country
 				},
 				{
 					label: i18n.collectionHeader.stateLabel(),
 					key: 'state',
-					value: data.state
+					value: item.state
 				},
 				{
 					label: i18n.collectionHeader.abbreviationLabel(),
 					key: 'abbreviation',
-					value: data.abbreviation,
+					value: item.abbreviation,
 					isTag: true
 				},
 				{
 					label: i18n.collectionHeader.designationLabel(),
 					key: 'designation',
-					value: data.designation
+					value: item.designation
 				},
 				{
 					label: i18n.collectionHeader.collectionPointsLabel(),
 					key: 'collectionPoints',
-					value: data.collectionPoints,
+					value: item.collectionPoints,
 					isJson: true
 				},
 				{
 					abel: i18n.collectionHeader.streetRelationLabel(),
 					key: 'streetRelation',
-					value: data.streetRelation,
+					value: item.streetRelation,
 					isJson: true
 				},
 				{
 					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
-					value: data.createdAt,
-					transform: friendlyDateString
+					value: item.createdAt,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.updatedAtLabel(),
 					key: 'updatedAt',
-					value: data.updatedAt,
-					transform: friendlyDateString
+					value: item.updatedAt,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
-					value: data.deleted,
-					transform: friendlyDateString
+					value: item.deleted,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				}
 			] as RowCell[]
 	);
@@ -215,7 +215,7 @@
 
 	async function handleRemove(event: CustomEvent) {
 		const { id, data } = event.detail;
-		const remove = confirm(TEMPLATES.REMOVE.FIELD(data.designation));
+		const remove = confirm(sharedI18n.remove.field({ designation: data.designation }));
 
 		if (remove) {
 			isLoading = true;
@@ -309,8 +309,9 @@
 				bind:showDeleted={pagination.deleted}
 			/>
 		{/each}
-		{#if collectionData.length === 0}
+		{#if collectionData.length === 0 && !isLoading}
 			<CollectionRowPlaceholder
+				locale={data.locale}
 				buttonLink={appHeader.buttonLink}
 				buttonText={appHeader.buttonText}
 			/>

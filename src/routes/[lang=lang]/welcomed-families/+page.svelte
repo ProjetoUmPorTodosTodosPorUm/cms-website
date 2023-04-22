@@ -132,42 +132,42 @@
 	] as ColumnCell[];
 
 	$: collectionData = Object.entries(welcomedFamilyData).map(
-		([key, data]) =>
+		([key, item]) =>
 			[
 				{
 					label: 'id',
 					key: 'id',
-					value: data.id
+					value: item.id
 				},
 				{
 					label: i18n.collectionHeader.representativeLabel(),
 					key: 'representative',
-					value: data.representative
+					value: item.representative
 				},
 				{
 					label: i18n.collectionHeader.observationLabel(),
 					key: 'observation',
-					value: data.observation,
+					value: item.observation,
 					textLimit: 100,
 					isModal: true
 				},
 				{
 					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
-					value: data.createdAt,
-					transform: friendlyDateString
+					value: item.createdAt,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.updatedAtLabel(),
 					key: 'updatedAt',
-					value: data.updatedAt,
-					transform: friendlyDateString
+					value: item.updatedAt,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
-					value: data.deleted,
-					transform: friendlyDateString
+					value: item.deleted,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				}
 			] as RowCell[]
 	);
@@ -290,8 +290,9 @@
 				bind:showDeleted={pagination.deleted}
 			/>
 		{/each}
-		{#if collectionData.length === 0}
+		{#if collectionData.length === 0 && !isLoading}
 			<CollectionRowPlaceholder
+				locale={data.locale}
 				buttonLink={appHeader.buttonLink}
 				buttonText={appHeader.buttonText}
 			/>

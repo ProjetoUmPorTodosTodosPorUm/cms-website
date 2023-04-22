@@ -23,6 +23,8 @@ export type Translations = RootTranslation &
 	'collected-offers': NamespaceCollectedOffersTranslation,
 	'collection-header': NamespaceCollectionHeaderTranslation,
 	'collection-row': NamespaceCollectionRowTranslation,
+	'collection-row-placeholder': NamespaceCollectionRowPlaceholderTranslation,
+	dashboard: NamespaceDashboardTranslation,
 	fields: NamespaceFieldsTranslation,
 	files: NamespaceFilesTranslation,
 	'forgot-password': NamespaceForgotPasswordTranslation,
@@ -41,12 +43,7 @@ export type Translations = RootTranslation &
 	'welcomed-families': NamespaceWelcomedFamiliesTranslation
 }
 
-type RootTranslation = {
-	/**
-	 * H​i​!​ ​P​l​e​a​s​e​ ​l​e​a​v​e​ ​a​ ​s​t​a​r​ ​i​f​ ​y​o​u​ ​l​i​k​e​ ​t​h​i​s​ ​p​r​o​j​e​c​t​:​ ​h​t​t​p​s​:​/​/​g​i​t​h​u​b​.​c​o​m​/​i​v​a​n​h​o​f​e​r​/​t​y​p​e​s​a​f​e​-​i​1​8​n
-	 */
-	HI: string
-}
+type RootTranslation = {}
 
 export type NamespaceAgendaTranslation = {
 	list: {
@@ -347,7 +344,7 @@ export type NamespaceAppHeaderTranslation = {
 export type NamespaceAppSidebarTranslation = {
 	menu: {
 		/**
-		 * I​n​í​c​i​o
+		 * D​a​s​h​b​o​a​r​d
 		 */
 		dashboard: string
 		/**
@@ -418,7 +415,7 @@ export type NamespaceAppSidebarTranslation = {
 			 */
 			profile: string
 			/**
-			 * S​a​i​r
+			 * L​o​g​o​u​t
 			 */
 			logout: string
 		}
@@ -808,6 +805,36 @@ export type NamespaceCollectionRowTranslation = {
 	 * R​e​m​o​v​e​r
 	 */
 	removeButtonTitle: string
+}
+
+export type NamespaceCollectionRowPlaceholderTranslation = {
+	/**
+	 * P​a​r​e​c​e​ ​q​u​e​ ​a​i​n​d​a​ ​n​ã​o​ ​h​á​ ​n​e​n​h​u​m​ ​r​e​g​i​s​t​r​o​.​.​.
+	 */
+	description: string
+}
+
+export type NamespaceDashboardTranslation = {
+	/**
+	 * D​a​s​h​b​o​a​r​d
+	 */
+	pageTitle: string
+	appHeader: {
+		/**
+		 * D​a​s​h​b​o​a​r​d
+		 */
+		name: string
+	}
+	/**
+	 * B​e​m​-​v​i​n​d​o​,​ ​{​n​a​m​e​}​!
+	 * @param {string} name
+	 */
+	welcomedText: RequiredParams<'name'>
+	/**
+	 * H​o​j​e​ ​é​ ​{​d​a​t​e​}​.
+	 * @param {string} date
+	 */
+	todayDate: RequiredParams<'date'>
 }
 
 export type NamespaceFieldsTranslation = {
@@ -1615,7 +1642,7 @@ export type NamespaceSharedTranslation = {
 		 */
 		collaborator: RequiredParams<'title'>
 		/**
-		 * V​o​c​ê​ ​d​e​s​e​j​a​ ​r​e​m​o​v​e​r​ ​a​ ​o​f​e​r​t​a​ ​c​o​l​e​t​a​d​a​ ​d​o​ ​m​ê​s​ ​{​m​o​n​t​h​}​ ​e​ ​a​n​o​ ​{​y​e​a​r​}​?
+		 * V​o​c​ê​ ​d​e​s​e​j​a​ ​r​e​m​o​v​e​r​ ​a​ ​o​f​e​r​t​a​ ​c​o​l​e​t​a​d​a​ ​d​e​ ​{​m​o​n​t​h​}​/​{​y​e​a​r​}​?
 		 * @param {number} month
 		 * @param {number} year
 		 */
@@ -2561,6 +2588,8 @@ export type Namespaces =
 	| 'collected-offers'
 	| 'collection-header'
 	| 'collection-row'
+	| 'collection-row-placeholder'
+	| 'dashboard'
 	| 'fields'
 	| 'files'
 	| 'forgot-password'
@@ -2638,6 +2667,18 @@ type DisallowNamespaces = {
 	 * you need to use the `./collection-row/index.ts` file instead
 	 */
 	'collection-row'?: "[typesafe-i18n] reserved for 'collection-row'-namespace. You need to use the `./collection-row/index.ts` file instead."
+
+	/**
+	 * reserved for 'collection-row-placeholder'-namespace\
+	 * you need to use the `./collection-row-placeholder/index.ts` file instead
+	 */
+	'collection-row-placeholder'?: "[typesafe-i18n] reserved for 'collection-row-placeholder'-namespace. You need to use the `./collection-row-placeholder/index.ts` file instead."
+
+	/**
+	 * reserved for 'dashboard'-namespace\
+	 * you need to use the `./dashboard/index.ts` file instead
+	 */
+	dashboard?: "[typesafe-i18n] reserved for 'dashboard'-namespace. You need to use the `./dashboard/index.ts` file instead."
 
 	/**
 	 * reserved for 'fields'-namespace\
@@ -2737,10 +2778,6 @@ type DisallowNamespaces = {
 }
 
 export type TranslationFunctions = {
-	/**
-	 * Hi! Please leave a star if you like this project: https://github.com/ivanhofer/typesafe-i18n
-	 */
-	HI: () => LocalizedString
 	agenda: {
 		list: {
 			/**
@@ -3036,7 +3073,7 @@ export type TranslationFunctions = {
 	'app-sidebar': {
 		menu: {
 			/**
-			 * Início
+			 * Dashboard
 			 */
 			dashboard: () => LocalizedString
 			/**
@@ -3107,7 +3144,7 @@ export type TranslationFunctions = {
 				 */
 				profile: () => LocalizedString
 				/**
-				 * Sair
+				 * Logout
 				 */
 				logout: () => LocalizedString
 			}
@@ -3492,6 +3529,32 @@ export type TranslationFunctions = {
 		 * Remover
 		 */
 		removeButtonTitle: () => LocalizedString
+	}
+	'collection-row-placeholder': {
+		/**
+		 * Parece que ainda não há nenhum registro...
+		 */
+		description: () => LocalizedString
+	}
+	dashboard: {
+		/**
+		 * Dashboard
+		 */
+		pageTitle: () => LocalizedString
+		appHeader: {
+			/**
+			 * Dashboard
+			 */
+			name: () => LocalizedString
+		}
+		/**
+		 * Bem-vindo, {name}!
+		 */
+		welcomedText: (arg: { name: string }) => LocalizedString
+		/**
+		 * Hoje é {date}.
+		 */
+		todayDate: (arg: { date: string }) => LocalizedString
 	}
 	fields: {
 		list: {
@@ -4278,7 +4341,7 @@ export type TranslationFunctions = {
 			 */
 			collaborator: (arg: { title: string }) => LocalizedString
 			/**
-			 * Você deseja remover a oferta coletada do mês {month} e ano {year}?
+			 * Você deseja remover a oferta coletada de {month}/{year}?
 			 */
 			collectedOffer: (arg: { month: number, year: number }) => LocalizedString
 			/**

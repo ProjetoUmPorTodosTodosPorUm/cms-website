@@ -140,54 +140,54 @@
 	] as ColumnCell[];
 
 	$: collectionData = Object.entries(churchData).map(
-		([key, data]) =>
+		([key, item]) =>
 			[
 				{
 					label: 'id',
 					key: 'id',
-					value: data.id
+					value: item.id
 				},
 				{
 					label: i18n.collectionHeader.nameLabel(),
 					key: 'name',
-					value: data.name
+					value: item.name
 				},
 				{
 					label: i18n.collectionHeader.descriptionLabel(),
 					key: 'description',
-					value: data.description,
+					value: item.description,
 					textLimit: 100,
 					isModal: true
 				},
 				{
 					label: i18n.collectionHeader.imagesLabel(),
 					key: 'images',
-					value: data.images,
+					value: item.images,
 					isJson: true
 				},
 				{
 					label: i18n.collectionHeader.typeLabel(),
 					key: 'type',
-					value: data.type,
+					value: item.type,
 					isTag: true
 				},
 				{
 					label: sharedI18n.collectionHeader.createdAtLabel(),
 					key: 'createdAt',
-					value: data.createdAt,
-					transform: friendlyDateString
+					value: item.createdAt,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.updatedAtLabel(),
 					key: 'updatedAt',
-					value: data.updatedAt,
-					transform: friendlyDateString
+					value: item.updatedAt,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				},
 				{
 					label: sharedI18n.collectionHeader.deletedLabel(),
 					key: 'deleted',
-					value: data.deleted,
-					transform: friendlyDateString
+					value: item.deleted,
+					transform: (value: string) => friendlyDateString(value, data.locale)
 				}
 			] as RowCell[]
 	);
@@ -307,8 +307,9 @@
 				bind:showDeleted={pagination.deleted}
 			/>
 		{/each}
-		{#if collectionData.length === 0}
+		{#if collectionData.length === 0 && !isLoading}
 			<CollectionRowPlaceholder
+				locale={data.locale}
 				buttonLink={appHeader.buttonLink}
 				buttonText={appHeader.buttonText}
 			/>

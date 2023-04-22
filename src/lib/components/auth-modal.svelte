@@ -2,12 +2,14 @@
 	import Toast from '$components/toast.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import '$lib/scss/components/auth-modal.scss';
+	import type { Locales } from '$src/i18n/i18n-types';
 
 	import Icon from 'svelte-icons-pack/Icon.svelte';
 	import HiOutlineArrowSmLeft from 'svelte-icons-pack/hi/HiOutlineArrowSmLeft';
 	import AiOutlineLoading from 'svelte-icons-pack/ai/AiOutlineLoading';
 
 	export let showBackButton = false;
+	export let locale: Locales;
 
 	// Form
 	export let title: string;
@@ -58,7 +60,7 @@
 
 	<div class="messages-container">
 		{#each messages as message (message.id)}
-			<Toast {...message} on:close={() => toastClose(message.id)} />
+			<Toast {...message} {locale} on:close={() => toastClose(message.id)} />
 		{/each}
 	</div>
 </div>

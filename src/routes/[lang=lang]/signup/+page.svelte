@@ -316,6 +316,7 @@
 	{isSubmitDisabled}
 	{messages}
 	{showBackButton}
+	locale={data.locale}
 >
 	<svelte:fragment slot="body">
 		{#if step == 1}

@@ -1,7 +1,8 @@
 import type { NamespaceAppHeaderTranslation } from '../../i18n-types'
 
 const en_app_header = {
-	// TODO: insert translations
+	refreshButtonTitle: 'Refresh',
+    switchThemeButtonTitle: 'Switch Theme'
 
 } satisfies NamespaceAppHeaderTranslation
 

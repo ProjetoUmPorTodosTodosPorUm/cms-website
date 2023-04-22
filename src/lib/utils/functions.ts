@@ -85,12 +85,12 @@ export function sortVolunteersByOccupations(volunteers: VolunteerDto[], occupati
     return volunteers;
 }
 
-export function friendlyDateString(date: Date | string) {
+export function friendlyDateString(date: Date | string, locales: Intl.LocalesArgument = 'pt-BR') {
     if (!(date instanceof Date)) {
         date = new Date(date);
     }
     return date.toLocaleDateString(
-        'pt-BR',
+        locales,
         {
             weekday: 'long',
             year: 'numeric',

@@ -11,7 +11,7 @@ const pt_BR_shared = {
     remove: {
         user: 'Você deseja remover a conta de {email:string}?',
         file: 'Você deseja remover o arquivo {name:string}?',
-        log: 'Você deseja remover o log de {createdAt: string}?',
+        log: 'Você deseja remover o log de {createdAt:string}?',
         agenda: 'Você deseja remover o evento {title:string}?',
         announcement: 'Você deseja remover o anúncio {title:string}?',
         testimonial: 'Você deseja remover o testemunho de {name:string}?',
@@ -21,7 +21,7 @@ const pt_BR_shared = {
         field: 'Você deseja remover o campo missionário {designation:string}?',
         church: 'Você deseja remover a igreja {name:string}?',
         collaborator: 'Você deseja remover o colaborador {title:string}?',
-        collectedOffer: 'Você deseja remover a oferta coletada do mês {month:number} e ano {year:number}?',
+        collectedOffer: 'Você deseja remover a oferta coletada de {month:number}/{year:number}?',
         volunteer: 'Você deseja remover o voluntário {name:string}?',
     },
 

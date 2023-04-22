@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { USER_TEMPLATE } from '$lib/constants';
 	import type { AppSidebarMenuItem } from '$lib/types';
 	import { Role } from '$lib/enums';
 	import type { UserStore } from '$lib/store/user';
@@ -7,6 +6,7 @@
 	import type { Navigation } from '@sveltejs/kit';
 	import { fade } from 'svelte/transition';
 	import { PUBLIC_STATIC_PATH } from '$env/static/public';
+	import SwitchLocale from '$components/switch-locale.svelte';
 
 	import Icon from 'svelte-icons-pack';
 	import HiOutlineHome from 'svelte-icons-pack/hi/HiOutlineHome';
@@ -27,7 +27,7 @@
 	import HiSolidUserCircle from 'svelte-icons-pack/hi/HiSolidUserCircle';
 	import { getContext, onMount } from 'svelte';
 	import { VERSION } from 'svelte/compiler';
-	import type { Locales } from '$src/i18n/i18n-types';
+	import type { Locales, Namespaces } from '$src/i18n/i18n-types';
 
 	// i18n
 	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
@@ -39,14 +39,14 @@
 	// @ts-ignore
 	const APP_VERSION = __APP_VERSION__;
 
-	let user = USER_TEMPLATE;
 	let userStore = getContext<UserStore>('userStore');
+	let user = userStore.get('user');
+
 	let active: string = 'painel';
 	let isAccoutMenuOpen = false;
 	let accountInfoRef: HTMLDivElement;
 
 	onMount(async () => {
-		user = userStore.get('user');
 		accountInfoRef.classList.toggle('margin-top-auto');
 
 		await loadNamespaceAsync(locale, 'app-sidebar');
@@ -173,6 +173,24 @@
 			return itemHref.split('/').length == 2;
 		}
 	}
+
+	function namespacesByActivePage(activePage: string) {
+		let namespaces = [
+			'app-actions',
+			'app-header',
+			'app-sidebar',
+			'collection-header',
+			'collection-row',
+			'collection-row-placeholder',
+			'shared',
+			'toast'
+		] as Namespaces[];
+		if (activePage) {
+			namespaces.push(activePage as Namespaces);
+		}
+
+		return namespaces;
+	}
 </script>
 
 <div class="sidebar">
@@ -238,4 +256,5 @@
 	<div class="app-info">
 		<p>Panel v.{APP_VERSION} | Using Svelte {VERSION}</p>
 	</div>
+	<SwitchLocale namespaces={namespacesByActivePage(active.split('/')[2] || '')} />
 </div>
