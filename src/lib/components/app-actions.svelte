@@ -9,6 +9,8 @@
 	import Axios from 'axios';
 	import { generateMessages } from '$components/toast.svelte';
 	import type { Locales } from '$src/i18n/i18n-types';
+	import type { FieldDto, Pagination as PaginationType } from '$lib/types';
+	import { fromPaginationToQuery } from '$lib/utils/functions';
 
 	// i18n
 	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
@@ -23,14 +25,19 @@
 	export let search = '';
 	export let searchMinLength = 3;
 	export let searchType: 'text' | 'number' = 'text';
+	export let searchSpecificValue = '';
+	export let searchSpecificField = '';
+	export let messages: any = [];
 
 	// Component Data
 	export let totalCount = 1;
 	export let showDeleted = true;
+	export let showFilter = true;
 	export let itemsSelected: string[] = [];
 	export let isLoading = false;
-	export let messages: any = [];
 	export let baseRoute = '';
+	let fieldFilterRef: HTMLSelectElement;
+	let fields: FieldDto[] = [];
 
 	let userStore = getContext<UserStore>('userStore');
 	let user = userStore.get('user');
@@ -54,6 +61,8 @@
 
 		await loadNamespaceAsync(locale, 'app-actions');
 		setLocale(locale);
+
+		await loadFields();
 	});
 
 	function handleFilterMenu() {
@@ -111,6 +120,43 @@
 			}
 		}
 	}
+
+	async function loadFields() {
+		const query = {
+			itemsPerPage: 100,
+			page: 1,
+			deleted: false,
+			orderKey: 'designation',
+			orderValue: 'asc'
+		} as PaginationType;
+		const queryString = fromPaginationToQuery(query);
+
+		try {
+			isLoading = true;
+			fields = (await axios.get(`/field?${queryString}`)).data.data;
+			isLoading = false;
+		} catch (error) {
+			isLoading = false;
+
+			if (error instanceof Axios.AxiosError) {
+				messages = generateMessages([{ message: error.response?.data.message }]);
+			} else {
+				console.warn(error);
+			}
+		}
+	}
+
+	function handleFilterApply() {
+		const fieldId = fieldFilterRef.value;
+		searchSpecificValue = fieldId;
+		searchSpecificField = 'fieldId';
+	}
+
+	function handleFilterReset() {
+		searchSpecificValue = '';
+		searchSpecificField = '';
+		fieldFilterRef.value = '';
+	}
 </script>
 
 <div class="app-content-actions">
@@ -128,7 +174,7 @@
 	<Pagination bind:page {maxPage} />
 	<div class="app-content-actions-wrapper">
 		<div class="filter-button-wrapper">
-			{#if isWebMaster}
+			{#if isWebMaster && showFilter}
 				<button on:click={handleFilterMenu} class="action-button filter jsFilter"
 					><span>{i18n.filterIconText()}</span><svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -146,12 +192,21 @@
 				>
 				<div bind:this={filterMenuRef} class="filter-menu">
 					<label for="field-select">{i18n.filterFieldLabel()}</label>
-					<select id="field-select">
-						<option>@TODO FIELDS</option>
+					<select bind:this={fieldFilterRef} id="field-select">
+						<option value="" disabled selected>{i18n.filterFieldLabel()}</option>
+						{#each fields as field}
+							<option value={field.id}>
+								{field.abbreviation} - {field.designation}
+							</option>
+						{/each}
 					</select>
 					<div class="filter-menu-buttons">
-						<button class="filter-button reset">{i18n.filterResetButton()}</button>
-						<button class="filter-button apply">{i18n.filterApplyButton()}</button>
+						<button on:click={handleFilterReset} class="filter-button reset"
+							>{i18n.filterResetButton()}</button
+						>
+						<button on:click={handleFilterApply} class="filter-button apply"
+							>{i18n.filterApplyButton()}</button
+						>
 					</div>
 				</div>
 			{/if}

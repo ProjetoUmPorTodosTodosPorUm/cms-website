@@ -14,17 +14,21 @@
 	export let maxPage = 1;
 	export let totalCount = 1;
 	export let showDeleted = false;
+	export let showFilter = true;
 	export let itemsSelected: string[] = [];
 	export let search = '';
 	export let searchMinLength = 3;
 	export let searchType: 'text' | 'number' = 'text';
 	export let locale: Locales;
+	export let searchSpecificValue = '';
+	export let searchSpecificField = '';
 
 	// Component Options - forwarding
 	export let isLoading = false;
 	export let showBackButton = true;
 	export let showRefreshButton = true;
 	export let baseRoute = '';
+	export let messages: any = [];
 
 	// Component Options
 	export let showActions = true;
@@ -62,10 +66,15 @@
 			{searchMinLength}
 			{searchType}
 			{locale}
+			{showFilter}
 			bind:search
 			bind:itemsSelected
 			bind:page
 			bind:showDeleted
+			bind:messages
+			bind:isLoading
+			bind:searchSpecificField
+			bind:searchSpecificValue
 			on:remove={remove}
 			on:restore={restore}
 			on:searchLoad={searchLoad}
