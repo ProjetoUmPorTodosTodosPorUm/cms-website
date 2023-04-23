@@ -226,6 +226,7 @@
 		{...appHeader}
 		{totalCount}
 		showBackButton={false}
+		showFilter={false}
 		maxPage={totalPages}
 		baseRoute={'/token'}
 		locale={data.locale}
@@ -237,6 +238,7 @@
 		bind:search={searchInput}
 		bind:page={pagination.page}
 		bind:showDeleted={pagination.deleted}
+		bind:messages
 		bind:itemsSelected
 		bind:isLoading
 	>

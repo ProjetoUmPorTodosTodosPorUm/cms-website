@@ -51,6 +51,11 @@
 		axios.setAuth(accessToken);
 		isReady = true;
 
+		if (userStore.isVolunteer() || userStore.isAdmin()) {
+			pagination.searchSpecificField = 'fieldId';
+			pagination.searchSpecificValue = userStore.get('user.fieldId');
+		}
+
 		await loadNamespaceAsync(data.locale, 'files');
 		await loadNamespaceAsync(data.locale, 'shared');
 		setLocale(data.locale);
@@ -243,6 +248,9 @@
 		bind:search={searchInput}
 		bind:page={pagination.page}
 		bind:showDeleted={pagination.deleted}
+		bind:searchSpecificField={pagination.searchSpecificField}
+		bind:searchSpecificValue={pagination.searchSpecificValue}
+		bind:messages
 		bind:itemsSelected
 		bind:isLoading
 	>

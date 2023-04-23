@@ -265,6 +265,9 @@
 		bind:search={searchInput}
 		bind:page={pagination.page}
 		bind:showDeleted={pagination.deleted}
+		bind:searchSpecificField={pagination.searchSpecificField}
+		bind:searchSpecificValue={pagination.searchSpecificValue}
+		bind:messages
 		bind:itemsSelected
 		bind:isLoading
 	>

@@ -19,7 +19,6 @@
 	import axios from '$lib/axios';
 	import Axios from 'axios';
 	import { goto } from '$app/navigation';
-	import { TEMPLATES } from '$src/lib/constants';
 	import type { PageData } from './$types';
 	import type { UserStore } from '$src/lib/store/user';
 
@@ -279,6 +278,7 @@
 		{...appHeader}
 		{totalCount}
 		showBackButton={false}
+		showFilter={false}
 		maxPage={totalPages}
 		baseRoute={'/field'}
 		locale={data.locale}
@@ -290,6 +290,7 @@
 		bind:search={searchInput}
 		bind:page={pagination.page}
 		bind:showDeleted={pagination.deleted}
+		bind:messages
 		bind:itemsSelected
 		bind:isLoading
 	>
