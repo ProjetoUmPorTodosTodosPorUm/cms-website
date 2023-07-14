@@ -47,7 +47,7 @@
 	// App Header
 	$: appHeader = {
 		name: i18n.appHeader.name(),
-		buttonText: i18n.appHeader.buttonText()
+		buttonText: ''
 	};
 
 	const query = {
@@ -406,6 +406,14 @@
 					</select>
 				</div>
 			{/if}
+			<div class="input">
+				<input
+					on:click={onSubmit}
+					class="submit"
+					type="submit"
+					value={i18n.appHeader.buttonText()}
+				/>
+			</div>
 		</form>
 	</AppContent>
 </AppContainer>

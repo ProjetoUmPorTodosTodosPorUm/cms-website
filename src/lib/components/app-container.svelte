@@ -1,5 +1,6 @@
 <script lang="ts">
-	import AppSidebar from '$components/app-sidebar.svelte';
+	import '$lib/scss/components/app-container.scss';
+	import AppNav from '$src/lib/components/app-nav.svelte';
 	import Toast from '$components/toast.svelte';
 	import type { Locales } from '$src/i18n/i18n-types';
 
@@ -10,7 +11,7 @@
 </script>
 
 <div class="app-container">
-	<AppSidebar {locale} />
+	<AppNav {locale} />
 	<slot />
 
 	<div class="messages-container">

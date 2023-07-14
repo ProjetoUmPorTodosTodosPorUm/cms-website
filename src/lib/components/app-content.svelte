@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '$lib/scss/components/app-content.scss';
 	import AppHeader from '$components/app-header.svelte';
 	import AppActions from '$components/app-actions.svelte';
 

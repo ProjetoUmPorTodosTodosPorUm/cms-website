@@ -6,11 +6,11 @@ $theme-map-dark: (
     $--app-content-main-color: #fff,
     $--app-content-secondary-color: #1d283c,
 
-    $--sidebar: rgba(21, 30, 47, 1),
-    $--sidebar-main-color: #fff,
-    $--sidebar-link: #fff,
-    $--sidebar-active-link: #1d283c,
-    $--sidebar-hover-link: #1a2539,
+    $--nav: rgba(21, 30, 47, 1),
+    $--nav-main-color: #fff,
+    $--nav-link: #fff,
+    $--nav-active-link: #1d283c,
+    $--nav-hover-link: #1a2539,
 
     $--table-border: #1a2131,
     $--table-header: #1a2131,
@@ -35,11 +35,11 @@ $theme-map-light: (
     $--app-content-main-color: #1f1c2e,
     $--app-content-secondary-color: #f3f6fd,
 
-    $--sidebar: #f3f6fd,
-    $--sidebar-main-color: #1f1c2e,
-    $--sidebar-link: #1f1c2e,
-    $--sidebar-hover-link: rgba(195, 207, 244, 0.5),
-    $--sidebar-active-link: rgba(195, 207, 244, 1),
+    $--nav: #f3f6fd,
+    $--nav-main-color: #1f1c2e,
+    $--nav-link: #1f1c2e,
+    $--nav-hover-link: rgba(195, 207, 244, 0.5),
+    $--nav-active-link: rgba(195, 207, 244, 1),
 
     $--table-border: rgba(195, 207, 244, 0.5),
     $--table-header: rgba(195, 207, 244, 0.5),

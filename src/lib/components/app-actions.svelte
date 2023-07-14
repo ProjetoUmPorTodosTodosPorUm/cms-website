@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '$lib/scss/components/app-actions.scss';
 	import Pagination from '$components/pagination.svelte';
 	import SearchInput from '$components/search-input.svelte';
 	import type { UserStore } from '$lib/store/user';
@@ -10,7 +11,11 @@
 	import { generateMessages } from '$components/toast.svelte';
 	import type { Locales } from '$src/i18n/i18n-types';
 	import type { FieldDto, Pagination as PaginationType } from '$lib/types';
-	import { fromPaginationToQuery } from '$lib/utils/functions';
+	import {
+		fromPaginationToQuery,
+		getFromLocalStorage,
+		saveToLocalStorage
+	} from '$lib/utils/functions';
 
 	// i18n
 	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
@@ -48,6 +53,12 @@
 	let listRef: HTMLButtonElement;
 	let gridRef: HTMLButtonElement;
 
+	let currentDataDisplay: 'list' | 'grid' = 'list';
+	let screenSize: number;
+	$: if (screenSize <= 575) {
+		handleGridView();
+	}
+
 	// Events
 	const dispatch = createEventDispatcher();
 	const restore = () => dispatch('restore');
@@ -56,6 +67,8 @@
 	const searchClear = () => dispatch('searchClear');
 
 	onMount(async () => {
+		applySavedDataDisplay();
+
 		const accessToken = userStore.get('accessToken');
 		axios.setAuth(accessToken);
 
@@ -74,6 +87,8 @@
 		gridRef.classList.add('active');
 		document.querySelector('.products-area-wrapper')?.classList.add('gridView');
 		document.querySelector('.products-area-wrapper')?.classList.remove('tableView');
+
+		saveToLocalStorage('dataDisplay', 'grid');
 	}
 
 	function handleListView() {
@@ -81,6 +96,19 @@
 		gridRef.classList.remove('active');
 		document.querySelector('.products-area-wrapper')?.classList.remove('gridView');
 		document.querySelector('.products-area-wrapper')?.classList.add('tableView');
+
+		saveToLocalStorage('dataDisplay', 'list');
+	}
+
+	function applySavedDataDisplay() {
+		const dataDisplay = getFromLocalStorage('dataDisplay') || currentDataDisplay;
+		currentDataDisplay = dataDisplay === 'list' ? 'list' : 'grid';
+
+		if (currentDataDisplay === 'list') {
+			handleListView();
+		} else {
+			handleGridView();
+		}
 	}
 
 	async function restoreAll() {
@@ -159,7 +187,9 @@
 	}
 </script>
 
-<div class="app-content-actions">
+<svelte:window bind:innerWidth={screenSize} />
+
+<div class="app-actions">
 	<SearchInput
 		bind:search
 		minLength={searchMinLength}
@@ -172,7 +202,7 @@
 		>{i18n.totalItemsText()}: {totalCount}</span
 	>
 	<Pagination bind:page {maxPage} />
-	<div class="app-content-actions-wrapper">
+	<div class="app-actions-wrapper">
 		<div class="filter-button-wrapper">
 			{#if isWebMaster && showFilter}
 				<button on:click={handleFilterMenu} class="action-button filter jsFilter"
@@ -269,7 +299,7 @@
 	</div>
 </div>
 {#if isAdmin || isWebMaster}
-	<div class="app-content-actions-admin">
+	<div class="app-actions-admin">
 		<div class="show-deleted">
 			<span>{i18n.showDeletedText()}</span>
 			<input bind:checked={showDeleted} type="checkbox" name="showDeleted" id="showDeleted" />

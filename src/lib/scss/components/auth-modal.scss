@@ -2,7 +2,7 @@
 @import "$lib/scss/_variables";
 
 .login-container {
-  min-height: 100vh;
+  height: 100vh;
   width: 100vw;
 
   display: flex;
@@ -13,14 +13,15 @@
 }
 
 .form-container {
-  width: 260px;
-  height: 480px;
-  overflow: hidden;
+  width: 70%;
+  height: 80%;
+
+  overflow: auto;
   border-top-right-radius: .5rem;
   border-top-left-radius: .5rem;
 
   display: grid;
-  grid-template-areas:
+  grid-template-areas: 
     'image'
     'form';
   grid-template-rows: 25% 75%;
@@ -31,7 +32,7 @@
 
   @include for-md-devices {
     width: 560px;
-    min-height: 380px;
+    height: 380px;
 
     grid-template-areas: 'image form';
     grid-template-rows: 100%;
@@ -42,6 +43,11 @@
     border-top-left-radius: .5rem;
     border-bottom-left-radius: .5rem;
   }
+
+  @include for-lg-devices {
+    height: 480px;
+  }
+
 }
 
 .form-image {
@@ -62,7 +68,7 @@
     position: absolute;
     margin: .5rem .2rem;
     padding: 0;
-    
+
     border: none;
     background-color: transparent;
     cursor: pointer;
@@ -75,12 +81,18 @@
 }
 
 .form {
+  grid-area: form;
+
   display: flex;
   flex-direction: column;
   align-items: center;
 
   box-sizing: border-box;
-  padding: 1rem 1.5rem;
+  padding: 1rem;
+
+  @include for-lg-devices {
+    padding: 1rem 1.5rem;
+  }
 
   h2 {
     width: 100%;
@@ -97,7 +109,7 @@
 
   .form-links {
     width: 100%;
-    margin-top: 1rem;
+    margin-top: auto;
     display: flex;
     flex-direction: column;
     align-items: center;

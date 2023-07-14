@@ -125,7 +125,7 @@
 	</svelte:fragment>
 
 	<svelte:fragment slot="links">
-		<a href={`/${data.locale}/signup`}>{i18n.links.signupText()}</a>
+		<a href={`/${data.locale}/signup?step=1`}>{i18n.links.signupText()}</a>
 		<a href={`/${data.locale}/forgot-password`}>{i18n.links.forgotPasswordText()}</a>
 	</svelte:fragment>
 </AuthModal>

@@ -1,0 +1,171 @@
+@import "$lib/scss/_shared";
+@import "$lib/scss/_variables";
+
+.app-nav {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+    z-index: 1;
+
+    @include for-md-devices {
+        position: relative;
+        width: 20%;
+        display: inline-flex;
+    }
+
+    @include for-xl-devices {
+        width: 15%;
+    }
+
+    &-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        background-color: var(--nav);
+        pointer-events: initial;
+
+        .app-icon {
+            color: var(--nav-main-color);
+            position: relative;
+            align-self: flex-start;
+            width: 1rem;
+            height: 1rem;
+
+            img {
+                display: block;
+                position: absolute;
+                height: 3.5rem;
+            }
+        }
+
+        & .toggle-icon {
+            height: 100%;
+            padding-top: .2rem;
+            transition: .6s ease-out;
+
+            animation-duration: .6s;
+            animation-name: fadeIn;
+
+            a {
+                font-size: 2rem;
+                border-radius: .15rem;
+            }
+
+            &.open {
+                animation-duration: .6s;
+                animation-name: fadeIn;
+            }
+
+            @include for-md-devices {
+                visibility: hidden;
+                pointer-events: none;
+            }
+        }
+    }
+
+    &-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        background-color: var(--nav);
+        overflow-y: auto;
+        box-shadow: inset 0 0 .8rem rgba(0, 0, 0, .1);
+
+        left: -100%;
+        position: relative;
+        transition: .6s ease-out;
+
+        &.open {
+            left: 0%;
+            pointer-events: initial;
+        }
+
+        @include for-md-devices {
+            left: 0%;
+            pointer-events: initial;
+        }
+
+
+
+        &-item {
+            position: relative;
+            margin-bottom: 4px;
+
+            a {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                padding: 10px 16px;
+                color: var(--nav-link);
+                text-decoration: none;
+                font-size: $font-small;
+                line-height: 24px;
+            }
+
+            svg {
+                margin-right: 8px;
+                width: 1.4rem;
+                height: 1.4rem;
+            }
+
+            &:hover {
+                background-color: var(--nav-hover-link);
+            }
+
+            &.active {
+                background-color: var(--nav-active-link);
+
+                &:before {
+                    content: '';
+                    position: absolute;
+                    right: 0;
+                    background-color: var(--action-color);
+                    height: 100%;
+                    width: 4px;
+                }
+            }
+        }
+
+        &-separator {
+            width: 80%;
+        }
+    }
+
+    .app-info {
+        background-color: var(--nav);
+        padding: 1rem;
+
+        span {
+            display: block;
+            text-indent: 0;
+            margin: 0;
+            color: var(--app-content-main-color);
+            font-size: .7rem;
+        }
+    }
+
+    .app-choices {
+        display: flex;
+        background-color: var(--nav);
+        padding: 0 0 1rem 1rem;
+        pointer-events: initial;
+
+        &>* {
+            margin-right: .5rem;
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

@@ -1,6 +1,6 @@
 import type { BaseTranslation } from '../../i18n-types'
 
-const pt_BR_app_sidebar = {
+const pt_BR_app_nav = {
     menu: {
         dashboard: 'Dashboard',
         agenda: 'Agenda',
@@ -25,7 +25,9 @@ const pt_BR_app_sidebar = {
             profile: 'Perfil',
             logout: 'Logout'
         },
-    }
+    },
+
+    userMessage: 'Olá, {name:string}.'
 } as BaseTranslation
 
-export default pt_BR_app_sidebar
+export default pt_BR_app_nav

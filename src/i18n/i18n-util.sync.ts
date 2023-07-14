@@ -12,7 +12,7 @@ import en_agenda from './en/agenda'
 import en_announcements from './en/announcements'
 import en_app_actions from './en/app-actions'
 import en_app_header from './en/app-header'
-import en_app_sidebar from './en/app-sidebar'
+import en_app_nav from './en/app-nav'
 import en_churches from './en/churches'
 import en_collaborators from './en/collaborators'
 import en_collected_offers from './en/collected-offers'
@@ -40,7 +40,7 @@ import pt_BR_agenda from './pt-BR/agenda'
 import pt_BR_announcements from './pt-BR/announcements'
 import pt_BR_app_actions from './pt-BR/app-actions'
 import pt_BR_app_header from './pt-BR/app-header'
-import pt_BR_app_sidebar from './pt-BR/app-sidebar'
+import pt_BR_app_nav from './pt-BR/app-nav'
 import pt_BR_churches from './pt-BR/churches'
 import pt_BR_collaborators from './pt-BR/collaborators'
 import pt_BR_collected_offers from './pt-BR/collected-offers'
@@ -72,7 +72,7 @@ const localeTranslations = {
 		announcements: en_announcements,
 		'app-actions': en_app_actions,
 		'app-header': en_app_header,
-		'app-sidebar': en_app_sidebar,
+		'app-nav': en_app_nav,
 		churches: en_churches,
 		collaborators: en_collaborators,
 		'collected-offers': en_collected_offers,
@@ -103,7 +103,7 @@ const localeTranslations = {
 		announcements: pt_BR_announcements,
 		'app-actions': pt_BR_app_actions,
 		'app-header': pt_BR_app_header,
-		'app-sidebar': pt_BR_app_sidebar,
+		'app-nav': pt_BR_app_nav,
 		churches: pt_BR_churches,
 		collaborators: pt_BR_collaborators,
 		'collected-offers': pt_BR_collected_offers,
