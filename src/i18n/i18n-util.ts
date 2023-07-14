@@ -20,7 +20,7 @@ export const namespaces: Namespaces[] = [
 	'announcements',
 	'app-actions',
 	'app-header',
-	'app-sidebar',
+	'app-nav',
 	'churches',
 	'collaborators',
 	'collected-offers',

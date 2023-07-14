@@ -17,7 +17,7 @@ export type Translations = RootTranslation &
 	announcements: NamespaceAnnouncementsTranslation,
 	'app-actions': NamespaceAppActionsTranslation,
 	'app-header': NamespaceAppHeaderTranslation,
-	'app-sidebar': NamespaceAppSidebarTranslation,
+	'app-nav': NamespaceAppNavTranslation,
 	churches: NamespaceChurchesTranslation,
 	collaborators: NamespaceCollaboratorsTranslation,
 	'collected-offers': NamespaceCollectedOffersTranslation,
@@ -341,7 +341,7 @@ export type NamespaceAppHeaderTranslation = {
 	switchThemeButtonTitle: string
 }
 
-export type NamespaceAppSidebarTranslation = {
+export type NamespaceAppNavTranslation = {
 	menu: {
 		/**
 		 * D​a​s​h​b​o​a​r​d
@@ -420,6 +420,11 @@ export type NamespaceAppSidebarTranslation = {
 			logout: string
 		}
 	}
+	/**
+	 * O​l​á​,​ ​{​n​a​m​e​}​.
+	 * @param {string} name
+	 */
+	userMessage: RequiredParams<'name'>
 }
 
 export type NamespaceChurchesTranslation = {
@@ -2582,7 +2587,7 @@ export type Namespaces =
 	| 'announcements'
 	| 'app-actions'
 	| 'app-header'
-	| 'app-sidebar'
+	| 'app-nav'
 	| 'churches'
 	| 'collaborators'
 	| 'collected-offers'
@@ -2633,10 +2638,10 @@ type DisallowNamespaces = {
 	'app-header'?: "[typesafe-i18n] reserved for 'app-header'-namespace. You need to use the `./app-header/index.ts` file instead."
 
 	/**
-	 * reserved for 'app-sidebar'-namespace\
-	 * you need to use the `./app-sidebar/index.ts` file instead
+	 * reserved for 'app-nav'-namespace\
+	 * you need to use the `./app-nav/index.ts` file instead
 	 */
-	'app-sidebar'?: "[typesafe-i18n] reserved for 'app-sidebar'-namespace. You need to use the `./app-sidebar/index.ts` file instead."
+	'app-nav'?: "[typesafe-i18n] reserved for 'app-nav'-namespace. You need to use the `./app-nav/index.ts` file instead."
 
 	/**
 	 * reserved for 'churches'-namespace\
@@ -3070,7 +3075,7 @@ export type TranslationFunctions = {
 		 */
 		switchThemeButtonTitle: () => LocalizedString
 	}
-	'app-sidebar': {
+	'app-nav': {
 		menu: {
 			/**
 			 * Dashboard
@@ -3149,6 +3154,10 @@ export type TranslationFunctions = {
 				logout: () => LocalizedString
 			}
 		}
+		/**
+		 * Olá, {name}.
+		 */
+		userMessage: (arg: { name: string }) => LocalizedString
 	}
 	churches: {
 		list: {

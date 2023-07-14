@@ -4,7 +4,7 @@ export * from './pagination';
 export * from './collumn-cell';
 export * from './row-cell';
 export * from './collection-point'
-export * from './app-sidebar-menu-item'
+export * from './app-nav-menu-item'
 
 // DTOS
 export * from './field.dto';

@@ -7,7 +7,7 @@
   align-items: flex-start;
 
   box-sizing: border-box;
-  padding: 3rem;
+  padding: 1rem;
 
   .image-preview {
     display: grid;
@@ -133,6 +133,25 @@
 
       .files {
         width: 100%;
+      }
+    }
+
+    .submit {
+      background-color: var(--action-color);
+      color: #fff;
+      font-size: $font-small;
+      line-height: 24px;
+      border: none;
+      border-radius: 4px;
+      min-height: 32px;
+      height: fit-content;
+      width: 100%;
+      padding: 0 16px;
+      transition: .2s;
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--action-color-hover);
       }
     }
 

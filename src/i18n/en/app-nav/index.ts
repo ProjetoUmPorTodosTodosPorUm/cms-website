@@ -1,7 +1,7 @@
-import type { NamespaceAppSidebarTranslation } from '../../i18n-types'
+import type { NamespaceAppNavTranslation } from '../../i18n-types'
 
-const en_app_sidebar = {
-	menu: {
+const en_app_nav = {
+    menu: {
         dashboard: 'Dashboard',
         agenda: 'Agenda',
         announcements: 'Announcements',
@@ -25,8 +25,10 @@ const en_app_sidebar = {
             profile: 'Profile',
             logout: 'Logout'
         },
-    }
+    },
 
-} satisfies NamespaceAppSidebarTranslation
+    userMessage: 'Hello, {name}.'
 
-export default en_app_sidebar
+} satisfies NamespaceAppNavTranslation
+
+export default en_app_nav
