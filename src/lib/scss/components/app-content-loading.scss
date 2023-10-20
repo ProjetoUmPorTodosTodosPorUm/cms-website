@@ -1,27 +1,27 @@
-@import "$lib/scss/_shared";
+@import '$scss/_shared';
 
 .loading-overlay {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  margin: -16px; // app-content
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	margin: -16px; // app-content
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--app-bg);
-  opacity: .3;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: var(--app-bg);
+	opacity: 0.3;
 
-  padding: calc(1rem + 85px) 1rem 1rem 1rem;
+	padding: calc(1rem + 85px) 1rem 1rem 1rem;
 
-  @include for-md-devices {
-    width: calc(100% - 200px);
-    padding: 1rem;
-  }
+	@include for-md-devices {
+		width: calc(100% - 200px);
+		padding: 1rem;
+	}
 
-  .loading-icon {
-    @include icon-spinner;
-    filter: var(--svg-color);
-    font-size: 5rem;
-  }
+	.loading-icon {
+		@include icon-spinner;
+		filter: var(--svg-color);
+		font-size: 5rem;
+	}
 }

@@ -1,44 +1,43 @@
 <script lang="ts">
-	import '$lib/scss/dashboard.scss';
-	import AppContainer from '$components/app-container.svelte';
-	import AppContent from '$components/app-content.svelte';
-	import { friendlyDateString } from '$lib/utils/functions';
-	import { getContext, onMount } from 'svelte';
-	import type { UserStore } from '$src/lib/store/user';
-	import type { PageData } from './$types';
+	import '$scss/dashboard.scss'
+	import { AppContainer, AppContent } from '$components'
+	import { friendlyDateString } from '$utils'
+	import { getContext, onMount } from 'svelte'
+	import type { UserStore } from '$stores'
+	import type { PageData } from './$types'
 
 	// i18n
-	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
-	import LL, { setLocale } from '$i18n/i18n-svelte';
-	$: i18n = $LL.dashboard;
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async'
+	import LL, { setLocale } from '$i18n/i18n-svelte'
+	$: i18n = $LL.dashboard
 
-	export let data: PageData;
+	export let data: PageData
 
 	// App Content Options
-	let isLoading = true;
+	let isLoading = true
 
 	// App Header
 	$: appHeader = {
 		name: i18n.appHeader.name()
-	};
+	}
 
 	// Component Options
-	let userStore = getContext<UserStore>('userStore');
-	let user = userStore.get('user');
+	const userStore = getContext<UserStore>('user')
+	const user = userStore.get()
 
-	let time = new Date();
-	$: currentTime = friendlyDateString(time, data.locale);
+	let time = new Date()
+	$: currentTime = friendlyDateString(time, data.locale)
 
 	onMount(async () => {
-		isLoading = false;
+		isLoading = false
 
 		setInterval(() => {
-			time = new Date();
-		}, 1000);
+			time = new Date()
+		}, 1000)
 
-		await loadNamespaceAsync(data.locale, 'dashboard');
-		setLocale(data.locale);
-	});
+		await loadNamespaceAsync(data.locale, 'dashboard')
+		setLocale(data.locale)
+	})
 </script>
 
 <svelte:head>

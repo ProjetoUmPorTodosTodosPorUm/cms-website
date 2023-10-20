@@ -1,243 +1,243 @@
-@import "$lib/scss/_shared";
-@import "$lib/scss/_variables";
+@import '$scss/_shared';
+@import '$scss/_variables';
 
 .app-actions {
-    display: grid;
-    grid-template-areas:
-        'search search search search search search search items items items'
-        '. . . . pagination pagination actions-wrapper actions-wrapper actions-wrapper actions-wrapper';
-    padding: 1rem .5rem;
+	display: grid;
+	grid-template-areas:
+		'search search search search search search search items items items'
+		'. . . . pagination pagination actions-wrapper actions-wrapper actions-wrapper actions-wrapper';
+	padding: 1rem 0.5rem;
 
-    @include for-md-devices {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-    }
+	@include for-md-devices {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+	}
 
-    .search-bar {
-        grid-area: search;
-        width: 100%;
-        margin-bottom: .5rem;
-    }
+	.search-bar {
+		grid-area: search;
+		width: 100%;
+		margin-bottom: 0.5rem;
+	}
 
-    .total-items {
-        grid-area: items;
-        border-radius: 4px;
-        height: 32px;
-        background-color: var(--app-content-secondary-color);
-        border: 1px solid var(--app-content-secondary-color);
-        display: flex;
-        align-items: center;
-        color: var(--app-content-main-color);
-        font-size: $font-small;
-        margin-left: 8px;
-        padding: 1px 6px;
-        cursor: pointer;
-    }
+	.total-items {
+		grid-area: items;
+		border-radius: 4px;
+		height: 32px;
+		background-color: var(--app-content-secondary-color);
+		border: 1px solid var(--app-content-secondary-color);
+		display: flex;
+		align-items: center;
+		color: var(--app-content-main-color);
+		font-size: $font-small;
+		margin-left: 8px;
+		padding: 1px 6px;
+		cursor: pointer;
+	}
 
-    .pagination {
-        grid-area: pagination;
+	.pagination {
+		grid-area: pagination;
 
-        @include for-md-devices {
-            margin-left: auto;
-        }
-    }
+		@include for-md-devices {
+			margin-left: auto;
+		}
+	}
 
-    &-wrapper {
-        grid-area: actions-wrapper;
+	&-wrapper {
+		grid-area: actions-wrapper;
 
-        display: flex;
-        align-items: center;
-    }
+		display: flex;
+		align-items: center;
+	}
 }
 
 .filter-menu {
-    background-color: var(--app-content-secondary-color);
-    position: absolute;
-    top: calc(100% + 16px);
-    right: -74px;
-    border-radius: 4px;
-    padding: 8px;
-    width: 220px;
-    z-index: 2;
-    box-shadow: var(--filter-shadow);
+	background-color: var(--app-content-secondary-color);
+	position: absolute;
+	top: calc(100% + 16px);
+	right: -74px;
+	border-radius: 4px;
+	padding: 8px;
+	width: 220px;
+	z-index: 2;
+	box-shadow: var(--filter-shadow);
 
-    visibility: hidden;
-    opacity: 0;
-    transition: .2s;
+	visibility: hidden;
+	opacity: 0;
+	transition: 0.2s;
 
-    &:before {
-        content: '';
-        position: absolute;
-        width: 0;
-        height: 0;
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
+	&:before {
+		content: '';
+		position: absolute;
+		width: 0;
+		height: 0;
+		border-left: 5px solid transparent;
+		border-right: 5px solid transparent;
 
-        border-bottom: 5px solid var(--app-content-secondary-color);
-        bottom: 100%;
-        left: 50%;
-        transform: translatex(-50%);
-    }
+		border-bottom: 5px solid var(--app-content-secondary-color);
+		bottom: 100%;
+		left: 50%;
+		transform: translatex(-50%);
+	}
 
-    &.active {
-        visibility: visible;
-        opacity: 1;
-        top: calc(100% + 8px);
-    }
+	&.active {
+		visibility: visible;
+		opacity: 1;
+		top: calc(100% + 8px);
+	}
 
-    label {
-        display: block;
-        font-size: $font-small;
-        color: var(--app-content-main-color);
-        margin-bottom: 8px;
-    }
+	label {
+		display: block;
+		font-size: $font-small;
+		color: var(--app-content-main-color);
+		margin-bottom: 8px;
+	}
 
-    select {
-        appearance: none;
-        @include arrowDown('fff');
-        background-repeat: no-repeat;
-        padding: 8px 24px 8px 8px;
-        background-position: right 4px center;
-        border: 1px solid var(--app-content-main-color);
-        border-radius: 4px;
-        color: var(--app-content-main-color);
-        font-size: 12px;
-        background-color: transparent;
-        margin-bottom: 16px;
-        width: 100%;
+	select {
+		appearance: none;
+		@include arrowDown('fff');
+		background-repeat: no-repeat;
+		padding: 8px 24px 8px 8px;
+		background-position: right 4px center;
+		border: 1px solid var(--app-content-main-color);
+		border-radius: 4px;
+		color: var(--app-content-main-color);
+		font-size: 12px;
+		background-color: transparent;
+		margin-bottom: 16px;
+		width: 100%;
 
-        option {
-            font-size: 14px;
-        }
+		option {
+			font-size: 14px;
+		}
 
-        .light & {
-            @include arrowDown('1f1c2e');
-        }
+		.light & {
+			@include arrowDown('1f1c2e');
+		}
 
-        &:hover {
-            border-color: var(--action-color-hover);
-        }
+		&:hover {
+			border-color: var(--action-color-hover);
+		}
 
-        &:focus,
-        &.active {
-            outline: none;
-            color: var(--action-color);
-            border-color: var(--action-color);
-            @include arrowDown('2869ff');
-        }
-    }
+		&:focus,
+		&.active {
+			outline: none;
+			color: var(--action-color);
+			border-color: var(--action-color);
+			@include arrowDown('2869ff');
+		}
+	}
 }
 
 .filter-button-wrapper {
-    position: relative;
+	position: relative;
 }
 
 .filter-menu-buttons {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .filter-button {
-    border-radius: 2px;
-    font-size: 12px;
-    padding: 4px 8px;
-    cursor: pointer;
-    border: none;
-    color: #fff;
+	border-radius: 2px;
+	font-size: 12px;
+	padding: 4px 8px;
+	cursor: pointer;
+	border: none;
+	color: #fff;
 
-    &.apply {
-        background-color: var(--action-color);
-    }
+	&.apply {
+		background-color: var(--action-color);
+	}
 
-    &.reset {
-        background-color: var(--filter-reset);
-    }
+	&.reset {
+		background-color: var(--filter-reset);
+	}
 }
 
 .action-button {
-    border-radius: 4px;
-    height: 32px;
-    background-color: var(--app-content-secondary-color);
-    border: 1px solid var(--app-content-secondary-color);
-    display: flex;
-    align-items: center;
-    color: var(--app-content-main-color);
-    font-size: $font-small;
-    margin-left: 8px;
-    cursor: pointer;
+	border-radius: 4px;
+	height: 32px;
+	background-color: var(--app-content-secondary-color);
+	border: 1px solid var(--app-content-secondary-color);
+	display: flex;
+	align-items: center;
+	color: var(--app-content-main-color);
+	font-size: $font-small;
+	margin-left: 8px;
+	cursor: pointer;
 
-    span {
-        margin-right: 4px;
-    }
+	span {
+		margin-right: 4px;
+	}
 
-    &:hover {
-        border-color: var(--action-color-hover);
-    }
+	&:hover {
+		border-color: var(--action-color-hover);
+	}
 
-    &:focus,
-    &.active {
-        outline: none;
-        color: var(--action-color);
-        border-color: var(--action-color);
-    }
+	&:focus,
+	&.active {
+		outline: none;
+		color: var(--action-color);
+		border-color: var(--action-color);
+	}
 
-    &.list {
-        display: none;
+	&.list {
+		display: none;
 
-        @include for-md-devices {
-            display: initial;
-        }
-    }
+		@include for-md-devices {
+			display: initial;
+		}
+	}
 }
 
 .app-actions-admin {
-    display: flex;
-    flex-direction: column;
-    align-items: end;
+	display: flex;
+	flex-direction: column;
+	align-items: end;
 
-    padding: 0px .5rem 1rem .5rem;
+	padding: 0px 0.5rem 1rem 0.5rem;
 
-    & .show-deleted {
-        display: flex;
+	& .show-deleted {
+		display: flex;
 
-        span {
-            color: var(--app-content-main-color);
-        }
-    }
+		span {
+			color: var(--app-content-main-color);
+		}
+	}
 
-    & .buttons {
-        display: flex;
+	& .buttons {
+		display: flex;
 
-        button {
-            background-color: var(--action-color);
-            color: #fff;
-            font-size: .9rem;
-            border: none;
-            border-radius: 4px;
-            min-height: 32px;
-            height: fit-content;
-            padding: .3rem 1rem;
-            transition: 0.2s;
-            cursor: pointer;
-            margin-left: .5rem;
+		button {
+			background-color: var(--action-color);
+			color: #fff;
+			font-size: 0.9rem;
+			border: none;
+			border-radius: 4px;
+			min-height: 32px;
+			height: fit-content;
+			padding: 0.3rem 1rem;
+			transition: 0.2s;
+			cursor: pointer;
+			margin-left: 0.5rem;
 
-            &:hover {
-                background-color: var(--action-color-hover);
-            }
-        }
-    }
+			&:hover {
+				background-color: var(--action-color-hover);
+			}
+		}
+	}
 
-    & .clean {
-        margin-left: .5rem;
+	& .clean {
+		margin-left: 0.5rem;
 
-        button {
-            background-color: var(--danger-action-color);
+		button {
+			background-color: var(--danger-action-color);
 
-            &:hover {
-                background-color: var(--danger-action-color-hover);
-            }
-        }
-    }
+			&:hover {
+				background-color: var(--danger-action-color-hover);
+			}
+		}
+	}
 }

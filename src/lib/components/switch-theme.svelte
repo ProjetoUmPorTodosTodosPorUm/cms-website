@@ -1,40 +1,42 @@
 <script lang="ts">
-	import '$lib/scss/components/switch-theme.scss';
-	import { getFromLocalStorage, saveToLocalStorage } from '$src/lib/utils/functions';
-	import { onMount } from 'svelte';
-	import type { Locales } from '$src/i18n/i18n-types';
+	import '$scss/components/switch-theme.scss'
+	import { getContext, onMount } from 'svelte'
 
 	// i18n
-	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
-	import LL, { setLocale } from '$i18n/i18n-svelte';
-	$: i18n = $LL['app-header'];
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async'
+	import type { Locales } from '$i18n/i18n-types'
+	import LL, { setLocale } from '$i18n/i18n-svelte'
+	import type { SettingsStore } from '$stores'
+	$: i18n = $LL['app-header']
 
-	let modeSwitchRef: HTMLButtonElement;
-	let currentTheme = 'light';
+	let modeSwitchRef: HTMLButtonElement
+	let currentTheme: 'light' | 'dark' = 'light'
 
-	export let locale: Locales;
+	export let locale: Locales
+
+	let settingsStore = getContext<SettingsStore>('settings')
 
 	onMount(async () => {
-		applySavedTheme();
+		applySavedTheme()
 
-		await loadNamespaceAsync(locale, 'app-header');
-		setLocale(locale);
-	});
+		await loadNamespaceAsync(locale, 'app-header')
+		setLocale(locale)
+	})
 
 	function applySavedTheme() {
-		const theme = getFromLocalStorage('theme') || currentTheme;
-		currentTheme = theme === 'dark' ? 'dark' : 'light';
+		const theme = settingsStore.get('theme') || currentTheme
+		currentTheme = theme === 'dark' ? 'dark' : 'light'
 
-		const key = currentTheme == 'light' ? 'add' : 'remove';
-		document.documentElement.classList[key]('light');
-		modeSwitchRef.classList[key]('active');
+		const key = currentTheme == 'light' ? 'add' : 'remove'
+		document.documentElement.classList[key]('light')
+		modeSwitchRef.classList[key]('active')
 	}
 
 	function onToggleStyle() {
-		currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-		document.documentElement.classList.toggle('light');
-		modeSwitchRef.classList.toggle('active');
-		saveToLocalStorage('theme', currentTheme);
+		currentTheme = currentTheme === 'dark' ? 'light' : 'dark'
+		document.documentElement.classList.toggle('light')
+		modeSwitchRef.classList.toggle('active')
+		settingsStore.updateTheme(currentTheme)
 	}
 </script>
 

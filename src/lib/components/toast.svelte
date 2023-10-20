@@ -1,57 +1,57 @@
-<script context="module" lang="ts">
-	export function generateMessages(messages: { message: string; variant?: string }[]) {
-		return messages.map((msg) => ({
-			id: `${Math.floor(Math.random() * Date.now())}`,
-			message: msg.message,
-			variant: msg.variant ?? 'danger'
-		}));
-	}
-</script>
-
 <script lang="ts">
-	import '$lib/scss/components/toast.scss';
-	import { createEventDispatcher, onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
-	import type { Locales } from '$src/i18n/i18n-types';
+	import '$scss/components/toast.scss'
+	import { createEventDispatcher, onMount } from 'svelte'
+	import { fade } from 'svelte/transition'
+	import { page } from '$app/stores'
 
-	export let isOpen = true;
-	export let id = 0;
-	export let message = '';
-	export let variant = 'danger';
-	export let autoHide = true;
-	export let duration = 5;
+	import Icon from 'svelte-icons-pack/Icon.svelte'
+	import HiOutlineX from 'svelte-icons-pack/hi/HiOutlineX'
+
+	export let id = 0
+	export let message = ''
+	export let variant = 'danger'
+	export let silent = false
+
+	export let isOpen = true
+	export let autoHide = true
+	export let duration = 3 // in seconds
 
 	// i18n
-	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
-	import LL, { setLocale } from '$i18n/i18n-svelte';
-	$: i18n = $LL.toast;
-
-	export let locale: Locales;
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async'
+	import LL, { setLocale } from '$i18n/i18n-svelte'
+	$: i18n = $LL.toast
 
 	onMount(async () => {
-		await loadNamespaceAsync(locale, 'toast');
-		setLocale(locale);
-	});
+		await loadNamespaceAsync($page.data.locale, 'toast')
+		setLocale($page.data.locale)
 
-	const dispatch = createEventDispatcher();
+		if (silent) {
+			console.debug(message)
+		}
+	})
+
+	const dispatch = createEventDispatcher()
 
 	function close() {
-		isOpen = false;
-		dispatch('close', id);
+		isOpen = false
+		dispatch('close', id)
 	}
 
 	if (autoHide) {
 		setTimeout(() => {
-			close();
-		}, duration * 1000);
+			close()
+		}, duration * 1000)
 	}
 </script>
 
-{#if isOpen}
+{#if isOpen && !silent}
 	<div in:fade out:fade class={`toast bg-${variant}`}>
-		<div class="toast-body text-white">
+		<div class="toast-body">
 			<p>{message}</p>
 		</div>
-		<button on:click={close} class={`toast-close text-${variant}`}>{i18n.closeText()}</button>
+		<!-- svelte-ignore a11y-invalid-attribute -->
+		<a href="#" on:click|preventDefault={close}>
+			<Icon src={HiOutlineX} className="btn-close toast-close" />
+		</a>
 	</div>
 {/if}

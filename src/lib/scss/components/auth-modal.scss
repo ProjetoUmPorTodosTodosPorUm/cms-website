@@ -1,209 +1,212 @@
-@import "$lib/scss/_shared";
-@import "$lib/scss/_variables";
+@import '$scss/_shared';
+@import '$scss/_variables';
 
 .login-container {
-  height: 100vh;
-  width: 100vw;
+	height: 100vh;
+	width: 100vw;
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 
-  background-color: $offWhiteBackground;
+	background-color: $offWhiteBackground;
 }
 
 .form-container {
-  width: 70%;
-  height: 80%;
+	width: 70%;
+	height: 80%;
 
-  overflow: auto;
-  border-top-right-radius: .5rem;
-  border-top-left-radius: .5rem;
+	overflow: auto;
+	border-top-right-radius: 0.5rem;
+	border-top-left-radius: 0.5rem;
 
-  display: grid;
-  grid-template-areas: 
-    'image'
-    'form';
-  grid-template-rows: 25% 75%;
-  grid-template-columns: 100%;
+	display: grid;
+	grid-template-areas:
+		'image'
+		'form';
+	grid-template-rows: 25% 75%;
+	grid-template-columns: 100%;
 
-  background-color: #fff;
-  box-shadow: .3rem .3rem 1rem rgba(0, 0, 0, .2);
+	background-color: #fff;
+	box-shadow: 0.3rem 0.3rem 1rem rgba(0, 0, 0, 0.2);
 
-  @include for-md-devices {
-    width: 560px;
-    height: 380px;
+	@include for-md-devices {
+		width: 560px;
+		height: 380px;
 
-    grid-template-areas: 'image form';
-    grid-template-rows: 100%;
-    grid-template-columns: 30% 70%;
+		grid-template-areas: 'image form';
+		grid-template-rows: 100%;
+		grid-template-columns: 30% 70%;
 
+		border-top-right-radius: 0;
+		border-top-left-radius: 0.5rem;
+		border-bottom-left-radius: 0.5rem;
+	}
 
-    border-top-right-radius: 0;
-    border-top-left-radius: .5rem;
-    border-bottom-left-radius: .5rem;
-  }
-
-  @include for-lg-devices {
-    height: 480px;
-  }
-
+	@include for-lg-devices {
+		height: 480px;
+	}
 }
 
 .form-image {
-  grid-area: image;
-  background-image: url(/images/pantokrator.webp);
-  background-size: cover;
-  background-position: center 22%;
-  background-repeat: no-repeat;
+	grid-area: image;
+	background-image: url("$assets/images/pantokrator.webp");
+	background-size: cover;
+	background-position: center 22%;
+	background-repeat: no-repeat;
 
-  @include for-md-devices {
-    background-position: center center;
-    background-size: cover;
-  }
+	@include for-md-devices {
+		background-position: center center;
+		background-size: cover;
+	}
 
-  position: relative;
+	position: relative;
 
-  button {
-    position: absolute;
-    margin: .5rem .2rem;
-    padding: 0;
+	button {
+		position: absolute;
+		margin: 0.5rem 0.2rem;
+		padding: 0;
 
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
+		border: none;
+		background-color: transparent;
+		cursor: pointer;
 
-    .icon {
-      font-size: 3rem;
-      filter: invert(100%) sepia(20%) saturate(2873%) hue-rotate(178deg) brightness(80%) contrast(87%);
-    }
-  }
+		.icon {
+			font-size: 3rem;
+			filter: invert(100%) sepia(20%) saturate(2873%) hue-rotate(178deg) brightness(80%)
+				contrast(87%);
+		}
+	}
 }
 
 .form {
-  grid-area: form;
+	grid-area: form;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 
-  box-sizing: border-box;
-  padding: 1rem;
+	box-sizing: border-box;
+	padding: 1rem;
 
-  @include for-lg-devices {
-    padding: 1rem 1.5rem;
-  }
+	@include for-lg-devices {
+		padding: 1rem 1.5rem;
+	}
 
-  h2 {
-    width: 100%;
-    margin: 0;
-    letter-spacing: .03rem;
-  }
+	h2 {
+		width: 100%;
+		margin: 0;
+		letter-spacing: 0.03rem;
+	}
 
-  p {
-    width: 100%;
-    margin: 0;
-    letter-spacing: .03rem;
-    text-indent: initial;
-  }
+	p {
+		width: 100%;
+		margin: 0;
+		letter-spacing: 0.03rem;
+		text-indent: initial;
+	}
 
-  .form-links {
-    width: 100%;
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+	.form-links {
+		width: 100%;
+		margin-top: auto;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 
-    @include for-md-devices {
-      margin: auto 0 0 0;
-      flex-direction: row;
-      justify-content: end;
-    }
+		@include for-md-devices {
+			margin: auto 0 0 0;
+			flex-direction: row;
+			justify-content: end;
+		}
 
-    a {
-      text-decoration: none;
-      color: rgba(0, 0, 0, .6);
-      margin-bottom: .5rem;
+		a {
+			text-decoration: none;
+			color: rgba(0, 0, 0, 0.6);
+			margin-bottom: 0.5rem;
 
-      @include for-sm-devices {
-        margin-right: .5rem;
-      }
-    }
-  }
+			@include for-sm-devices {
+				margin-right: 0.5rem;
+			}
+		}
+	}
+
+	.loading-icon {
+		@include icon-spinner;
+	}
 }
 
 .form-inputs {
-  margin-top: 2rem;
-  width: 100%;
+	margin-top: 2rem;
+	width: 100%;
 
-  .form-input {
-    margin-bottom: 1rem;
-    display: grid;
-    grid-template-areas: 'icon input';
-    grid-template-columns: 12% 88%;
-    grid-template-rows: 100%;
+	.form-input {
+		margin-bottom: 1rem;
+		display: grid;
+		grid-template-areas: 'icon input';
+		grid-template-columns: 12% 88%;
+		grid-template-rows: 100%;
 
-    @include for-md-devices {
-      margin-bottom: .5rem;
-    }
+		@include for-md-devices {
+			margin-bottom: 0.5rem;
+		}
 
-    svg {
-      grid-area: icon;
-      font-size: 1.5rem;
-      margin-top: 0.3rem;
-      filter: invert(100%) sepia(20%) saturate(2873%) hue-rotate(178deg) brightness(80%) contrast(87%);
-    }
+		svg {
+			grid-area: icon;
+			font-size: 1.5rem;
+			margin-top: 0.3rem;
+			filter: invert(100%) sepia(20%) saturate(2873%) hue-rotate(178deg) brightness(80%)
+				contrast(87%);
+		}
 
-    input {
-      grid-area: input;
-      height: 2.5rem;
-      border-top: 0;
-      border-left: 0;
-      border-right: 0;
-      border-color: rgba($themeColor, 0.3);
-      outline: none;
-      transition: .6s ease;
-      font-size: 1rem;
+		input {
+			grid-area: input;
+			height: 2.5rem;
+			border-top: 0;
+			border-left: 0;
+			border-right: 0;
+			border-color: rgba($themeColor, 0.3);
+			outline: none;
+			transition: 0.6s ease;
+			font-size: 1rem;
 
-      &:focus {
-        border-color: rgba($themeColor, 1);
-      }
-    }
+			&:focus {
+				border-color: rgba($themeColor, 1);
+			}
+		}
+	}
 
-  }
+	.token-form-input {
+		display: flex;
+		justify-content: space-evenly;
+	}
 
-  .token-form-input {
-    display: flex;
-    justify-content: space-evenly;
-  }
+	.token-input {
+		width: 15px;
+	}
 
-  .token-input {
-    width: 15px;
-  }
+	button[type='submit'] {
+		margin-top: 1rem;
+		width: 100%;
+		padding: 0.5rem 1rem;
+		border-radius: 2rem;
+		border-width: 0;
 
-  button[type=submit] {
-    margin-top: 1rem;
-    width: 100%;
-    padding: .5rem 1rem;
-    border-radius: 2rem;
-    border-width: 0;
+		font-size: 1.1rem;
+		color: #fff;
+		background-color: $themeColor;
+		transition: 0.6s ease;
+		cursor: pointer;
 
-    font-size: 1.1rem;
-    color: #fff;
-    background-color: $themeColor;
-    transition: .6s ease;
-    cursor: pointer;
+		display: flex;
+		justify-content: center;
 
-    display: flex;
-    justify-content: center;
+		&:disabled {
+			background-color: rgba($themeColor, 0.5);
+		}
 
-    &:disabled {
-      background-color: rgba($themeColor, .5);
-    }
-
-    @include for-md-devices {
-      max-width: fit-content;
-      float: right;
-    }
-  }
+		@include for-md-devices {
+			max-width: fit-content;
+			float: right;
+		}
+	}
 }

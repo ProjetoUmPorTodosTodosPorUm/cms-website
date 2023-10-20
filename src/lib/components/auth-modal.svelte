@@ -1,31 +1,30 @@
 <script lang="ts">
-	import Toast from '$components/toast.svelte';
-	import { createEventDispatcher } from 'svelte';
-	import '$lib/scss/components/auth-modal.scss';
-	import type { Locales } from '$src/i18n/i18n-types';
+	import '$scss/components/auth-modal.scss'
+	import { Toast } from '$components'
+	import { createEventDispatcher } from 'svelte'
+	import { enhance } from '$app/forms'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte';
-	import HiOutlineArrowSmLeft from 'svelte-icons-pack/hi/HiOutlineArrowSmLeft';
-	import AiOutlineLoading from 'svelte-icons-pack/ai/AiOutlineLoading';
+	import Icon from 'svelte-icons-pack/Icon.svelte'
+	import HiOutlineArrowSmLeft from 'svelte-icons-pack/hi/HiOutlineArrowSmLeft'
+	import AiOutlineLoading from 'svelte-icons-pack/ai/AiOutlineLoading'
 
-	export let showBackButton = false;
-	export let locale: Locales;
+	export let showBackButton = false
 
 	// Form
-	export let title: string;
-	export let subTitle: string;
-	export let buttonText: string;
-	export let isSending = false;
-	export let isSubmitDisabled = true;
+	export let title: string
+	export let subTitle: string
+	export let buttonText: string
+	export let isLoading = false
+	export let isSubmitDisabled = true
+	export let action: string
 
 	// Toast Messages
-	export let messages: any[] = [];
+	export let messages: any[] = []
 
 	// Events
-	const dispatch = createEventDispatcher();
-	const submit = () => dispatch('submit');
-	const toastClose = (id: number) => dispatch('toastClose', id);
-	const onBackButtonClick = () => history.back();
+	const dispatch = createEventDispatcher()
+	const onSubmit = () => dispatch('submit')
+	const onBackButtonClick = () => history.back()
 </script>
 
 <div class="login-container">
@@ -40,15 +39,22 @@
 		<div class="form">
 			<h2>{title}</h2>
 			<p>{subTitle}</p>
-			<form on:submit|preventDefault|stopPropagation={submit} class="form-inputs">
+			<form
+				method="POST"
+				{action}
+				on:submit|preventDefault|stopPropagation={onSubmit}
+				use:enhance
+				class="form-inputs"
+			>
 				<slot name="body" />
 
-				{#if isSending}
-					<button on:click={submit} disabled={true} type="submit"
-						><Icon src={AiOutlineLoading} className="icon" /></button
+				{#if isLoading}
+					<!-- on:click={submit} -->
+					<button disabled={true} type="submit"
+						><Icon src={AiOutlineLoading} className="loading-icon" /></button
 					>
 				{:else}
-					<button on:click={submit} disabled={isSubmitDisabled} type="submit">{buttonText}</button>
+					<button disabled={isSubmitDisabled} type="submit">{buttonText}</button>
 				{/if}
 			</form>
 
@@ -60,7 +66,7 @@
 
 	<div class="messages-container">
 		{#each messages as message (message.id)}
-			<Toast {...message} {locale} on:close={() => toastClose(message.id)} />
+			<Toast {...message} />
 		{/each}
 	</div>
 </div>

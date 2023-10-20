@@ -1,143 +1,46 @@
 <script lang="ts">
-	import '$lib/scss/dashboard.scss';
-	import '$lib/scss/dashboard-form.scss';
-	import AppContainer from '$components/app-container.svelte';
-	import AppContent from '$components/app-content.svelte';
-	import { generateMessages } from '$components/toast.svelte';
+	import '$lib/scss/dashboard.scss'
+	import '$lib/scss/dashboard-form.scss'
+	import { onMount } from 'svelte'
+	import { enhance } from '$app/forms'
+	import { AppContainer, AppContent, FieldSelect } from '$components'
+	import type { ActionData, PageData } from './$types'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte';
-	import HiOutlineUser from 'svelte-icons-pack/hi/HiOutlineUser';
-	import HiOutlineInformationCircle from 'svelte-icons-pack/hi/HiOutlineInformationCircle';
-	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
-
-	import * as yup from 'yup';
-	import axios from '$lib/axios';
-	import Axios from 'axios';
-	import type { PageData } from '../../users/add/$types';
-	import type { FieldDto, Pagination } from '$src/lib/types';
-	import { fromPaginationToQuery } from '$src/lib/utils/functions';
-	import type { UserStore } from '$src/lib/store/user';
-	import { getContext, onMount } from 'svelte';
+	import Icon from 'svelte-icons-pack/Icon.svelte'
+	import HiOutlineUser from 'svelte-icons-pack/hi/HiOutlineUser'
+	import HiOutlineInformationCircle from 'svelte-icons-pack/hi/HiOutlineInformationCircle'
 
 	// i18n
-	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
-	import LL, { setLocale } from '$i18n/i18n-svelte';
-	$: i18n = $LL['welcomed-families'].add;
-	$: sharedI18n = $LL.shared;
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async'
+	import LL, { setLocale } from '$i18n/i18n-svelte'
+	$: i18n = $LL['welcomed-families'].add
 
-	export let data: PageData;
-	let userStore = getContext<UserStore>('userStore');
-	let isAdminOrVolunteer = true;
+	export let data: PageData
+	export let form: ActionData
+	let isLoading = false
+	$: messages = form?.messages ?? []
+	$: messages, postActionCallback()
 
-	// App Content Options
-	const showActions = false;
-	const showRefreshButton = true;
+	onMount(async () => {
+		await loadNamespaceAsync(data.locale, 'welcomed-families')
+		setLocale(data.locale)
+	})
+
+	async function postActionCallback() {
+		// ignore first loading triggering
+		if (isLoading && messages.length > 0) {
+			isLoading = false
+		}
+	}
+
+	function onSubmit() {
+		isLoading = true
+	}
 
 	// App Header
 	$: appHeader = {
 		name: i18n.appHeader.name(),
 		buttonText: ''
-	};
-
-	const query = {
-		itemsPerPage: 100,
-		page: 1,
-		deleted: false,
-		orderKey: 'designation',
-		orderValue: 'asc'
-	} as Pagination;
-	$: queryString = fromPaginationToQuery(query);
-
-	// Form
-	let formRef: HTMLFormElement;
-	let isLoading = false;
-	let fields: FieldDto[] = [];
-	$: schema = yup.object().shape({
-		representative: yup
-			.string()
-			.required(sharedI18n.yup.required({ field: i18n.inputs.representativeLabel() })),
-		observation: yup
-			.string()
-			.required(sharedI18n.yup.required({ field: i18n.inputs.observationLabel() })),
-		field: yup.string().nullable().optional()
-	});
-
-	let representative: string;
-	let observation: string;
-	let field: string | null;
-
-	let messages: any[] = [];
-
-	onMount(async () => {
-		await loadData();
-		isAdminOrVolunteer = userStore.isVolunteer() || userStore.isAdmin();
-
-		await loadNamespaceAsync(data.locale, 'welcomed-families');
-		await loadNamespaceAsync(data.locale, 'shared');
-		setLocale(data.locale);
-	});
-
-	async function loadData() {
-		try {
-			isLoading = true;
-			fields = (await axios.get(`/field?${queryString}`)).data.data;
-			isLoading = false;
-		} catch (error) {
-			isLoading = false;
-
-			if (error instanceof Axios.AxiosError) {
-				messages = generateMessages([{ message: error.response?.data.message }]);
-			} else if (error instanceof yup.ValidationError) {
-				messages = generateMessages(error.inner.map((err) => ({ message: err.message })));
-			} else {
-				console.warn(error);
-			}
-		}
-	}
-
-	async function onSubmit(event: Event) {
-		event.preventDefault();
-		event.stopPropagation();
-		isLoading = true;
-
-		try {
-			const isValid = schema.validateSync(
-				{ representative, observation, field },
-				{ abortEarly: false }
-			);
-
-			if (isValid) {
-				const postData = {
-					representative,
-					observation,
-					field
-				};
-				if (isAdminOrVolunteer) {
-					// @ts-ignore
-					delete postData.field;
-				}
-				const res = await axios.post('/welcomed-family', postData);
-
-				isLoading = false;
-				messages = generateMessages([{ message: res.data.message, variant: 'success' }]);
-				eraseForm();
-			}
-		} catch (error) {
-			isLoading = false;
-
-			if (error instanceof Axios.AxiosError) {
-				messages = generateMessages([{ message: error.response?.data.message }]);
-			} else if (error instanceof yup.ValidationError) {
-				messages = generateMessages(error.inner.map((err) => ({ message: err.message })));
-			} else {
-				console.warn(error);
-			}
-		}
-	}
-
-	function eraseForm() {
-		formRef.reset();
-		field = null;
 	}
 </script>
 
@@ -149,47 +52,30 @@
 	<AppContent
 		{...appHeader}
 		{isLoading}
-		{showActions}
-		{showRefreshButton}
+		showActions={false}
+		showRefreshButton={false}
 		locale={data.locale}
 		on:click={onSubmit}
 	>
-		<form bind:this={formRef} on:submit|preventDefault|stopPropagation={onSubmit} class="app-form">
+		<form class="app-form" method="POST" action="?/post" use:enhance on:submit={onSubmit}>
 			<div class="input">
 				<Icon src={HiOutlineUser} />
 				<input
-					bind:value={representative}
 					name="representative"
 					placeholder={i18n.inputs.representativeLabel()}
 					autocomplete="off"
-					required
 				/>
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineInformationCircle} />
 				<textarea
-					bind:value={observation}
 					name="observation"
 					placeholder={i18n.inputs.observationLabel()}
 					autocomplete="off"
 					rows="5"
-					required
 				/>
 			</div>
-			{#if !isAdminOrVolunteer}
-				<div class="input">
-					<Icon src={HiOutlineGlobe} />
-					<select bind:value={field} name="field" required>
-						<option value={null} disabled selected>{sharedI18n.inputs.fieldLabel()}</option>
-
-						{#each fields as field}
-							<option value={field.id}>
-								{field.abbreviation} - {field.designation}
-							</option>
-						{/each}
-					</select>
-				</div>
-			{/if}
+			<FieldSelect />
 			<div class="input">
 				<input
 					on:click={onSubmit}

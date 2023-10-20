@@ -1590,17 +1590,17 @@ export type NamespaceSharedTranslation = {
 		 * V​o​c​ê​ ​d​e​s​e​j​a​ ​r​e​m​o​v​e​r​ ​a​ ​c​o​n​t​a​ ​d​e​ ​{​e​m​a​i​l​}​?
 		 * @param {string} email
 		 */
-		user: RequiredParams<'email'>
+		users: RequiredParams<'email'>
 		/**
 		 * V​o​c​ê​ ​d​e​s​e​j​a​ ​r​e​m​o​v​e​r​ ​o​ ​a​r​q​u​i​v​o​ ​{​n​a​m​e​}​?
 		 * @param {string} name
 		 */
-		file: RequiredParams<'name'>
+		files: RequiredParams<'name'>
 		/**
 		 * V​o​c​ê​ ​d​e​s​e​j​a​ ​r​e​m​o​v​e​r​ ​o​ ​l​o​g​ ​d​e​ ​{​c​r​e​a​t​e​d​A​t​}​?
 		 * @param {string} createdAt
 		 */
-		log: RequiredParams<'createdAt'>
+		logs: RequiredParams<'createdAt'>
 		/**
 		 * V​o​c​ê​ ​d​e​s​e​j​a​ ​r​e​m​o​v​e​r​ ​o​ ​e​v​e​n​t​o​ ​{​t​i​t​l​e​}​?
 		 * @param {string} title
@@ -1610,53 +1610,53 @@ export type NamespaceSharedTranslation = {
 		 * V​o​c​ê​ ​d​e​s​e​j​a​ ​r​e​m​o​v​e​r​ ​o​ ​a​n​ú​n​c​i​o​ ​{​t​i​t​l​e​}​?
 		 * @param {string} title
 		 */
-		announcement: RequiredParams<'title'>
+		announcements: RequiredParams<'title'>
 		/**
 		 * V​o​c​ê​ ​d​e​s​e​j​a​ ​r​e​m​o​v​e​r​ ​o​ ​t​e​s​t​e​m​u​n​h​o​ ​d​e​ ​{​n​a​m​e​}​?
 		 * @param {string} name
 		 */
-		testimonial: RequiredParams<'name'>
+		testimonials: RequiredParams<'name'>
 		/**
 		 * V​o​c​ê​ ​d​e​s​e​j​a​ ​r​e​m​o​v​e​r​ ​o​ ​r​e​l​a​t​ó​r​i​o​ ​{​t​i​t​l​e​}​?
 		 * @param {string} title
 		 */
-		report: RequiredParams<'title'>
+		reports: RequiredParams<'title'>
 		/**
 		 * V​o​c​ê​ ​d​e​s​e​j​a​ ​r​e​m​o​v​e​r​ ​a​ ​f​a​m​í​l​i​a​ ​o​f​e​r​t​a​n​t​e​ ​r​e​p​r​e​s​e​n​t​a​d​a​ ​p​e​l​o​(​a​)​ ​{​n​a​m​e​}​?
 		 * @param {string} name
 		 */
-		offerorFamily: RequiredParams<'name'>
+		'offeror-families': RequiredParams<'name'>
 		/**
 		 * V​o​c​ê​ ​d​e​s​e​j​a​ ​r​e​m​o​v​e​r​ ​a​ ​f​a​m​í​l​i​a​ ​a​c​o​l​h​i​d​a​ ​r​e​p​r​e​s​e​n​t​a​d​a​ ​p​e​l​o​(​a​)​ ​{​n​a​m​e​}​?
 		 * @param {string} name
 		 */
-		welcomedFamily: RequiredParams<'name'>
+		'welcomed-families': RequiredParams<'name'>
 		/**
 		 * V​o​c​ê​ ​d​e​s​e​j​a​ ​r​e​m​o​v​e​r​ ​o​ ​c​a​m​p​o​ ​m​i​s​s​i​o​n​á​r​i​o​ ​{​d​e​s​i​g​n​a​t​i​o​n​}​?
 		 * @param {string} designation
 		 */
-		field: RequiredParams<'designation'>
+		fields: RequiredParams<'designation'>
 		/**
 		 * V​o​c​ê​ ​d​e​s​e​j​a​ ​r​e​m​o​v​e​r​ ​a​ ​i​g​r​e​j​a​ ​{​n​a​m​e​}​?
 		 * @param {string} name
 		 */
-		church: RequiredParams<'name'>
+		churches: RequiredParams<'name'>
 		/**
 		 * V​o​c​ê​ ​d​e​s​e​j​a​ ​r​e​m​o​v​e​r​ ​o​ ​c​o​l​a​b​o​r​a​d​o​r​ ​{​t​i​t​l​e​}​?
 		 * @param {string} title
 		 */
-		collaborator: RequiredParams<'title'>
+		collaborators: RequiredParams<'title'>
 		/**
 		 * V​o​c​ê​ ​d​e​s​e​j​a​ ​r​e​m​o​v​e​r​ ​a​ ​o​f​e​r​t​a​ ​c​o​l​e​t​a​d​a​ ​d​e​ ​{​m​o​n​t​h​}​/​{​y​e​a​r​}​?
 		 * @param {number} month
 		 * @param {number} year
 		 */
-		collectedOffer: RequiredParams<'month' | 'year'>
+		'collected-offers': RequiredParams<'month' | 'year'>
 		/**
 		 * V​o​c​ê​ ​d​e​s​e​j​a​ ​r​e​m​o​v​e​r​ ​o​ ​v​o​l​u​n​t​á​r​i​o​ ​{​n​a​m​e​}​?
 		 * @param {string} name
 		 */
-		volunteer: RequiredParams<'name'>
+		volunteers: RequiredParams<'name'>
 	}
 	isStatusTransform: {
 		/**
@@ -1734,6 +1734,16 @@ export type NamespaceSharedTranslation = {
 		 * C​a​m​p​o​ ​M​i​s​s​i​o​n​á​r​i​o
 		 */
 		fieldLabel: string
+	}
+	inputFile: {
+		/**
+		 * E​s​c​o​l​h​e​r​ ​A​r​q​u​i​v​o
+		 */
+		chooseFile: string
+		/**
+		 * E​s​c​o​l​h​e​r​ ​A​r​q​u​i​v​o​s
+		 */
+		chooseFiles: string
 	}
 }
 
@@ -4304,15 +4314,15 @@ export type TranslationFunctions = {
 			/**
 			 * Você deseja remover a conta de {email}?
 			 */
-			user: (arg: { email: string }) => LocalizedString
+			users: (arg: { email: string }) => LocalizedString
 			/**
 			 * Você deseja remover o arquivo {name}?
 			 */
-			file: (arg: { name: string }) => LocalizedString
+			files: (arg: { name: string }) => LocalizedString
 			/**
 			 * Você deseja remover o log de {createdAt}?
 			 */
-			log: (arg: { createdAt: string }) => LocalizedString
+			logs: (arg: { createdAt: string }) => LocalizedString
 			/**
 			 * Você deseja remover o evento {title}?
 			 */
@@ -4320,43 +4330,43 @@ export type TranslationFunctions = {
 			/**
 			 * Você deseja remover o anúncio {title}?
 			 */
-			announcement: (arg: { title: string }) => LocalizedString
+			announcements: (arg: { title: string }) => LocalizedString
 			/**
 			 * Você deseja remover o testemunho de {name}?
 			 */
-			testimonial: (arg: { name: string }) => LocalizedString
+			testimonials: (arg: { name: string }) => LocalizedString
 			/**
 			 * Você deseja remover o relatório {title}?
 			 */
-			report: (arg: { title: string }) => LocalizedString
+			reports: (arg: { title: string }) => LocalizedString
 			/**
 			 * Você deseja remover a família ofertante representada pelo(a) {name}?
 			 */
-			offerorFamily: (arg: { name: string }) => LocalizedString
+			'offeror-families': (arg: { name: string }) => LocalizedString
 			/**
 			 * Você deseja remover a família acolhida representada pelo(a) {name}?
 			 */
-			welcomedFamily: (arg: { name: string }) => LocalizedString
+			'welcomed-families': (arg: { name: string }) => LocalizedString
 			/**
 			 * Você deseja remover o campo missionário {designation}?
 			 */
-			field: (arg: { designation: string }) => LocalizedString
+			fields: (arg: { designation: string }) => LocalizedString
 			/**
 			 * Você deseja remover a igreja {name}?
 			 */
-			church: (arg: { name: string }) => LocalizedString
+			churches: (arg: { name: string }) => LocalizedString
 			/**
 			 * Você deseja remover o colaborador {title}?
 			 */
-			collaborator: (arg: { title: string }) => LocalizedString
+			collaborators: (arg: { title: string }) => LocalizedString
 			/**
 			 * Você deseja remover a oferta coletada de {month}/{year}?
 			 */
-			collectedOffer: (arg: { month: number, year: number }) => LocalizedString
+			'collected-offers': (arg: { month: number, year: number }) => LocalizedString
 			/**
 			 * Você deseja remover o voluntário {name}?
 			 */
-			volunteer: (arg: { name: string }) => LocalizedString
+			volunteers: (arg: { name: string }) => LocalizedString
 		}
 		isStatusTransform: {
 			/**
@@ -4421,6 +4431,16 @@ export type TranslationFunctions = {
 			 * Campo Missionário
 			 */
 			fieldLabel: () => LocalizedString
+		}
+		inputFile: {
+			/**
+			 * Escolher Arquivo
+			 */
+			chooseFile: () => LocalizedString
+			/**
+			 * Escolher Arquivos
+			 */
+			chooseFiles: () => LocalizedString
 		}
 	}
 	signup: {

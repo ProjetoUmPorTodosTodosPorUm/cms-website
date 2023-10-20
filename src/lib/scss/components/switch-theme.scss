@@ -1,22 +1,22 @@
-@import "$lib/scss/_shared";
-@import "$lib/scss/_variables";
+@import '$scss/_shared';
+@import '$scss/_variables';
 
 .mode-switch {
-    background-color: transparent;
-    border: none;
-    padding: 0;
-    color: var(--app-content-main-color);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-right: 8px;
-    cursor: pointer;
+	background-color: transparent;
+	border: none;
+	padding: 0;
+	color: var(--app-content-main-color);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-right: 8px;
+	cursor: pointer;
 
-    .moon {
-        fill: var(--app-content-main-color);
-    }
+	.moon {
+		fill: var(--app-content-main-color);
+	}
 }
 
 .mode-switch.active .moon {
-    fill: none;
+	fill: none;
 }
