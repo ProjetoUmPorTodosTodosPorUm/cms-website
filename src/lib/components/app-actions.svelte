@@ -1,210 +1,128 @@
 <script lang="ts">
-	import '$lib/scss/components/app-actions.scss';
-	import Pagination from '$components/pagination.svelte';
-	import SearchInput from '$components/search-input.svelte';
-	import type { UserStore } from '$lib/store/user';
-	import { Role } from '$lib/enums';
-	import { createEventDispatcher, getContext, onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
-	import axios from '$lib/axios';
-	import Axios from 'axios';
-	import { generateMessages } from '$components/toast.svelte';
-	import type { Locales } from '$src/i18n/i18n-types';
-	import type { FieldDto, Pagination as PaginationType } from '$lib/types';
-	import {
-		fromPaginationToQuery,
-		getFromLocalStorage,
-		saveToLocalStorage
-	} from '$lib/utils/functions';
+	import '$scss/components/app-actions.scss'
+	import { Pagination, SearchInput } from '$components'
+	import type { UserStore } from '$stores'
+	import { getContext, onMount } from 'svelte'
+	import { fade } from 'svelte/transition'
+	import { page } from '$app/stores'
+	import { goto, invalidate } from '$app/navigation'
+	import { enhance } from '$app/forms'
+	import type { FieldDto } from '$types'
 
 	// i18n
-	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
-	import LL, { setLocale } from '$i18n/i18n-svelte';
-	$: i18n = $LL['app-actions'];
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async'
+	import type { Locales } from '$i18n/i18n-types'
+	import LL, { setLocale } from '$i18n/i18n-svelte'
+	$: i18n = $LL['app-actions']
 
-	export let locale: Locales;
+	export let locale: Locales
+	$: fields = $page.data.fields || [] as FieldDto[]
+	const userStore = getContext<UserStore>('user')
 
 	// Component Data - forwarding
-	export let page = 1;
-	export let maxPage = 1;
-	export let search = '';
-	export let searchMinLength = 3;
-	export let searchType: 'text' | 'number' = 'text';
-	export let searchSpecificValue = '';
-	export let searchSpecificField = '';
-	export let messages: any = [];
+	export let maxPage = 1
+	export let searchSpecificValue = ''
+	export let searchSpecificField = ''
 
 	// Component Data
-	export let totalCount = 1;
-	export let showDeleted = true;
-	export let showFilter = true;
-	export let itemsSelected: string[] = [];
-	export let isLoading = false;
-	export let baseRoute = '';
-	let fieldFilterRef: HTMLSelectElement;
-	let fields: FieldDto[] = [];
+	export let totalCount = 1
+	export let showFilter = true
+	let itemsSelected: string[] = []
+	let showDeleted = false
 
-	let userStore = getContext<UserStore>('userStore');
-	let user = userStore.get('user');
-	$: isAdmin = user.role === Role.ADMIN;
-	$: isWebMaster = user.role === Role.WEB_MASTER;
+	let fieldFilterRef: HTMLSelectElement
+	let filterMenuRef: HTMLDivElement
+	let listRef: HTMLButtonElement
+	let gridRef: HTMLButtonElement
 
-	let filterMenuRef: HTMLDivElement;
-	let listRef: HTMLButtonElement;
-	let gridRef: HTMLButtonElement;
-
-	let currentDataDisplay: 'list' | 'grid' = 'list';
-	let screenSize: number;
+	let currentDataDisplay: 'list' | 'grid' = 'list'
+	let screenSize: number
 	$: if (screenSize <= 575) {
-		handleGridView();
+		handleGridView()
 	}
 
-	// Events
-	const dispatch = createEventDispatcher();
-	const restore = () => dispatch('restore');
-	const remove = () => dispatch('remove');
-	const searchLoad = () => dispatch('searchLoad');
-	const searchClear = () => dispatch('searchClear');
-
 	onMount(async () => {
-		applySavedDataDisplay();
+		applySavedDataDisplay()
 
-		const accessToken = userStore.get('accessToken');
-		axios.setAuth(accessToken);
+		await loadNamespaceAsync(locale, 'app-actions')
+		setLocale(locale)
 
-		await loadNamespaceAsync(locale, 'app-actions');
-		setLocale(locale);
-
-		await loadFields();
-	});
+		const deleted = Boolean($page.url.searchParams.get('deleted'))
+		if (deleted !== showDeleted) {
+			onShowDeleted()
+		}
+	})
 
 	function handleFilterMenu() {
-		filterMenuRef.classList.toggle('active');
+		filterMenuRef.classList.toggle('active')
 	}
 
 	function handleGridView() {
-		listRef.classList.remove('active');
-		gridRef.classList.add('active');
-		document.querySelector('.products-area-wrapper')?.classList.add('gridView');
-		document.querySelector('.products-area-wrapper')?.classList.remove('tableView');
+		listRef.classList.remove('active')
+		gridRef.classList.add('active')
+		document.querySelector('.products-area-wrapper')?.classList.add('gridView')
+		document.querySelector('.products-area-wrapper')?.classList.remove('tableView')
 
-		saveToLocalStorage('dataDisplay', 'grid');
+		//saveToLocalStorage('dataDisplay', 'grid');
 	}
 
 	function handleListView() {
-		listRef.classList.add('active');
-		gridRef.classList.remove('active');
-		document.querySelector('.products-area-wrapper')?.classList.remove('gridView');
-		document.querySelector('.products-area-wrapper')?.classList.add('tableView');
+		listRef.classList.add('active')
+		gridRef.classList.remove('active')
+		document.querySelector('.products-area-wrapper')?.classList.remove('gridView')
+		document.querySelector('.products-area-wrapper')?.classList.add('tableView')
 
-		saveToLocalStorage('dataDisplay', 'list');
+		//saveToLocalStorage('dataDisplay', 'list');
 	}
 
 	function applySavedDataDisplay() {
-		const dataDisplay = getFromLocalStorage('dataDisplay') || currentDataDisplay;
-		currentDataDisplay = dataDisplay === 'list' ? 'list' : 'grid';
+		const dataDisplay = /* getFromLocalStorage('dataDisplay')  ||*/ currentDataDisplay
+		currentDataDisplay = dataDisplay === 'list' ? 'list' : 'grid'
 
 		if (currentDataDisplay === 'list') {
-			handleListView();
+			handleListView()
 		} else {
-			handleGridView();
-		}
-	}
-
-	async function restoreAll() {
-		try {
-			isLoading = true;
-
-			await axios.put(`${baseRoute}/restore`, { ids: itemsSelected });
-			itemsSelected = [];
-			restore();
-
-			isLoading = false;
-		} catch (error) {
-			isLoading = false;
-			if (error instanceof Axios.AxiosError) {
-				messages = generateMessages([{ message: error.response?.data.message }]);
-			} else {
-				console.warn(error);
-			}
-		}
-	}
-
-	async function removeAll() {
-		try {
-			isLoading = true;
-
-			await axios.delete(`${baseRoute}/hard-remove`, { data: { ids: itemsSelected } });
-			itemsSelected = [];
-			remove();
-
-			isLoading = false;
-		} catch (error) {
-			isLoading = false;
-			if (error instanceof Axios.AxiosError) {
-				messages = generateMessages([{ message: error.response?.data.message }]);
-			} else {
-				console.warn(error);
-			}
-		}
-	}
-
-	async function loadFields() {
-		const query = {
-			itemsPerPage: 100,
-			page: 1,
-			deleted: false,
-			orderKey: 'designation',
-			orderValue: 'asc'
-		} as PaginationType;
-		const queryString = fromPaginationToQuery(query);
-
-		try {
-			isLoading = true;
-			fields = (await axios.get(`/field?${queryString}`)).data.data;
-			isLoading = false;
-		} catch (error) {
-			isLoading = false;
-
-			if (error instanceof Axios.AxiosError) {
-				messages = generateMessages([{ message: error.response?.data.message }]);
-			} else {
-				console.warn(error);
-			}
+			handleGridView()
 		}
 	}
 
 	function handleFilterApply() {
-		const fieldId = fieldFilterRef.value;
-		searchSpecificValue = fieldId;
-		searchSpecificField = 'fieldId';
+		const fieldId = fieldFilterRef.value
+		searchSpecificValue = fieldId
+		searchSpecificField = 'fieldId'
 	}
 
 	function handleFilterReset() {
-		searchSpecificValue = '';
-		searchSpecificField = '';
-		fieldFilterRef.value = '';
+		searchSpecificValue = ''
+		searchSpecificField = ''
+		fieldFilterRef.value = ''
+	}
+
+	async function onShowDeleted() {
+		showDeleted = !showDeleted
+
+		if (showDeleted) {
+			$page.url.searchParams.set('deleted', 'true')
+		} else {
+			$page.url.searchParams.delete('deleted')
+		}
+
+		await goto($page.url.href)
+		await invalidate('app:list-load')
 	}
 </script>
 
 <svelte:window bind:innerWidth={screenSize} />
 
 <div class="app-actions">
-	<SearchInput
-		bind:search
-		minLength={searchMinLength}
-		type={searchType}
-		placeholder={i18n.searchInputPlaceHolder()}
-		on:searchLoad={searchLoad}
-		on:searchClear={searchClear}
-	/>
+	<SearchInput placeholder={i18n.searchInputPlaceHolder()} />
 	<span class="total-items" title={i18n.totalItemsTitle()}
 		>{i18n.totalItemsText()}: {totalCount}</span
 	>
-	<Pagination bind:page {maxPage} />
+	<Pagination {maxPage} />
 	<div class="app-actions-wrapper">
 		<div class="filter-button-wrapper">
-			{#if isWebMaster && showFilter}
+			{#if userStore.isWebMaster() && showFilter}
 				<button on:click={handleFilterMenu} class="action-button filter jsFilter"
 					><span>{i18n.filterIconText()}</span><svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -298,21 +216,29 @@
 		</button>
 	</div>
 </div>
-{#if isAdmin || isWebMaster}
+{#if userStore.isAdmin() || userStore.isWebMaster()}
 	<div class="app-actions-admin">
 		<div class="show-deleted">
 			<span>{i18n.showDeletedText()}</span>
-			<input bind:checked={showDeleted} type="checkbox" name="showDeleted" id="showDeleted" />
+			<input
+				checked={showDeleted}
+				on:click={onShowDeleted}
+				type="checkbox"
+				name="showDeleted"
+				id="showDeleted"
+			/>
 		</div>
 		{#if showDeleted}
 			<div class="buttons" in:fade out:fade>
-				<button on:click={restoreAll}
+				<form id="restore" use:enhance method="POST" action="?/restore" />
+				<button type="submit" form="restore"
 					>{i18n.showDeletedRestoreButton()}
 					{#if itemsSelected.length > 0}
 						(x {itemsSelected.length})
 					{/if}
 				</button>
-				<button on:click={removeAll}
+				<form id="hard-remove" use:enhance method="POST" action="?/hardRemove" />
+				<button type="submit" form="hard-remove"
 					>{i18n.showDeletedHardRemoveButton()}
 					{#if itemsSelected.length > 0}
 						(x {itemsSelected.length})

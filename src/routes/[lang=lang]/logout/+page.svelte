@@ -1,18 +1,16 @@
 <script lang="ts">
-	import { getContext, onMount } from 'svelte';
-	import type { UserStore } from '$lib/store/user';
-	import { goto } from '$app/navigation';
-	import type { PageData } from './$types';
-	import { delay } from '$src/lib/utils/functions';
+	import { getContext, onMount } from 'svelte'
+	import type { UserStore } from '$stores'
+	import { goto } from '$app/navigation'
+	import type { PageData } from './$types'
 
-	export let data: PageData;
-	let userStore = getContext<UserStore>('userStore');
+	export let data: PageData
+	const userStore = getContext<UserStore>('user')
 
 	onMount(async () => {
-		userStore.eraseStore();
-		await delay(500);
-		await goto(`/${data.locale}`);
-	});
+		userStore.eraseStore()
+		await goto(`/${data.locale}/login`, { invalidateAll: true })
+	})
 </script>
 
 <svelte:head>

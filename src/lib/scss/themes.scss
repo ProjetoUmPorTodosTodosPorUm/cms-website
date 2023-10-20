@@ -1,72 +1,72 @@
-@import "variables";
+@import 'variables';
 
 $theme-map-dark: (
-    $--app-bg: #101827,
-    $--app-bg-rgb: rgb(16, 24, 39),
-    $--app-content-main-color: #fff,
-    $--app-content-secondary-color: #1d283c,
+	$--app-bg: #101827,
+	$--app-bg-rgb: rgb(16, 24, 39),
+	$--app-content-main-color: #fff,
+	$--app-content-secondary-color: #1d283c,
 
-    $--nav: rgba(21, 30, 47, 1),
-    $--nav-main-color: #fff,
-    $--nav-link: #fff,
-    $--nav-active-link: #1d283c,
-    $--nav-hover-link: #1a2539,
+	$--nav: rgba(21, 30, 47, 1),
+	$--nav-main-color: #fff,
+	$--nav-link: #fff,
+	$--nav-active-link: #1d283c,
+	$--nav-hover-link: #1a2539,
 
-    $--table-border: #1a2131,
-    $--table-header: #1a2131,
-    
-    $--action-color: #2869ff,
-    $--action-color-hover: #6291fd,
-    $--danger-action-color: #cc0000,
-    $--danger-action-color-hover: #fb4646,
-    
-    $--filter-reset: #2c394f,
-    $--filter-shadow: rgba(16, 24, 39, 0.8) 0px 6px 12px -2px,
+	$--table-border: #1a2131,
+	$--table-header: #1a2131,
 
-    $--svg-color: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%),
-    $--input-background-color: #101827,
-    $--input-border-color-initial: rgb(40, 105, 255, .3),
-    $--input-border-color-full: #2869ff,
+	$--action-color: #2869ff,
+	$--action-color-hover: #6291fd,
+	$--danger-action-color: #cc0000,
+	$--danger-action-color-hover: #fb4646,
+
+	$--filter-reset: #2c394f,
+	$--filter-shadow: rgba(16, 24, 39, 0.8) 0px 6px 12px -2px,
+
+	$--svg-color: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%)
+		contrast(102%),
+	$--input-background-color: #101827,
+	$--input-border-color-initial: rgb(40, 105, 255, 0.3),
+	$--input-border-color-full: #2869ff
 );
 
 $theme-map-light: (
-    $--app-bg: #fff,
-    $--app-bg-rgb: rgb(255, 255, 255),
-    $--app-content-main-color: #1f1c2e,
-    $--app-content-secondary-color: #f3f6fd,
+	$--app-bg: #fff,
+	$--app-bg-rgb: rgb(255, 255, 255),
+	$--app-content-main-color: #1f1c2e,
+	$--app-content-secondary-color: #f3f6fd,
 
-    $--nav: #f3f6fd,
-    $--nav-main-color: #1f1c2e,
-    $--nav-link: #1f1c2e,
-    $--nav-hover-link: rgba(195, 207, 244, 0.5),
-    $--nav-active-link: rgba(195, 207, 244, 1),
+	$--nav: #f3f6fd,
+	$--nav-main-color: #1f1c2e,
+	$--nav-link: #1f1c2e,
+	$--nav-hover-link: rgba(195, 207, 244, 0.5),
+	$--nav-active-link: rgba(195, 207, 244, 1),
+	$--table-border: rgba(195, 207, 244, 0.5),
+	$--table-header: rgba(195, 207, 244, 0.5),
+	$--action-color: #2869ff,
+	$--action-color-hover: #6291fd,
+	$--danger-action-color: #cc0000,
+	$--danger-action-color-hover: #fb4646,
 
-    $--table-border: rgba(195, 207, 244, 0.5),
-    $--table-header: rgba(195, 207, 244, 0.5),
+	$--filter-reset: #2c394f,
+	$--filter-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px,
 
-    $--action-color: #2869ff,
-    $--action-color-hover: #6291fd,
-    $--danger-action-color: #cc0000,
-    $--danger-action-color-hover: #fb4646,
-
-    $--filter-reset: #2c394f,
-    $--filter-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px,
-
-    $--svg-color: brightness(0) saturate(100%) invert(30%) sepia(38%) saturate(3718%) hue-rotate(212deg) brightness(105%) contrast(101%),
-    $--input-background-color: #fff,
-    $--input-border-color-initial: rgb(29, 40, 60, .3),
-    $--input-border-color-full: #1d283c,
+	$--svg-color: brightness(0) saturate(100%) invert(30%) sepia(38%) saturate(3718%)
+		hue-rotate(212deg) brightness(105%) contrast(101%),
+	$--input-background-color: #fff,
+	$--input-border-color-initial: rgb(29, 40, 60, 0.3),
+	$--input-border-color-full: #1d283c
 );
 
 @mixin spread-map($map: ()) {
-    @each $key, $value in $map {
-        #{$key}: $value;
-    }
+	@each $key, $value in $map {
+		#{$key}: $value;
+	}
 }
 
 :root.light {
-    @include spread-map($theme-map-light);
+	@include spread-map($theme-map-light);
 }
 :root.dark {
-    @include spread-map($theme-map-dark);
+	@include spread-map($theme-map-dark);
 }

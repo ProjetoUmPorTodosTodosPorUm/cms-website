@@ -1,28 +1,43 @@
 <script lang="ts">
-	import type { ColumnCell } from '$lib/types';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { page } from '$app/stores'
+	import { goto, invalidate } from '$app/navigation'
+	import type { ColumnCell } from '$types'
+	import { onMount } from 'svelte'
 
 	// i18n
-	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
-	import type { Locales } from '$src/i18n/i18n-types';
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async'
+	import type { Locales } from '$i18n/i18n-types'
+	import LL, { setLocale } from '$i18n/i18n-svelte'
+	$: i18n = $LL['collection-header']
 
-	import LL, { setLocale } from '$i18n/i18n-svelte';
-	$: i18n = $LL['collection-header'];
-	export let locale: Locales;
+	export let locale: Locales
 
 	// Component Options
-	export let showOptions = true;
-	export let showDeleted = false;
-	export let columns: ColumnCell[];
-
-	// Events - forwarding
-	const dispatch = createEventDispatcher();
-	const click = (key: string) => dispatch('click', key);
+	export let showOptions = true
+	export let columns: ColumnCell[]
+	$: showDeleted = $page.url.searchParams.get('deleted') == 'true' ? true : false
 
 	onMount(async () => {
-		await loadNamespaceAsync(locale, 'collection-header');
-		setLocale(locale);
-	});
+		await loadNamespaceAsync(locale, 'collection-header')
+		setLocale(locale)
+	})
+
+	async function onSort(orderKey: string) {
+		const currentOrderKey = $page.url.searchParams.get('orderKey')
+		const currentOrderValue = $page.url.searchParams.get('orderValue')
+		let orderValue
+
+		if (orderKey === currentOrderKey) {
+			orderValue = currentOrderValue === 'desc' ? 'asc' : 'desc'
+		} else {
+			orderValue = 'desc'
+		}
+
+		$page.url.searchParams.set('orderKey', orderKey)
+		$page.url.searchParams.set('orderValue', orderValue)
+		await goto($page.url.href, { keepFocus: true })
+		await invalidate('app:list-load')
+	}
 </script>
 
 <div class="products-header">
@@ -30,7 +45,7 @@
 		{#if column.key !== 'deleted'}
 			<div class="product-cell image">
 				{column.label}
-				<button on:click={() => click(column.key)} class="sort-button">
+				<button on:click={async () => await onSort(column.key)} class="sort-button">
 					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"
 						><path
 							fill="currentColor"
@@ -42,7 +57,7 @@
 		{:else if column.key === 'deleted' && showDeleted}
 			<div class="product-cell image">
 				{column.label}
-				<button on:click={() => click(column.key)} class="sort-button">
+				<button on:click={async () => await onSort(column.key)} class="sort-button">
 					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"
 						><path
 							fill="currentColor"

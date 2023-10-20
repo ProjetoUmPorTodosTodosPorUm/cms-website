@@ -1,13 +1,12 @@
 <script lang="ts">
-	import '$lib/scss/components/app-container.scss';
-	import AppNav from '$src/lib/components/app-nav.svelte';
-	import Toast from '$components/toast.svelte';
-	import type { Locales } from '$src/i18n/i18n-types';
+	import '$scss/components/app-container.scss'
+	import { AppNav, Toast } from '$components'
+	import type { Locales } from '$i18n/i18n-types'
 
-	export let messages: any[] = [];
+	export let messages: any[] = []
 
 	// Component Data - forwarding
-	export let locale: Locales;
+	export let locale: Locales
 </script>
 
 <div class="app-container">
@@ -16,7 +15,7 @@
 
 	<div class="messages-container">
 		{#each messages as message (message.id)}
-			<Toast {...message} {locale} />
+			<Toast {...message} />
 		{/each}
 	</div>
 </div>

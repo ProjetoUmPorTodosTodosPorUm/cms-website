@@ -9,20 +9,20 @@ const pt_BR_shared = {
     },
 
     remove: {
-        user: 'Você deseja remover a conta de {email:string}?',
-        file: 'Você deseja remover o arquivo {name:string}?',
-        log: 'Você deseja remover o log de {createdAt:string}?',
+        users: 'Você deseja remover a conta de {email:string}?',
+        files: 'Você deseja remover o arquivo {name:string}?',
+        logs: 'Você deseja remover o log de {createdAt:string}?',
         agenda: 'Você deseja remover o evento {title:string}?',
-        announcement: 'Você deseja remover o anúncio {title:string}?',
-        testimonial: 'Você deseja remover o testemunho de {name:string}?',
-        report: 'Você deseja remover o relatório {title:string}?',
-        offerorFamily: 'Você deseja remover a família ofertante representada pelo(a) {name:string}?',
-        welcomedFamily: 'Você deseja remover a família acolhida representada pelo(a) {name:string}?',
-        field: 'Você deseja remover o campo missionário {designation:string}?',
-        church: 'Você deseja remover a igreja {name:string}?',
-        collaborator: 'Você deseja remover o colaborador {title:string}?',
-        collectedOffer: 'Você deseja remover a oferta coletada de {month:number}/{year:number}?',
-        volunteer: 'Você deseja remover o voluntário {name:string}?',
+        announcements: 'Você deseja remover o anúncio {title:string}?',
+        testimonials: 'Você deseja remover o testemunho de {name:string}?',
+        reports: 'Você deseja remover o relatório {title:string}?',
+        'offeror-families': 'Você deseja remover a família ofertante representada pelo(a) {representative:string}?',
+        'welcomed-families': 'Você deseja remover a família acolhida representada pelo(a) {representative:string}?',
+        fields: 'Você deseja remover o campo missionário {designation:string}?',
+        churches: 'Você deseja remover a igreja {name:string}?',
+        collaborators: 'Você deseja remover o colaborador {title:string}?',
+        'collected-offers': 'Você deseja remover a oferta coletada de {month:number}/{year:number}?',
+        volunteers: 'Você deseja remover o voluntário(a) {firstName:string}?',
     },
 
     isStatusTransform: {
@@ -51,6 +51,11 @@ const pt_BR_shared = {
     inputs: {
         fieldLabel: 'Campo Missionário'
     },
+
+    inputFile: {
+		chooseFile: 'Escolher Arquivo',
+        chooseFiles: 'Escolher Arquivos'
+	}
 
 } as BaseTranslation
 

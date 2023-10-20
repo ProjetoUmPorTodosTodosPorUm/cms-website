@@ -1,21 +1,21 @@
-@import "$lib/scss/_shared";
+@import '$scss/_shared';
 
 .switch-locale {
-    display: flex;
-    
-    .icon {
-        margin-right: .2rem;
-        fill: var(--contrast-primary-background);
-    }
+	display: flex;
 
-    select {
-        background: transparent;
-        color: var(--contrast-primary-background);
-        border-color: var(--contrast-primary-background);
-        outline: none;
+	.icon {
+		margin-right: 0.2rem;
+		fill: var(--contrast-primary-background);
+	}
 
-        option {
-            color: var(--font-color);
-        }
-    }
+	select {
+		background: transparent;
+		color: var(--contrast-primary-background);
+		border-color: var(--contrast-primary-background);
+		outline: none;
+
+		option {
+			color: var(--font-color);
+		}
+	}
 }

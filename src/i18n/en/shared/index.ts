@@ -9,20 +9,20 @@ const en_shared = {
 	},
 
 	remove: {
-		user: "Do you want to remove {email}'s account?",
-		file: 'Do you want to remove the file {name}?',
-		log: 'Do you want to remove the entry at {createdAt}?',
+		users: "Do you want to remove {email}'s account?",
+		files: 'Do you want to remove the file {name}?',
+		logs: 'Do you want to remove the entry at {createdAt}?',
 		agenda: 'Do you want to remove the event {title}?',
-		announcement: 'Do you want to remove the announcement {title}?',
-		testimonial: "Do you want to remove {name}'s testimonial?",
-		report: 'Do you want to remove the report {title}?',
-		offerorFamily: 'Do you want to remove the offeror family represented by {name}?',
-		welcomedFamily: 'Do you want to remove the welcomed family representate by {name}?',
-		field: 'Do you want to remove the missionary field {designation}?',
-		church: 'Do you want to remove the church {name}?',
-		collaborator: 'Do you want to remove the collaborator {title}?',
-		collectedOffer: 'Do you want to remove the collected offer from {month}/{year}?',
-		volunteer: 'Do you want to remove the volunteer {name}?',
+		announcements: 'Do you want to remove the announcement {title}?',
+		testimonials: "Do you want to remove {name}'s testimonial?",
+		reports: 'Do you want to remove the report {title}?',
+		'offeror-families': 'Do you want to remove the offeror family represented by {name}?',
+		'welcomed-families': 'Do you want to remove the welcomed family representate by {name}?',
+		fields: 'Do you want to remove the missionary field {designation}?',
+		churches: 'Do you want to remove the church {name}?',
+		collaborators: 'Do you want to remove the collaborator {title}?',
+		'collected-offers': 'Do you want to remove the collected offer from {month}/{year}?',
+		volunteers: 'Do you want to remove the volunteer {name}?',
 	},
 
 	isStatusTransform: {
@@ -51,6 +51,11 @@ const en_shared = {
 	inputs: {
 		fieldLabel: 'Missionary Field'
 	},
+
+	inputFile: {
+		chooseFile: 'Choose File',
+        chooseFiles: 'Choose Files'
+	}
 
 } satisfies NamespaceSharedTranslation
 

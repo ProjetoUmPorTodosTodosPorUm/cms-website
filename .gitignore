@@ -4,8 +4,13 @@ node_modules
 /.svelte-kit
 /package
 .env
-.env.*
 !.env.example
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 TODO
+/static/tinymce/icons
+/static/tinymce/models
+/static/tinymce/plugins
+/static/tinymce/skins
+/static/tinymce/themes
+/static/tinymce/tinymce.min.js

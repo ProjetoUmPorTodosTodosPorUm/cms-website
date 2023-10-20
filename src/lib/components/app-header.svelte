@@ -2,7 +2,6 @@
 	import '$lib/scss/components/app-header.scss';
 	import { goto } from '$app/navigation';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import type { Locales } from '$src/i18n/i18n-types';
 
 	import Icon from 'svelte-icons-pack';
 	import FaSolidArrowLeft from 'svelte-icons-pack/fa/FaSolidArrowLeft';
@@ -10,6 +9,7 @@
 
 	// i18n
 	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import type { Locales } from '$i18n/i18n-types';
 	import LL, { setLocale } from '$i18n/i18n-svelte';
 	$: i18n = $LL['app-header'];
 

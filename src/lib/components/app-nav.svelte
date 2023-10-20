@@ -1,69 +1,84 @@
 <script lang="ts">
-	import '$lib/scss/components/app-nav.scss';
-	import type { AppNavMenuItem } from '$lib/types';
-	import { Role } from '$lib/enums';
-	import type { UserStore } from '$lib/store/user';
-	import { afterNavigate } from '$app/navigation';
-	import type { Navigation } from '@sveltejs/kit';
-	import SwitchLocale from '$components/switch-locale.svelte';
+	import '$scss/components/app-nav.scss'
+	import imageAsset from '$assets/images/logo.png'
+	import type { AppNavMenuItem, Pagination } from '$types'
+	import { Role } from '$enums'
+	import type { UserStore } from '$stores'
+	import { SwitchLocale } from '$components'
 
-	import Icon from 'svelte-icons-pack';
-	import HiOutlineMenu from 'svelte-icons-pack/hi/HiOutlineMenu';
-	import HiOutlineMenuAlt2 from 'svelte-icons-pack/hi/HiOutlineMenuAlt2';
-	import HiOutlineHome from 'svelte-icons-pack/hi/HiOutlineHome';
-	import HiOutlineCalendar from 'svelte-icons-pack/hi/HiOutlineCalendar';
-	import HiOutlineSpeakerphone from 'svelte-icons-pack/hi/HiOutlineSpeakerphone';
-	import HiOutlineLibrary from 'svelte-icons-pack/hi/HiOutlineLibrary';
-	import HiOutlineUserGroup from 'svelte-icons-pack/hi/HiOutlineUserGroup';
-	import HiOutlineHand from 'svelte-icons-pack/hi/HiOutlineHand';
-	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe';
-	import HiOutlineFolderOpen from 'svelte-icons-pack/hi/HiOutlineFolderOpen';
-	import HiOutlineArchive from 'svelte-icons-pack/hi/HiOutlineArchive';
-	import HiOutlineChartSquareBar from 'svelte-icons-pack/hi/HiOutlineChartSquareBar';
-	import HiOutlineChat from 'svelte-icons-pack/hi/HiOutlineChat';
-	import HiOutlineTicket from 'svelte-icons-pack/hi/HiOutlineTicket';
-	import HiOutlineUsers from 'svelte-icons-pack/hi/HiOutlineUsers';
-	import HiOutlineIdentification from 'svelte-icons-pack/hi/HiOutlineIdentification';
-	import HiOutlineHeart from 'svelte-icons-pack/hi/HiOutlineHeart';
-	import HiSolidUserCircle from 'svelte-icons-pack/hi/HiSolidUserCircle';
-	import HiOutlineLogout from 'svelte-icons-pack/hi/HiOutlineLogout';
-	import { getContext, onMount } from 'svelte';
-	import { VERSION } from 'svelte/compiler';
-	import type { Locales, Namespaces } from '$src/i18n/i18n-types';
+	import Icon from 'svelte-icons-pack'
+	import HiOutlineMenu from 'svelte-icons-pack/hi/HiOutlineMenu'
+	import HiOutlineMenuAlt2 from 'svelte-icons-pack/hi/HiOutlineMenuAlt2'
+	import HiOutlineHome from 'svelte-icons-pack/hi/HiOutlineHome'
+	import HiOutlineCalendar from 'svelte-icons-pack/hi/HiOutlineCalendar'
+	import HiOutlineSpeakerphone from 'svelte-icons-pack/hi/HiOutlineSpeakerphone'
+	import HiOutlineLibrary from 'svelte-icons-pack/hi/HiOutlineLibrary'
+	import HiOutlineUserGroup from 'svelte-icons-pack/hi/HiOutlineUserGroup'
+	import HiOutlineHand from 'svelte-icons-pack/hi/HiOutlineHand'
+	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe'
+	import HiOutlineFolderOpen from 'svelte-icons-pack/hi/HiOutlineFolderOpen'
+	import HiOutlineArchive from 'svelte-icons-pack/hi/HiOutlineArchive'
+	import HiOutlineChartSquareBar from 'svelte-icons-pack/hi/HiOutlineChartSquareBar'
+	import HiOutlineChat from 'svelte-icons-pack/hi/HiOutlineChat'
+	import HiOutlineTicket from 'svelte-icons-pack/hi/HiOutlineTicket'
+	import HiOutlineUsers from 'svelte-icons-pack/hi/HiOutlineUsers'
+	import HiOutlineIdentification from 'svelte-icons-pack/hi/HiOutlineIdentification'
+	import HiOutlineHeart from 'svelte-icons-pack/hi/HiOutlineHeart'
+	import HiSolidUserCircle from 'svelte-icons-pack/hi/HiSolidUserCircle'
+	import HiOutlineLogout from 'svelte-icons-pack/hi/HiOutlineLogout'
+
+	import { getContext, onMount } from 'svelte'
+	import { VERSION } from 'svelte/compiler'
+	import { fromPaginationToQuery } from '$utils'
 
 	// i18n
-	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
-	import LL, { setLocale } from '$i18n/i18n-svelte';
-	import SwitchTheme from './switch-theme.svelte';
-	$: i18n = $LL['app-nav'];
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async'
+	import type { Locales, Namespaces } from '$i18n/i18n-types'
+	import LL, { setLocale } from '$i18n/i18n-svelte'
+	import SwitchTheme from './switch-theme.svelte'
+	import { page } from '$app/stores'
+	$: i18n = $LL['app-nav']
 
-	export let locale: Locales;
+	export let locale: Locales
+
+	const pagination: Pagination = {
+		page: 1,
+		deleted: false,
+		itemsPerPage: 20,
+		orderKey: 'updatedAt',
+		orderValue: 'desc',
+		search: ''
+	}
+	const queryString = fromPaginationToQuery(pagination)
+
+	const createdAtPagination: Pagination = {
+		page: 1,
+		deleted: false,
+		itemsPerPage: 20,
+		orderKey: 'createdAt',
+		orderValue: 'desc',
+		search: ''
+	}
+	const createdAtQueryString = fromPaginationToQuery(createdAtPagination)
 
 	// @ts-ignore
-	const APP_VERSION = __APP_VERSION__;
+	const APP_VERSION = __APP_VERSION__
 
-	let userStore = getContext<UserStore>('userStore');
-	let user = userStore.get('user');
-	$: userFullname = `${user.firstName} ${user.lastName || ''}`;
+	const userStore = getContext<UserStore>('user')
+	$: user = userStore.get()
+	$: userFullname = `${user.firstName} ${user.lastName || ''}`
 
-	let active: string = 'painel';
+	$: active = $page.route.id || ''
 
-	let navListRef: HTMLElement;
-	let navToggleIconRef: HTMLDivElement;
-	let navIconComponentRef: Icon;
-	let currentMenuIcon = HiOutlineMenuAlt2;
+	let navListRef: HTMLElement
+	let navToggleIconRef: HTMLDivElement
+	let navIconComponentRef: Icon
+	let currentMenuIcon = HiOutlineMenuAlt2
 
 	onMount(async () => {
-		await loadNamespaceAsync(locale, 'app-nav');
-		setLocale(locale);
-	});
-
-	afterNavigate(async (navigation: Navigation) => {
-		const routeId = navigation.to?.route.id;
-		if (routeId) {
-			active = routeId;
-		}
-	});
+		await loadNamespaceAsync(locale, 'app-nav')
+		setLocale(locale)
+	})
 
 	$: menu = [
 		{
@@ -73,81 +88,82 @@
 		},
 		{
 			name: i18n.menu.agenda(),
-			href: `/${locale}/agenda`,
+			href: `/${locale}/agenda?${queryString}`,
 			icon: HiOutlineCalendar
 		},
 		{
 			name: i18n.menu.announcements(),
-			href: `/${locale}/announcements`,
+			href: `/${locale}/announcements?${queryString}`,
 			icon: HiOutlineSpeakerphone
 		},
 		{
 			name: i18n.menu.churches(),
-			href: `/${locale}/churches`,
+			href: `/${locale}/churches?${queryString}`,
 			icon: HiOutlineLibrary
 		},
 		{
 			name: i18n.menu.collaborators(),
-			href: `/${locale}/collaborators`,
+			href: `/${locale}/collaborators?${queryString}`,
 			icon: HiOutlineUserGroup
 		},
 		{
 			name: i18n.menu.collectedOffers(),
-			href: `/${locale}/collected-offers`,
+			href: `/${locale}/collected-offers?${queryString}`,
 			icon: HiOutlineHand
 		},
 		{
 			name: i18n.menu.fields(),
-			href: `/${locale}/fields`,
+			href: `/${locale}/fields?${queryString}`,
 			icon: HiOutlineGlobe,
 			role: Role.WEB_MASTER
 		},
 		{
 			name: i18n.menu.files(),
-			href: `/${locale}/files`,
+			href: `/${locale}/files?${createdAtQueryString}`,
 			icon: HiOutlineFolderOpen,
 			role: Role.ADMIN
 		},
 		{
 			name: i18n.menu.logs(),
-			href: `/${locale}/logs`,
+			href: `/${locale}/logs?${createdAtQueryString}`,
 			icon: HiOutlineArchive,
 			role: Role.ADMIN
 		},
 		{
 			name: i18n.menu.offerorFamilies(),
-			href: `/${locale}/offeror-families`,
+			href: `/${locale}/offeror-families?${queryString}`,
 			icon: HiOutlineUserGroup
 		},
 		{
 			name: i18n.menu.reports(),
-			href: `/${locale}/reports`,
+			href: `/${locale}/reports?${queryString}`,
 			icon: HiOutlineChartSquareBar
 		},
 		{
 			name: i18n.menu.testimonials(),
-			href: `/${locale}/testimonials`,
+			href: `/${locale}/testimonials?${queryString}`,
 			icon: HiOutlineChat
 		},
 		{
 			name: i18n.menu.tokens(),
-			href: `/${locale}/tokens`,
-			icon: HiOutlineTicket
+			href: `/${locale}/tokens?${createdAtQueryString}`,
+			icon: HiOutlineTicket,
+			role: Role.ADMIN
 		},
 		{
 			name: i18n.menu.users(),
-			href: `/${locale}/users`,
+			href: `/${locale}/users?${queryString}`,
 			icon: HiOutlineUsers,
 			role: Role.ADMIN
 		},
 		{
 			name: i18n.menu.volunteers(),
-			href: `/${locale}/volunteers`,
+			href: `/${locale}/volunteers?${queryString}`,
 			icon: HiOutlineIdentification
 		},
 		{
 			name: i18n.menu.welcomedFamilies(),
-			href: `/${locale}/welcomed-families`,
+			href: `/${locale}/welcomed-families?${queryString}`,
 			icon: HiOutlineHeart
 		},
 		{
@@ -163,27 +179,27 @@
 			href: `/${locale}/logout`,
 			icon: HiOutlineLogout
 		}
-	] as AppNavMenuItem[];
+	] as AppNavMenuItem[]
 
-	$: menuFilteredByRole = filterMenuByRole(menu);
+	$: menuFilteredByRole = filterMenuByRole(menu)
 
 	function filterMenuByRole(menu: AppNavMenuItem[]) {
 		return menu.filter((item) => {
 			if (item.role) {
-				return user.role === item.role || user.role === Role.WEB_MASTER;
+				return user.role === item.role || user.role === Role.WEB_MASTER
 			} else {
-				return true;
+				return true
 			}
-		});
+		})
 	}
 
 	function isActive(itemHref: string) {
-		let pageRootName = active.split('/')[2] || '';
+		let pageRootName = active.split('/')[2] || ''
 
 		if (pageRootName) {
-			return itemHref.match(pageRootName);
+			return itemHref.match(pageRootName)
 		} else {
-			return itemHref.split('/').length == 2;
+			return itemHref.split('/').length == 2
 		}
 	}
 
@@ -197,20 +213,24 @@
 			'collection-row-placeholder',
 			'shared',
 			'toast'
-		] as Namespaces[];
+		] as Namespaces[]
 		if (activePage) {
-			namespaces.push(activePage as Namespaces);
+			namespaces.push(activePage as Namespaces)
 		}
 
-		return namespaces;
+		return namespaces
 	}
 
 	function onNavToggle() {
-		navToggleIconRef.classList.toggle('open');
-		navListRef.classList.toggle('open');
+		navToggleIconRef.classList.toggle('open')
+		navListRef.classList.toggle('open')
 
-		currentMenuIcon = currentMenuIcon == HiOutlineMenu ? HiOutlineMenuAlt2 : HiOutlineMenu;
-		navIconComponentRef.$set({ src: currentMenuIcon });
+		currentMenuIcon = currentMenuIcon == HiOutlineMenu ? HiOutlineMenuAlt2 : HiOutlineMenu
+		navIconComponentRef.$set({ src: currentMenuIcon })
+	}
+
+	function isLogoutHref(item: AppNavMenuItem) {
+		return item.href === `/${locale}/logout`
 	}
 </script>
 
@@ -218,11 +238,7 @@
 	<div class="app-nav-header">
 		<div class="app-icon">
 			<a href={`/${locale}`}>
-				<img
-					src="/images/logo.png"
-					alt="logo"
-					title='Projeto "Um Por Todos! Todos Por Um." '
-				/>
+				<img src={imageAsset} alt="logo" title={'Panel | Projeto "Um Por Todos! Todos Por Um."'} />
 			</a>
 		</div>
 
@@ -235,7 +251,7 @@
 	<ul bind:this={navListRef} class="app-nav-list">
 		{#each menuFilteredByRole as item}
 			{#if item.name !== 'separator'}
-				<li class={`app-nav-list-item ${isActive(item.href) ? 'active' : ''}`}>
+				<li class="app-nav-list-item" class:active={isActive(item.href)}>
 					<a href={item.href}>
 						<Icon src={item.icon} />
 						<span>{item.name}</span>
