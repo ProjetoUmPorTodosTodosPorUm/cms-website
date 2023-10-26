@@ -5,40 +5,38 @@ const shared = {
 		titleLabel: 'Title',
 		messageLabel: 'Message',
 		attachmentsLabel: 'Attachments',
-		dateLabel: 'Date',
+		dateLabel: 'Date'
 	},
 	pageTitle: 'Agenda'
 }
-
 
 const en_agenda = {
 	list: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Agenda',
-			buttonText: 'Add Event',
+			buttonText: 'Add Event'
 		},
-		collectionHeader: shared.labels,
+		collectionHeader: shared.labels
 	},
 
 	add: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Add Event',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
-		inputs: shared.labels,
+		inputs: shared.labels
 	},
 
 	edit: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Edit Event',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
-		inputs: shared.labels,
+		inputs: shared.labels
 	}
-
 } satisfies NamespaceAgendaTranslation
 
 export default en_agenda

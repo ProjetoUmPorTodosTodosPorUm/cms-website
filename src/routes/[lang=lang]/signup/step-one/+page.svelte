@@ -77,7 +77,6 @@
 				type="email"
 				autocomplete="off"
 				placeholder={i18n.inputs.emailLabel()}
-				
 			/>
 		</div>
 	</svelte:fragment>

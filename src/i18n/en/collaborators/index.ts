@@ -4,9 +4,9 @@ const shared = {
 	labels: {
 		titleLabel: 'Title',
 		descriptionLabel: 'Description',
-		imageLabel: 'Image',
+		imageLabel: 'Image'
 	},
-	pageTitle: 'Collaborators',
+	pageTitle: 'Collaborators'
 }
 
 const en_collaborators = {
@@ -14,29 +14,28 @@ const en_collaborators = {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Collaborators',
-			buttonText: 'Add Collaborator',
+			buttonText: 'Add Collaborator'
 		},
-		collectionHeader: shared.labels,
+		collectionHeader: shared.labels
 	},
 
 	add: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Add Collaborator',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
-		inputs: shared.labels,
+		inputs: shared.labels
 	},
 
 	edit: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Edit Collaborator',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
-		inputs: shared.labels,
+		inputs: shared.labels
 	}
-
 } satisfies NamespaceCollaboratorsTranslation
 
 export default en_collaborators

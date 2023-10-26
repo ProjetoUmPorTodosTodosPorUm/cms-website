@@ -5,7 +5,7 @@ const en_profile = {
 
 	appHeader: {
 		name: 'Profile',
-		buttonText: 'Save',
+		buttonText: 'Save'
 	},
 
 	roles: {
@@ -31,8 +31,6 @@ const en_profile = {
 		altText: 'Profile pic',
 		editText: 'Edit'
 	}
-
-
 } satisfies NamespaceProfileTranslation
 
 export default en_profile

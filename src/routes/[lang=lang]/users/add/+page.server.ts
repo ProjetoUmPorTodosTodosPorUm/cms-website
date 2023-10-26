@@ -13,7 +13,7 @@ export const actions = {
 		const roles = [
 			{ value: 'VOLUNTEER', text: i18n.roles.volunteer() },
 			{ value: 'ADMIN', text: i18n.roles.admin() },
-			{ value: 'WEB_MASTER', text: i18n.roles.webMaster() },
+			{ value: 'WEB_MASTER', text: i18n.roles.webMaster() }
 		]
 
 		const schema = yup.object().shape({

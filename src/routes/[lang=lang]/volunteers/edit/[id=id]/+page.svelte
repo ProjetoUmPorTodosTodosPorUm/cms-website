@@ -134,7 +134,12 @@
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineCalendar} />
-				<input value={volunteerData.joinedDate.split("T")[0]} name="joinedDate" type="date" autocomplete="off" />
+				<input
+					value={volunteerData.joinedDate.split('T')[0]}
+					name="joinedDate"
+					type="date"
+					autocomplete="off"
+				/>
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineTag} />

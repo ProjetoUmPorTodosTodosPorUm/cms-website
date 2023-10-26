@@ -10,48 +10,48 @@ loadAllLocales()
 const L = i18n()
 
 export const handle: Handle = async ({ event, resolve }) => {
-    // get user from cookie and pass forward
+	// get user from cookie and pass forward
 	const user: UserDto = JSON.parse(event.cookies.get('user') || 'null')
 	event.locals.user = user
 
-    // read language slug
-    const [, lang] = event.url.pathname.split('/')
+	// read language slug
+	const [, lang] = event.url.pathname.split('/')
 
-    // redirect to base locale if no locale slug was found
-    if (!lang) {
-        const locale = getPreferredLocale(event)
+	// redirect to base locale if no locale slug was found
+	if (!lang) {
+		const locale = getPreferredLocale(event)
 
-        return new Response(null, {
-            status: 302,
-            headers: { Location: `/${locale}` },
-        })
-    }
+		return new Response(null, {
+			status: 302,
+			headers: { Location: `/${locale}` }
+		})
+	}
 
-    // if slug is not a locale, use base locale (e.g. api endpoints)
-    const locale = isLocale(lang) ? (lang as Locales) : getPreferredLocale(event)
-    const LL = L[locale]
+	// if slug is not a locale, use base locale (e.g. api endpoints)
+	const locale = isLocale(lang) ? (lang as Locales) : getPreferredLocale(event)
+	const LL = L[locale]
 
-    // bind locale and translation functions to current request
-    event.locals.locale = locale
-    event.locals.LL = LL
+	// bind locale and translation functions to current request
+	event.locals.locale = locale
+	event.locals.LL = LL
 
-    // Server Headers
+	// Server Headers
 	// @ts-ignore
 	const APP_SERVER_NAME = __APP_SERVER_NAME__
 	event.setHeaders({
 		Server: APP_SERVER_NAME
 	})
 
-    // replace html lang attribute with correct language
-    return resolve(event, { transformPageChunk: ({ html }) => html.replace('%lang%', locale) })
+	// replace html lang attribute with correct language
+	return resolve(event, { transformPageChunk: ({ html }) => html.replace('%lang%', locale) })
 }
 
 const getPreferredLocale = ({ request }: RequestEvent) => {
-    // detect the preferred language the user has configured in his browser
-    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language
-    const acceptLanguageDetector = initAcceptLanguageHeaderDetector(request)
+	// detect the preferred language the user has configured in his browser
+	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language
+	const acceptLanguageDetector = initAcceptLanguageHeaderDetector(request)
 
-    return detectLocale(acceptLanguageDetector)
+	return detectLocale(acceptLanguageDetector)
 }
 
 export const handleFetch: HandleFetch = async ({ event, request, fetch }) => {
@@ -59,7 +59,7 @@ export const handleFetch: HandleFetch = async ({ event, request, fetch }) => {
 		// See package.json script.dev for MODE
 		// See API's docker-compose.yml for api's container_name
 		//const MODE = import.meta.env.MODE
-		let localApiURL = 'http://localhost:3000';
+		let localApiURL = 'http://localhost:3000'
 
 		/*if (MODE == 'preview') {
 			localApiURL = 'http://preview-api:3000'

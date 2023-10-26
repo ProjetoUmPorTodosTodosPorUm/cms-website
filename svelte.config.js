@@ -1,5 +1,5 @@
-import adapter from '@sveltejs/adapter-node';
-import { vitePreprocess } from '@sveltejs/kit/vite';
+import adapter from '@sveltejs/adapter-node'
+import { vitePreprocess } from '@sveltejs/kit/vite'
 import * as child_process from 'node:child_process'
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -12,7 +12,7 @@ const config = {
 		// If your environment is not supported or you settled on a specific environment, switch out the adapter.
 		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
 		adapter: adapter({
-			polyfill: false,
+			polyfill: false
 		}),
 		alias: {
 			$src: 'src',
@@ -36,7 +36,13 @@ const config = {
 				'style-src': ['self', 'fonts.googleapis.com', 'unsafe-inline'],
 				'font-src': ['self', 'fonts.gstatic.com'],
 				'img-src': ['self', 'data:'],
-				'connect-src': ['*.localhost', 'localhost:*', 'ws://cms.localhost:*', '*.projetoumportodostodosporum.org', 'projetoumportodostodosporum.org'],
+				'connect-src': [
+					'*.localhost',
+					'localhost:*',
+					'ws://cms.localhost:*',
+					'*.projetoumportodostodosporum.org',
+					'projetoumportodostodosporum.org'
+				]
 			},
 			reportOnly: {
 				'default-src': ['self'],
@@ -45,7 +51,13 @@ const config = {
 				'style-src': ['self', 'fonts.googleapis.com', 'unsafe-inline'],
 				'font-src': ['self', 'fonts.gstatic.com'],
 				'img-src': ['self', 'data:'],
-				'connect-src': ['*.localhost', 'localhost:*', 'ws://cms.localhost:*', '*.projetoumportodostodosporum.org', 'projetoumportodostodosporum.org'],
+				'connect-src': [
+					'*.localhost',
+					'localhost:*',
+					'ws://cms.localhost:*',
+					'*.projetoumportodostodosporum.org',
+					'projetoumportodostodosporum.org'
+				],
 				'report-to': ['api.projetoumportodostodosporum.org/csp-report']
 			}
 		},
@@ -53,6 +65,6 @@ const config = {
 			name: child_process.execSync('git rev-parse HEAD').toString().trim()
 		}
 	}
-};
+}
 
-export default config;
+export default config

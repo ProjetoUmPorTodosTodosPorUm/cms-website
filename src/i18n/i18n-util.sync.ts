@@ -127,7 +127,7 @@ const localeTranslations = {
 		users: pt_BR_users,
 		volunteers: pt_BR_volunteers,
 		'welcomed-families': pt_BR_welcomed_families
-	},
+	}
 }
 
 export const loadLocale = (locale: Locales): void => {

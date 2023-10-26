@@ -21,31 +21,30 @@ const en_churches = {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Churches in Unity',
-			buttonText: 'Add Church in Unity',
+			buttonText: 'Add Church in Unity'
 		},
-		collectionHeader: shared.labels,
+		collectionHeader: shared.labels
 	},
 
 	add: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Add Church in Unity',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
 		inputs: shared.labels,
-		churchTypes: shared.churchTypes,
+		churchTypes: shared.churchTypes
 	},
 
 	edit: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Edit Church in Unity',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
 		inputs: shared.labels,
-		churchTypes: shared.churchTypes,
+		churchTypes: shared.churchTypes
 	}
-
 } satisfies NamespaceChurchesTranslation
 
 export default en_churches

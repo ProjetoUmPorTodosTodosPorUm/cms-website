@@ -7,20 +7,19 @@ const shared = {
 		usedLabel: 'Used',
 		typeLabel: 'Type',
 		payloadLabel: 'Payload',
-		expirationLabel: 'Expiration',
+		expirationLabel: 'Expiration'
 	},
-	pageTitle: 'Tokens',
+	pageTitle: 'Tokens'
 }
 
 const en_tokens = {
 	list: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
-			name: 'Tokens',
+			name: 'Tokens'
 		},
-		collectionHeader: shared.labels,
-	},
-
+		collectionHeader: shared.labels
+	}
 } satisfies NamespaceTokensTranslation
 
 export default en_tokens

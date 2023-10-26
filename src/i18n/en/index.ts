@@ -1,7 +1,7 @@
-import type { Translation } from "../i18n-types"
+import type { Translation } from '../i18n-types'
 
 const en = {
-    // DO NOT REMOVE THIS FILE
+	// DO NOT REMOVE THIS FILE
 } satisfies Translation
 
 export default en

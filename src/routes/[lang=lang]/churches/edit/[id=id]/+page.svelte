@@ -83,7 +83,6 @@
 					name="name"
 					placeholder={i18n.inputs.nameLabel()}
 					autocomplete="off"
-					
 				/>
 			</div>
 			<div class="input input-lg">
@@ -91,7 +90,6 @@
 					formName="description"
 					value={churchData.description}
 					placeholder={i18n.inputs.descriptionLabel()}
-					
 				/>
 				<!-- file={form?.apiData?.file} -->
 			</div>
@@ -105,7 +103,7 @@
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineTag} />
-				<select bind:value={churchData.type} name="type" >
+				<select bind:value={churchData.type} name="type">
 					<option value="" disabled selected>{i18n.inputs.typeLabel()}</option>
 
 					{#each churchTypes as churchType}

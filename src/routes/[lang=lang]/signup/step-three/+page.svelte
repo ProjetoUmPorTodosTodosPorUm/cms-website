@@ -93,7 +93,6 @@
 				type="text"
 				placeholder={i18n.inputs.firstNameLabel()}
 				autocomplete="off"
-				
 			/>
 		</div>
 		<div class="form-input" in:fade>
@@ -113,7 +112,6 @@
 				type="password"
 				autocomplete="new-password"
 				placeholder={i18n.inputs.passwordLabel()}
-				
 			/>
 		</div>
 		<div class="form-input" in:fade>
@@ -123,7 +121,6 @@
 				type="password"
 				autocomplete="new-password"
 				placeholder={i18n.inputs.confirmPasswordLabel()}
-				
 			/>
 		</div>
 	</svelte:fragment>

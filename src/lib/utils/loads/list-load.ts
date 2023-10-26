@@ -23,7 +23,7 @@ export async function listLoad(
 			apiData: [],
 			totalCount: 0,
 			totalPages: 1,
-			messages: generateMessages([{ message: ((await res.json()) as ApiResponseDto).message }]),
+			messages: generateMessages([{ message: ((await res.json()) as ApiResponseDto).message }])
 		}
 	} else if (res) {
 		const resJson = (await res.json()) as ApiResponseDto
@@ -32,7 +32,7 @@ export async function listLoad(
 			apiData: resJson.data,
 			totalCount: Number(res.headers.get('x-total-count')),
 			totalPages: Number(res.headers.get('x-total-pages')),
-			messages: generateMessages([{ message: resJson.message, variant: 'success', silent: true }]),
+			messages: generateMessages([{ message: resJson.message, variant: 'success', silent: true }])
 		}
 	}
 
@@ -41,10 +41,6 @@ export async function listLoad(
 		apiData: [],
 		totalCount: 0,
 		totalPages: 1,
-		messages: [],
+		messages: []
 	}
 }
-
-
-
-

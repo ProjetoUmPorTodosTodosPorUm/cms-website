@@ -81,7 +81,6 @@
 				type="email"
 				placeholder={i18n.inputs.emailLabel()}
 				autocomplete="email"
-				
 			/>
 		</div>
 		<div class="form-input">
@@ -93,7 +92,6 @@
 				minlength={8}
 				placeholder={i18n.inputs.passwordLabel()}
 				autocomplete="current-password"
-				
 			/>
 		</div>
 	</svelte:fragment>

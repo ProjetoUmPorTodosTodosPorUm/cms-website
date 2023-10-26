@@ -121,7 +121,6 @@
 				name="token"
 				maxlength="1"
 				autocomplete="off"
-				
 			/>
 			<input
 				bind:value={token[1]}
@@ -131,7 +130,6 @@
 				name="token"
 				maxlength="1"
 				autocomplete="off"
-				
 			/>
 			<input
 				bind:value={token[2]}
@@ -141,7 +139,6 @@
 				name="token"
 				maxlength="1"
 				autocomplete="off"
-				
 			/>
 			<input
 				bind:value={token[3]}
@@ -151,7 +148,6 @@
 				name="token"
 				maxlength="1"
 				autocomplete="off"
-				
 			/>
 			<input
 				bind:value={token[4]}
@@ -161,7 +157,6 @@
 				name="token"
 				maxlength="1"
 				autocomplete="off"
-				
 			/>
 			<input
 				bind:value={token[5]}
@@ -171,7 +166,6 @@
 				name="token"
 				maxlength="1"
 				autocomplete="off"
-				
 			/>
 		</div>
 	</svelte:fragment>

@@ -4,9 +4,9 @@ const shared = {
 	labels: {
 		nameLabel: 'Name',
 		emailLabel: 'E-mail',
-		textLabel: 'Text',
+		textLabel: 'Text'
 	},
-	pageTitle: 'Testimonials',
+	pageTitle: 'Testimonials'
 }
 
 const en_testimonials = {
@@ -14,29 +14,28 @@ const en_testimonials = {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Testimonials',
-			buttonText: 'Add Testimonial',
+			buttonText: 'Add Testimonial'
 		},
-		collectionHeader: shared.labels,
+		collectionHeader: shared.labels
 	},
 
 	add: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Add Testimonial',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
-		inputs: shared.labels,
+		inputs: shared.labels
 	},
 
 	edit: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Edit Testimonial',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
-		inputs: shared.labels,
+		inputs: shared.labels
 	}
-
 } satisfies NamespaceTestimonialsTranslation
 
 export default en_testimonials

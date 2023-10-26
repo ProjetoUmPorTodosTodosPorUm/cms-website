@@ -16,7 +16,7 @@
 	$: i18n = $LL['app-actions']
 
 	export let locale: Locales
-	$: fields = $page.data.fields || [] as FieldDto[]
+	$: fields = $page.data.fields || ([] as FieldDto[])
 	const userStore = getContext<UserStore>('user')
 
 	// Component Data - forwarding

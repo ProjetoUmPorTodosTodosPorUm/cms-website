@@ -4,20 +4,19 @@ const shared = {
 	labels: {
 		nameLabel: 'Name',
 		mimeTypeLabel: 'MimeType',
-		sizeLabel: 'Size',
+		sizeLabel: 'Size'
 	},
-	pageTitle: 'Files',
+	pageTitle: 'Files'
 }
 
 const en_files = {
 	list: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
-			name: 'Files',
+			name: 'Files'
 		},
-		collectionHeader: shared.labels,
-	},
-
+		collectionHeader: shared.labels
+	}
 } satisfies NamespaceFilesTranslation
 
 export default en_files

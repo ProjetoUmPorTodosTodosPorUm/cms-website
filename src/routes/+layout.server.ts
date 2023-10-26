@@ -19,25 +19,30 @@ const publicRouteIds = [
 ]
 const adminRouteIds = /(\/files.*|\/logs.*|\/users.*)/
 
-export const load: LayoutServerLoad = async ({ locals: { locale, user, LL }, cookies, route, depends }) => {
+export const load: LayoutServerLoad = async ({
+	locals: { locale, user, LL },
+	cookies,
+	route,
+	depends
+}) => {
 	depends('app:fields-load')
 
 	// guard routes
 	AuthGuard(cookies, route.id ?? '', locale)
 
 	// pass locale information from "server-context" to "shared server + client context"
-	const isWebMaster = user?.role === "WEB_MASTER"
+	const isWebMaster = user?.role === 'WEB_MASTER'
 	if (isWebMaster) {
 		return {
-			...await fieldsLoad(fetch, cookies),
+			...(await fieldsLoad(fetch, cookies)),
 			locale,
-			user,
+			user
 		}
 	} else {
 		return {
 			fields: [],
 			locale,
-			user,
+			user
 		}
 	}
 }

@@ -1,5 +1,5 @@
 export enum OfferorFamilyGroup {
-    CHURCH = 'CHURCH',
-    COMMUNITY = 'COMMUNITY',
-    EXTERNAL = 'EXTERNAL'
+	CHURCH = 'CHURCH',
+	COMMUNITY = 'COMMUNITY',
+	EXTERNAL = 'EXTERNAL'
 }
