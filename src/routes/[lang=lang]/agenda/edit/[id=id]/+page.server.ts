@@ -2,7 +2,14 @@ import type { Actions } from '@sveltejs/kit'
 import * as yup from 'yup'
 import { PUBLIC_API_URL } from '$env/static/public'
 import type { ApiResponseDto } from '$types'
-import { generateMessages, safeFetch, actionErrorHandler, bulkFileAction, editLoad, fileRemoveAction } from '$utils'
+import {
+	generateMessages,
+	safeFetch,
+	actionErrorHandler,
+	bulkFileAction,
+	editLoad,
+	fileRemoveAction
+} from '$utils'
 import { ApiError } from '$classes/api-error'
 import type { PageServerLoad } from './$types'
 
@@ -17,7 +24,9 @@ export const actions = {
 
 		const schema = yup.object().shape({
 			title: yup.string().required(sharedI18n.yup.required({ field: i18n.inputs.titleLabel() })),
-			message: yup.string().required(sharedI18n.yup.required({ field: i18n.inputs.messageLabel() })),
+			message: yup
+				.string()
+				.required(sharedI18n.yup.required({ field: i18n.inputs.messageLabel() })),
 			attachments: yup.array(yup.string()).nullable().optional(),
 			date: yup.string().required(sharedI18n.yup.required({ field: i18n.inputs.dateLabel() })),
 			field: yup.string().nullable().optional()
@@ -32,7 +41,10 @@ export const actions = {
 		const field = data.get('field')
 
 		try {
-			schema.validateSync({ title, message, attachments: arrAttachments, date, field }, { abortEarly: false })
+			schema.validateSync(
+				{ title, message, attachments: arrAttachments, date, field },
+				{ abortEarly: false }
+			)
 
 			const res = await safeFetch(fetch, cookies, {
 				url: `${PUBLIC_API_URL}/agenda/${params.id}`,

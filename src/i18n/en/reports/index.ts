@@ -23,16 +23,16 @@ const en_reports = {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Reports',
-			buttonText: 'Add Report',
+			buttonText: 'Add Report'
 		},
-		collectionHeader: shared.labels,
+		collectionHeader: shared.labels
 	},
 
 	add: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Add Report',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
 		inputs: shared.labels,
 		reportTypes: shared.reportTypes
@@ -42,12 +42,11 @@ const en_reports = {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Edit Report',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
 		inputs: shared.labels,
 		reportTypes: shared.reportTypes
 	}
-
 } satisfies NamespaceReportsTranslation
 
 export default en_reports

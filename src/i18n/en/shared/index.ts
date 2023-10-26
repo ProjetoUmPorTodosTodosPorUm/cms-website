@@ -22,7 +22,7 @@ const en_shared = {
 		churches: 'Do you want to remove the church {name}?',
 		collaborators: 'Do you want to remove the collaborator {title}?',
 		'collected-offers': 'Do you want to remove the collected offer from {month}/{year}?',
-		volunteers: 'Do you want to remove the volunteer {name}?',
+		volunteers: 'Do you want to remove the volunteer {name}?'
 	},
 
 	isStatusTransform: {
@@ -54,9 +54,8 @@ const en_shared = {
 
 	inputFile: {
 		chooseFile: 'Choose File',
-        chooseFiles: 'Choose Files'
+		chooseFiles: 'Choose Files'
 	}
-
 } satisfies NamespaceSharedTranslation
 
 export default en_shared

@@ -8,7 +8,7 @@ const shared = {
 		monetaryValueLabel: 'Monetary',
 		othersQntLabel: 'Others (Qnt.)'
 	},
-	pageTitle: 'Collected Offers',
+	pageTitle: 'Collected Offers'
 }
 
 const en_collected_offers = {
@@ -16,29 +16,28 @@ const en_collected_offers = {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Collected Offers',
-			buttonText: 'Add Collected Offers',
+			buttonText: 'Add Collected Offers'
 		},
-		collectionHeader: shared.labels,
+		collectionHeader: shared.labels
 	},
 
 	add: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Add Collected Offers',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
-		inputs: shared.labels,
+		inputs: shared.labels
 	},
 
 	edit: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Edit Collected Offers',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
-		inputs: shared.labels,
+		inputs: shared.labels
 	}
-
 } satisfies NamespaceCollectedOffersTranslation
 
 export default en_collected_offers

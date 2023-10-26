@@ -17,27 +17,27 @@ const en_announcements = {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Announcements',
-			buttonText: 'Add Announcement',
+			buttonText: 'Add Announcement'
 		},
-		collectionHeader: shared.labels,
+		collectionHeader: shared.labels
 	},
 
 	add: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Add Announcement',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
-		inputs: shared.labels,
+		inputs: shared.labels
 	},
 
 	edit: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Edit Announcement',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
-		inputs: shared.labels,
+		inputs: shared.labels
 	}
 } satisfies NamespaceAnnouncementsTranslation
 

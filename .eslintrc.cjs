@@ -18,6 +18,6 @@ module.exports = {
 		node: true
 	},
 	globals: {
-		'__APP_VERSION__': true
+		__APP_VERSION__: true
 	}
-};
+}

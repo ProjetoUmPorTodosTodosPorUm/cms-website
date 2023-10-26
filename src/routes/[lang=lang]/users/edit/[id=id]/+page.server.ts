@@ -4,7 +4,14 @@ import { PUBLIC_API_URL } from '$env/static/public'
 import type { ApiResponseDto } from '$types'
 import { Role } from '$enums'
 import type { PageServerLoad } from './$types'
-import { generateMessages, safeFetch, editLoad, fileAction, actionErrorHandler, fileRemoveAction } from '$utils'
+import {
+	generateMessages,
+	safeFetch,
+	editLoad,
+	fileAction,
+	actionErrorHandler,
+	fileRemoveAction
+} from '$utils'
 import { ApiError } from '$classes/api-error'
 
 export const load: PageServerLoad = async ({ fetch, cookies, params }) => {
@@ -18,7 +25,7 @@ export const actions = {
 		const roles = [
 			{ value: 'VOLUNTEER', text: i18n.roles.volunteer() },
 			{ value: 'ADMIN', text: i18n.roles.admin() },
-			{ value: 'WEB_MASTER', text: i18n.roles.webMaster() },
+			{ value: 'WEB_MASTER', text: i18n.roles.webMaster() }
 		]
 
 		const schema = yup.object().shape({

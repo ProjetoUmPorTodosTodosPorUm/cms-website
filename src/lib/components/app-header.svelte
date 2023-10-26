@@ -1,43 +1,43 @@
 <script lang="ts">
-	import '$lib/scss/components/app-header.scss';
-	import { goto } from '$app/navigation';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import '$lib/scss/components/app-header.scss'
+	import { goto } from '$app/navigation'
+	import { createEventDispatcher, onMount } from 'svelte'
 
-	import Icon from 'svelte-icons-pack';
-	import FaSolidArrowLeft from 'svelte-icons-pack/fa/FaSolidArrowLeft';
-	import FiRefreshCw from 'svelte-icons-pack/fi/FiRefreshCw';
+	import Icon from 'svelte-icons-pack'
+	import FaSolidArrowLeft from 'svelte-icons-pack/fa/FaSolidArrowLeft'
+	import FiRefreshCw from 'svelte-icons-pack/fi/FiRefreshCw'
 
 	// i18n
-	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
-	import type { Locales } from '$i18n/i18n-types';
-	import LL, { setLocale } from '$i18n/i18n-svelte';
-	$: i18n = $LL['app-header'];
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async'
+	import type { Locales } from '$i18n/i18n-types'
+	import LL, { setLocale } from '$i18n/i18n-svelte'
+	$: i18n = $LL['app-header']
 
-	export let locale: Locales;
+	export let locale: Locales
 
 	// Component Data
-	export let name: string;
-	export let buttonText: string | null = null;
-	export let buttonLink: string | null = null;
+	export let name: string
+	export let buttonText: string | null = null
+	export let buttonLink: string | null = null
 
 	// Component Options
-	export let showBackButton = true;
-	export let showRefreshButton = true;
+	export let showBackButton = true
+	export let showRefreshButton = true
 
 	onMount(async () => {
-		await loadNamespaceAsync(locale, 'app-header');
-		setLocale(locale);
-	});
+		await loadNamespaceAsync(locale, 'app-header')
+		setLocale(locale)
+	})
 
 	// Events
-	const dispatch = createEventDispatcher();
-	const refresh = () => dispatch('refresh');
+	const dispatch = createEventDispatcher()
+	const refresh = () => dispatch('refresh')
 	const click = () => {
 		if (buttonLink) {
-			goto(buttonLink);
+			goto(buttonLink)
 		}
-		dispatch('click');
-	};
+		dispatch('click')
+	}
 </script>
 
 <div class="app-header">

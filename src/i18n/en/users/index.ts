@@ -7,7 +7,7 @@ const shared = {
 		lastNameLabel: 'Last Name',
 		emailLabel: 'E-mail',
 		roleLabel: 'Role',
-		lastAccessLabel: 'Last Access',
+		lastAccessLabel: 'Last Access'
 	},
 	pageTitle: 'Users',
 	roles: {
@@ -26,34 +26,33 @@ const en_users = {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Users',
-			buttonText: 'Add User',
+			buttonText: 'Add User'
 		},
 		collectionHeader: shared.labels,
-		lastNamePlaceholder: '(not informed)',
+		lastNamePlaceholder: '(not informed)'
 	},
 
 	add: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Add User',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
 		inputs: shared.labels,
 		roles: shared.roles,
-		profilePic: shared.profilePic,
+		profilePic: shared.profilePic
 	},
 
 	edit: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Edit User',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
 		inputs: shared.labels,
 		roles: shared.roles,
-		profilePic: shared.profilePic,
+		profilePic: shared.profilePic
 	}
-
 } satisfies NamespaceUsersTranslation
 
 export default en_users

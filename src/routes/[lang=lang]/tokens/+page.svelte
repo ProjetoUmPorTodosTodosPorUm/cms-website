@@ -2,12 +2,7 @@
 	import '$scss/dashboard.scss'
 	import { onMount } from 'svelte'
 	import type { PageData } from './$types'
-	import { 
-		AppContainer, 
-		AppContent, 
-		CollectionHeader, 
-		CollectionRow 
-	} from '$components'
+	import { AppContainer, AppContent, CollectionHeader, CollectionRow } from '$components'
 	import type { TokenDto, ColumnCell, RowCell } from '$types'
 	import { friendlyDateString } from '$utils'
 

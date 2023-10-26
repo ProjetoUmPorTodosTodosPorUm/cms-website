@@ -1,4 +1,4 @@
 export enum MonthlyOfferOption {
-    'ANNUAL',
-    'MONTHLY'
+	'ANNUAL',
+	'MONTHLY'
 }

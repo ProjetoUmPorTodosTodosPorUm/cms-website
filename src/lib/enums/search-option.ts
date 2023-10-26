@@ -1,4 +1,4 @@
 export enum SearchOption {
-    'ALL',
-    'SPECIFIC'
+	'ALL',
+	'SPECIFIC'
 }

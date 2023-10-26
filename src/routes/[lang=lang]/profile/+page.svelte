@@ -38,7 +38,7 @@
 		// ignore first loading triggering
 		if (isLoading && messages.length > 0) {
 			isLoading = false
-			
+
 			// @TODO away to verify if an error occurred
 			if ($page.status === 200) {
 				userStore.updateUser(userData)

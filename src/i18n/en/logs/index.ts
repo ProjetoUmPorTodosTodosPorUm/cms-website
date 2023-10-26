@@ -11,18 +11,17 @@ const shared = {
 		statusCodeLabel: 'Status Code',
 		userLabel: 'User'
 	},
-	pageTitle: 'Logs',
+	pageTitle: 'Logs'
 }
 
 const en_logs = {
 	list: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
-			name: 'Logs',
+			name: 'Logs'
 		},
-		collectionHeader: shared.labels,
+		collectionHeader: shared.labels
 	}
-
 } satisfies NamespaceLogsTranslation
 
 export default en_logs

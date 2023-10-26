@@ -6,7 +6,7 @@ const en_login = {
 	authModal: {
 		title: 'Project One for All! All for one.',
 		subTitle: 'Welcomed Back',
-		buttonText: 'Sign-in',
+		buttonText: 'Sign-in'
 	},
 
 	inputs: {
@@ -18,7 +18,6 @@ const en_login = {
 		signupText: 'Create Account',
 		forgotPasswordText: 'Retrieve Account'
 	}
-
 } satisfies NamespaceLoginTranslation
 
 export default en_login

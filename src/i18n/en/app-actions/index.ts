@@ -17,7 +17,6 @@ const en_app_actions = {
 	showDeletedText: 'Show Deleted',
 	showDeletedRestoreButton: 'Restore Checked',
 	showDeletedHardRemoveButton: 'Remove Checked'
-
 } satisfies NamespaceAppActionsTranslation
 
 export default en_app_actions

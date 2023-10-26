@@ -14,7 +14,6 @@ export function actionErrorHandler(error: unknown) {
 				// @TODO maybe merge with else?
 				return fail(error.status, { messages: generateMessages([{ message: error.message }]) })
 			}
-
 		} else {
 			return fail(error.status, { messages: generateMessages([{ message: error.message }]) })
 		}

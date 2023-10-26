@@ -96,7 +96,6 @@
 						type="number"
 						min="2000"
 						max="2100"
-						
 					/>
 				</div>
 			</div>

@@ -8,9 +8,9 @@ const shared = {
 		abbreviationLabel: 'Abbreviation',
 		designationLabel: 'Designation',
 		collectionPointsLabel: 'Collection Points',
-		streetRelationLabel: 'Street Relation',
+		streetRelationLabel: 'Street Relation'
 	},
-	pageTitle: 'Missionary Fields',
+	pageTitle: 'Missionary Fields'
 }
 
 const en_fields = {
@@ -18,29 +18,28 @@ const en_fields = {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Missionary Fields',
-			buttonText: 'Add Missionary Field',
+			buttonText: 'Add Missionary Field'
 		},
-		collectionHeader: shared.labels,
+		collectionHeader: shared.labels
 	},
 
 	add: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Add Missionary Field',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
-		inputs: shared.labels,
+		inputs: shared.labels
 	},
 
 	edit: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Edit Missionary Field',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
-		inputs: shared.labels,
+		inputs: shared.labels
 	}
-
 } satisfies NamespaceFieldsTranslation
 
 export default en_fields

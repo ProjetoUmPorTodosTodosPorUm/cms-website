@@ -8,20 +8,19 @@ const en_signup = {
 		{
 			title: 'Create Account',
 			subTitle: 'Please enter your email',
-			buttonText: 'Next',
+			buttonText: 'Next'
 		},
 		{
 			title: 'Verification',
 			subTitle: 'Enter your token',
-			buttonText: 'Validate',
+			buttonText: 'Validate'
 		},
 		{
 			title: 'Last Step',
 			subTitle: 'Fill with your data',
-			buttonText: 'Create Account',
-		},
+			buttonText: 'Create Account'
+		}
 	],
-
 
 	inputs: {
 		emailLabel: 'E-mail',
@@ -42,7 +41,6 @@ const en_signup = {
 		loginText: 'Login',
 		forgotPasswordText: 'Retrieve Account'
 	}
-
 } satisfies NamespaceSignupTranslation
 
 export default en_signup

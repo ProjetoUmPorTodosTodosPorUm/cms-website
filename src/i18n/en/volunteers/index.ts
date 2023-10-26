@@ -45,33 +45,32 @@ const en_volunteers = {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Volunteers',
-			buttonText: 'Add Volunteer',
+			buttonText: 'Add Volunteer'
 		},
-		collectionHeader: shared.labels,
+		collectionHeader: shared.labels
 	},
 
 	add: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Add Volunteer',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
 		inputs: shared.labels,
 		occupations: shared.occupations,
-		profilePic: shared.profilePic,
+		profilePic: shared.profilePic
 	},
 
 	edit: {
 		pageTitle: shared.pageTitle,
 		appHeader: {
 			name: 'Edit Volunteer',
-			buttonText: 'Save',
+			buttonText: 'Save'
 		},
 		inputs: shared.labels,
 		occupations: shared.occupations,
-		profilePic: shared.profilePic,
+		profilePic: shared.profilePic
 	}
-
 } satisfies NamespaceVolunteersTranslation
 
 export default en_volunteers

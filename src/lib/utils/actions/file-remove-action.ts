@@ -15,7 +15,7 @@ export async function fileRemoveAction(skFetch: typeof fetch, request: Request, 
 		itemsPerPage: 1,
 		orderKey: 'createdAt',
 		orderValue: 'desc',
-		search: fileName,
+		search: fileName
 	}
 	const queryString = fromPaginationToQuery(pagination)
 
@@ -35,7 +35,6 @@ export async function fileRemoveAction(skFetch: typeof fetch, request: Request, 
 		fileResJson = await fileRes?.json()
 		file = fileResJson.data[0]
 	}
-
 
 	const res = await safeFetch(skFetch, cookies, {
 		url: `${PUBLIC_API_URL}/file/${file.id}`,

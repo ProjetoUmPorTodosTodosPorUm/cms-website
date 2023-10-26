@@ -19,11 +19,11 @@ declare global {
 		interface PageData {
 			locale: Locales
 			user: UserDto
-			fields?: FieldDto[] 
+			fields?: FieldDto[]
 		}
 
 		// interface Platform {}
 	}
 }
 
-export { }
+export {}
