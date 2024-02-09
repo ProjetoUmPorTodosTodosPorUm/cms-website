@@ -2,8 +2,7 @@
 	import '$scss/components/app-content.scss'
 	import { AppHeader, AppActions, AppContentLoading } from '$components'
 	import { createEventDispatcher } from 'svelte'
-	import { navigating, page } from '$app/stores'
-	import type { Locales } from '$i18n/i18n-types'
+	import { navigating } from '$app/stores'
 
 	// Component Data - forwarding
 	export let name: string
@@ -12,7 +11,6 @@
 	export let maxPage = 1
 	export let totalCount = 1
 	export let showFilter = true
-	export let locale: Locales
 
 	// Component Options - forwarding
 	export let showBackButton = true
@@ -35,9 +33,9 @@
 </script>
 
 <div class="app-content">
-	<AppHeader {...appHeader} {showBackButton} {showRefreshButton} {locale} on:click={click} />
+	<AppHeader {...appHeader} {showBackButton} {showRefreshButton} on:click={click} />
 	{#if showActions}
-		<AppActions {totalCount} {maxPage} {locale} {showFilter} />
+		<AppActions {totalCount} {maxPage} {showFilter} />
 	{/if}
 	<div class="products-area-wrapper tableView">
 		<slot />

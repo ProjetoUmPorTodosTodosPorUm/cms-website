@@ -3,19 +3,18 @@
 	"version": "1.0.0",
 	"private": true,
 	"scripts": {
-		"dev": "vite --port 3002 --strictPort --host",
+		"dev": "NODE_TLS_REJECT_UNAUTHORIZED=0 vite --port 3002 --strictPort --host",
 		"build": "vite build",
-		"build:docker:preview": "docker build --build-arg MODE=preview --build-arg PUBLIC_API_URL=http://api.localhost --target preview-image -t renangalvao/project-cms:preview .",
+		"build:docker:preview": "docker build --target preview-image -t project/cms:preview .",
 		"build:docker": "docker build --target prod-image -t renangalvao/project-cms:latest .",
 		"postbuild:docker": "docker push renangalvao/project-cms:latest",
 		"preview": "vite preview --port 3002 --strictPort --host",
-		"test": "npm run test:integration && npm run test:unit",
+		"test": "playwright test",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test:unit": "vitest",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
-		"format": "prettier --plugin-search-dir . --write .",
-		"typesafe-i18n": "typesafe-i18n"
+		"format": "prettier --plugin-search-dir . --write ."
 	},
 	"devDependencies": {
 		"@googlemaps/js-api-loader": "^1.15.1",
@@ -44,10 +43,9 @@
 	"dependencies": {
 		"@tinymce/tinymce-svelte": "^1.0.1",
 		"css-tree": "^2.3.1",
-		"svelte-icons-pack": "^2.1.0",
+		"svelte-icons-pack": "^2.1.1",
 		"svelte-json-tree": "^1.0.0",
 		"tinymce": "^6.7.0",
-		"typesafe-i18n": "^5.26.2",
 		"yup": "^1.3.2"
 	}
 }

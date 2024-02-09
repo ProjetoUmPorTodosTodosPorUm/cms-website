@@ -2,7 +2,6 @@
 	import '$scss/components/toast.scss'
 	import { createEventDispatcher, onMount } from 'svelte'
 	import { fade } from 'svelte/transition'
-	import { page } from '$app/stores'
 
 	import Icon from 'svelte-icons-pack/Icon.svelte'
 	import HiOutlineX from 'svelte-icons-pack/hi/HiOutlineX'
@@ -16,15 +15,7 @@
 	export let autoHide = true
 	export let duration = 3 // in seconds
 
-	// i18n
-	import { loadNamespaceAsync } from '$i18n/i18n-util.async'
-	import LL, { setLocale } from '$i18n/i18n-svelte'
-	$: i18n = $LL.toast
-
 	onMount(async () => {
-		await loadNamespaceAsync($page.data.locale, 'toast')
-		setLocale($page.data.locale)
-
 		if (silent) {
 			console.debug(message)
 		}

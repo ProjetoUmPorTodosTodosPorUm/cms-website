@@ -2,25 +2,11 @@
 	import { page } from '$app/stores'
 	import { goto, invalidate } from '$app/navigation'
 	import type { ColumnCell } from '$types'
-	import { onMount } from 'svelte'
-
-	// i18n
-	import { loadNamespaceAsync } from '$i18n/i18n-util.async'
-	import type { Locales } from '$i18n/i18n-types'
-	import LL, { setLocale } from '$i18n/i18n-svelte'
-	$: i18n = $LL['collection-header']
-
-	export let locale: Locales
 
 	// Component Options
 	export let showOptions = true
 	export let columns: ColumnCell[]
 	$: showDeleted = $page.url.searchParams.get('deleted') == 'true' ? true : false
-
-	onMount(async () => {
-		await loadNamespaceAsync(locale, 'collection-header')
-		setLocale(locale)
-	})
 
 	async function onSort(orderKey: string) {
 		const currentOrderKey = $page.url.searchParams.get('orderKey')
@@ -69,9 +55,9 @@
 		{/if}
 	{/each}
 	{#if showOptions}
-		<div class="product-cell">{i18n.optionsColumnText()}</div>
+		<div class="product-cell">Opções</div>
 	{/if}
 	{#if showDeleted}
-		<div class="product-cell">{i18n.selectionColumnText()}</div>
+		<div class="product-cell">Selecionar</div>
 	{/if}
 </div>

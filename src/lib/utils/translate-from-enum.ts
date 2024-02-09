@@ -1,5 +1,5 @@
 // return friendly text based on friendly enum
-export function translateFromEnum(
+export function nateFromEnum(
 	value: string,
 	friendlyEnum: {
 		[key: string]: string

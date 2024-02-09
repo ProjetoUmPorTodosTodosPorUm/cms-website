@@ -9,13 +9,6 @@
 	import { enhance } from '$app/forms'
 	import type { FieldDto } from '$types'
 
-	// i18n
-	import { loadNamespaceAsync } from '$i18n/i18n-util.async'
-	import type { Locales } from '$i18n/i18n-types'
-	import LL, { setLocale } from '$i18n/i18n-svelte'
-	$: i18n = $LL['app-actions']
-
-	export let locale: Locales
 	$: fields = $page.data.fields || ([] as FieldDto[])
 	const userStore = getContext<UserStore>('user')
 
@@ -43,9 +36,6 @@
 
 	onMount(async () => {
 		applySavedDataDisplay()
-
-		await loadNamespaceAsync(locale, 'app-actions')
-		setLocale(locale)
 
 		const deleted = Boolean($page.url.searchParams.get('deleted'))
 		if (deleted !== showDeleted) {
@@ -115,16 +105,14 @@
 <svelte:window bind:innerWidth={screenSize} />
 
 <div class="app-actions">
-	<SearchInput placeholder={i18n.searchInputPlaceHolder()} />
-	<span class="total-items" title={i18n.totalItemsTitle()}
-		>{i18n.totalItemsText()}: {totalCount}</span
-	>
+	<SearchInput placeholder="Pesquise Aqui..." />
+	<span class="total-items" title="Número total de items">Items: {totalCount}</span>
 	<Pagination {maxPage} />
 	<div class="app-actions-wrapper">
 		<div class="filter-button-wrapper">
 			{#if userStore.isWebMaster() && showFilter}
 				<button on:click={handleFilterMenu} class="action-button filter jsFilter"
-					><span>{i18n.filterIconText()}</span><svg
+					><span>Filtro</span><svg
 						xmlns="http://www.w3.org/2000/svg"
 						width="16"
 						height="16"
@@ -139,9 +127,9 @@
 					></button
 				>
 				<div bind:this={filterMenuRef} class="filter-menu">
-					<label for="field-select">{i18n.filterFieldLabel()}</label>
+					<label for="field-select">Campo Missionário</label>
 					<select bind:this={fieldFilterRef} id="field-select">
-						<option value="" disabled selected>{i18n.filterFieldLabel()}</option>
+						<option value="" disabled selected>Campo Missionário</option>
 						{#each fields as field}
 							<option value={field.id}>
 								{field.abbreviation} - {field.designation}
@@ -149,12 +137,8 @@
 						{/each}
 					</select>
 					<div class="filter-menu-buttons">
-						<button on:click={handleFilterReset} class="filter-button reset"
-							>{i18n.filterResetButton()}</button
-						>
-						<button on:click={handleFilterApply} class="filter-button apply"
-							>{i18n.filterApplyButton()}</button
-						>
+						<button on:click={handleFilterReset} class="filter-button reset">Reiniciar</button>
+						<button on:click={handleFilterApply} class="filter-button apply">Aplicar</button>
 					</div>
 				</div>
 			{/if}
@@ -163,7 +147,7 @@
 			bind:this={listRef}
 			on:click={handleListView}
 			class="action-button list active"
-			title={i18n.listViewTitle()}
+			title="Visualizar em lista"
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -193,7 +177,7 @@
 			bind:this={gridRef}
 			on:click={handleGridView}
 			class="action-button grid"
-			title={i18n.gridViewTitle()}
+			title="Visualizar em grid"
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -219,7 +203,7 @@
 {#if userStore.isAdmin() || userStore.isWebMaster()}
 	<div class="app-actions-admin">
 		<div class="show-deleted">
-			<span>{i18n.showDeletedText()}</span>
+			<span>Mostrar Removidos</span>
 			<input
 				checked={showDeleted}
 				on:click={onShowDeleted}
@@ -232,14 +216,14 @@
 			<div class="buttons" in:fade out:fade>
 				<form id="restore" use:enhance method="POST" action="?/restore" />
 				<button type="submit" form="restore"
-					>{i18n.showDeletedRestoreButton()}
+					>Restaurar Selecionados
 					{#if itemsSelected.length > 0}
 						(x {itemsSelected.length})
 					{/if}
 				</button>
 				<form id="hard-remove" use:enhance method="POST" action="?/hardRemove" />
 				<button type="submit" form="hard-remove"
-					>{i18n.showDeletedHardRemoveButton()}
+					>Remover Selecionados
 					{#if itemsSelected.length > 0}
 						(x {itemsSelected.length})
 					{/if}

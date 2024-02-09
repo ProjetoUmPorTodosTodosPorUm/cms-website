@@ -27,7 +27,7 @@ export class UserStore extends BaseStore<UserStoreType> {
 		}
 	}
 
-	updateUser(userData: UserDto) {
+	updateUser(userData: UserDto | null) {
 		this.store.update((data) => ({
 			...data,
 			...userData

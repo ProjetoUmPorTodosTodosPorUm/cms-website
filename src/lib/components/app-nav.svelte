@@ -4,7 +4,6 @@
 	import type { AppNavMenuItem, Pagination } from '$types'
 	import { Role } from '$enums'
 	import type { UserStore } from '$stores'
-	import { SwitchLocale } from '$components'
 
 	import Icon from 'svelte-icons-pack'
 	import HiOutlineMenu from 'svelte-icons-pack/hi/HiOutlineMenu'
@@ -14,6 +13,7 @@
 	import HiOutlineSpeakerphone from 'svelte-icons-pack/hi/HiOutlineSpeakerphone'
 	import HiOutlineLibrary from 'svelte-icons-pack/hi/HiOutlineLibrary'
 	import HiOutlineUserGroup from 'svelte-icons-pack/hi/HiOutlineUserGroup'
+	import BsHouseHeart from 'svelte-icons-pack/bs/BsHouseHeart'
 	import HiOutlineHand from 'svelte-icons-pack/hi/HiOutlineHand'
 	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe'
 	import HiOutlineFolderOpen from 'svelte-icons-pack/hi/HiOutlineFolderOpen'
@@ -27,19 +27,11 @@
 	import HiSolidUserCircle from 'svelte-icons-pack/hi/HiSolidUserCircle'
 	import HiOutlineLogout from 'svelte-icons-pack/hi/HiOutlineLogout'
 
-	import { getContext, onMount } from 'svelte'
-	import { VERSION } from 'svelte/compiler'
+	import { getContext } from 'svelte'
+	import { VERSION } from '@sveltejs/kit'
 	import { fromPaginationToQuery } from '$utils'
-
-	// i18n
-	import { loadNamespaceAsync } from '$i18n/i18n-util.async'
-	import type { Locales, Namespaces } from '$i18n/i18n-types'
-	import LL, { setLocale } from '$i18n/i18n-svelte'
 	import SwitchTheme from './switch-theme.svelte'
 	import { page } from '$app/stores'
-	$: i18n = $LL['app-nav']
-
-	export let locale: Locales
 
 	const pagination: Pagination = {
 		page: 1,
@@ -75,108 +67,113 @@
 	let navIconComponentRef: Icon
 	let currentMenuIcon = HiOutlineMenuAlt2
 
-	onMount(async () => {
-		await loadNamespaceAsync(locale, 'app-nav')
-		setLocale(locale)
-	})
-
 	$: menu = [
 		{
-			name: i18n.menu.dashboard(),
-			href: `/${locale}`,
+			name: 'Dashboard',
+			href: `/`,
 			icon: HiOutlineHome
 		},
 		{
-			name: i18n.menu.agenda(),
-			href: `/${locale}/agenda?${queryString}`,
+			name: 'Agenda',
+			href: `/agenda?${queryString}`,
 			icon: HiOutlineCalendar
 		},
 		{
-			name: i18n.menu.announcements(),
-			href: `/${locale}/announcements?${queryString}`,
+			name: 'Avisos',
+			href: `/announcements?${queryString}`,
 			icon: HiOutlineSpeakerphone
 		},
 		{
-			name: i18n.menu.churches(),
-			href: `/${locale}/churches?${queryString}`,
+			name: 'Igrejas',
+			href: `/churches?${queryString}`,
 			icon: HiOutlineLibrary
 		},
 		{
-			name: i18n.menu.collaborators(),
-			href: `/${locale}/collaborators?${queryString}`,
+			name: 'Contatos',
+			href: `/contacts?${queryString}`,
+			icon: HiOutlineChat
+		},
+		{
+			name: 'Colaboradores',
+			href: `/collaborators?${queryString}`,
 			icon: HiOutlineUserGroup
 		},
 		{
-			name: i18n.menu.collectedOffers(),
-			href: `/${locale}/collected-offers?${queryString}`,
+			name: 'Casas de Recuperação',
+			href: `/recovery-houses?${queryString}`,
+			icon: BsHouseHeart
+		},
+		{
+			name: 'Ofertas Coletadas',
+			href: `/collected-offers?${queryString}`,
 			icon: HiOutlineHand
 		},
 		{
-			name: i18n.menu.fields(),
-			href: `/${locale}/fields?${queryString}`,
+			name: 'Campos Missionários',
+			href: `/fields?${queryString}`,
 			icon: HiOutlineGlobe,
 			role: Role.WEB_MASTER
 		},
 		{
-			name: i18n.menu.files(),
-			href: `/${locale}/files?${createdAtQueryString}`,
+			name: 'Arquivos',
+			href: `/files?${createdAtQueryString}`,
 			icon: HiOutlineFolderOpen,
 			role: Role.ADMIN
 		},
 		{
-			name: i18n.menu.logs(),
-			href: `/${locale}/logs?${createdAtQueryString}`,
+			name: 'Logs',
+			href: `/logs?${createdAtQueryString}`,
 			icon: HiOutlineArchive,
 			role: Role.ADMIN
 		},
 		{
-			name: i18n.menu.offerorFamilies(),
-			href: `/${locale}/offeror-families?${queryString}`,
+			name: 'Famílias Ofertantes',
+			href: `/offeror-families?${queryString}`,
 			icon: HiOutlineUserGroup
 		},
 		{
-			name: i18n.menu.reports(),
-			href: `/${locale}/reports?${queryString}`,
+			name: 'Relatórios',
+			href: `/reports?${queryString}`,
 			icon: HiOutlineChartSquareBar
 		},
 		{
-			name: i18n.menu.testimonials(),
-			href: `/${locale}/testimonials?${queryString}`,
+			name: 'Testemunhos',
+			href: `/testimonials?${queryString}`,
 			icon: HiOutlineChat
 		},
 		{
-			name: i18n.menu.tokens(),
-			href: `/${locale}/tokens?${createdAtQueryString}`,
+			name: 'Tokens',
+			href: `/tokens?${createdAtQueryString}`,
 			icon: HiOutlineTicket,
 			role: Role.ADMIN
 		},
 		{
-			name: i18n.menu.users(),
-			href: `/${locale}/users?${queryString}`,
+			name: 'Usuários',
+			href: `/users?${queryString}`,
 			icon: HiOutlineUsers,
 			role: Role.ADMIN
 		},
 		{
-			name: i18n.menu.volunteers(),
-			href: `/${locale}/volunteers?${queryString}`,
+			name: 'Voluntários',
+			href: `/volunteers?${queryString}`,
 			icon: HiOutlineIdentification
 		},
 		{
-			name: i18n.menu.welcomedFamilies(),
-			href: `/${locale}/welcomed-families?${queryString}`,
+			name: 'Famílias Acolhidas',
+			href: `/welcomed-families?${queryString}`,
 			icon: HiOutlineHeart
 		},
 		{
 			name: 'separator'
 		},
 		{
-			name: i18n.accountMenu.links.profile(),
-			href: `/${locale}/profile`,
+			name: 'Perfil',
+			href: `/profile`,
 			icon: HiSolidUserCircle
 		},
 		{
-			name: i18n.accountMenu.links.logout(),
-			href: `/${locale}/logout`,
+			name: 'Logout',
+			href: `/logout`,
 			icon: HiOutlineLogout
 		}
 	] as AppNavMenuItem[]
@@ -194,31 +191,13 @@
 	}
 
 	function isActive(itemHref: string) {
-		let pageRootName = active.split('/')[2] || ''
+		let pageRootName = active.split('/')[1] || ''
 
 		if (pageRootName) {
 			return itemHref.match(pageRootName)
 		} else {
-			return itemHref.split('/').length == 2
+			return itemHref == '/'
 		}
-	}
-
-	function namespacesByActivePage(activePage: string) {
-		let namespaces = [
-			'app-actions',
-			'app-header',
-			'app-nav',
-			'collection-header',
-			'collection-row',
-			'collection-row-placeholder',
-			'shared',
-			'toast'
-		] as Namespaces[]
-		if (activePage) {
-			namespaces.push(activePage as Namespaces)
-		}
-
-		return namespaces
 	}
 
 	function onNavToggle() {
@@ -228,16 +207,12 @@
 		currentMenuIcon = currentMenuIcon == HiOutlineMenu ? HiOutlineMenuAlt2 : HiOutlineMenu
 		navIconComponentRef.$set({ src: currentMenuIcon })
 	}
-
-	function isLogoutHref(item: AppNavMenuItem) {
-		return item.href === `/${locale}/logout`
-	}
 </script>
 
 <nav class="app-nav">
 	<div class="app-nav-header">
 		<div class="app-icon">
-			<a href={`/${locale}`}>
+			<a href={`/`}>
 				<img src={imageAsset} alt="logo" title={'Panel | Projeto "Um Por Todos! Todos Por Um."'} />
 			</a>
 		</div>
@@ -264,12 +239,11 @@
 	</ul>
 
 	<div class="app-info">
-		<span>{i18n.userMessage({ name: userFullname })}</span>
-		<span>Panel v.{APP_VERSION} | Using Svelte {VERSION}</span>
+		<span>Olá, {userFullname}</span>
+		<span>Panel v.{APP_VERSION} | Using Svelte Kit {VERSION}</span>
 	</div>
 
 	<div class="app-choices">
-		<SwitchLocale namespaces={namespacesByActivePage(active.split('/')[2] || '')} />
-		<SwitchTheme {locale} />
+		<SwitchTheme />
 	</div>
 </nav>
