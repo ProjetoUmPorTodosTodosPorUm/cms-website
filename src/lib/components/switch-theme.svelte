@@ -1,26 +1,14 @@
 <script lang="ts">
 	import '$scss/components/switch-theme.scss'
 	import { getContext, onMount } from 'svelte'
-
-	// i18n
-	import { loadNamespaceAsync } from '$i18n/i18n-util.async'
-	import type { Locales } from '$i18n/i18n-types'
-	import LL, { setLocale } from '$i18n/i18n-svelte'
 	import type { SettingsStore } from '$stores'
-	$: i18n = $LL['app-header']
 
+	let settingsStore = getContext<SettingsStore>('settings')
 	let modeSwitchRef: HTMLButtonElement
 	let currentTheme: 'light' | 'dark' = 'light'
 
-	export let locale: Locales
-
-	let settingsStore = getContext<SettingsStore>('settings')
-
 	onMount(async () => {
 		applySavedTheme()
-
-		await loadNamespaceAsync(locale, 'app-header')
-		setLocale(locale)
 	})
 
 	function applySavedTheme() {
@@ -44,7 +32,7 @@
 	bind:this={modeSwitchRef}
 	on:click={onToggleStyle}
 	class="mode-switch"
-	title={i18n.switchThemeButtonTitle()}
+	title="Alternar Tema"
 >
 	<svg
 		class="moon"

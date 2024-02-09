@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { PUBLIC_STATIC_PATH } from '$env/static/public'
+	import { PUBLIC_FILES_URL } from '$env/static/public'
 	import { enhance } from '$app/forms'
 	import Editor from '@tinymce/tinymce-svelte'
 	import type { FileDto } from '$types'
 	import { onMount } from 'svelte'
 	import { delay } from '$utils'
-	import { page } from '$app/stores'
 
 	export let placeholder = ''
 	export let formName = ''
@@ -51,7 +50,7 @@
 		file_picker_types: 'image',
 		file_picker_callback: filePickerCallback,
 		convert_urls: false,
-		language: $page.data.locale.replace('-', '_'),
+		language: 'pt_BR',
 		branding: false,
 		resize: 'both'
 	}
@@ -66,7 +65,7 @@
 		fileInputRef.click()
 		await isFilenameAvailable()
 
-		callback(`${PUBLIC_STATIC_PATH}/${tinyMCEFilename}`, {
+		callback(`${PUBLIC_FILES_URL}/${tinyMCEFilename}`, {
 			title: tinyMCEFilename
 		})
 		tinyMCEFilename = ''

@@ -1,25 +1,16 @@
 <script lang="ts">
 	import type { RowCell } from '$types'
-	import { onMount } from 'svelte'
 	import JSONTree from 'svelte-json-tree'
-	import { PUBLIC_STATIC_PATH } from '$env/static/public'
-	import { apiPathnameFromUrl } from '$utils'
+	import { PUBLIC_FILES_URL } from '$env/static/public'
+	import { apiPathnameFromUrl, stripHtml } from '$utils'
 	import { page } from '$app/stores'
 	import { enhance } from '$app/forms'
 	import { Modal } from '$components'
+	import { SHARED } from '$constants'
 
 	import Icon from 'svelte-icons-pack'
 	import FiEdit from 'svelte-icons-pack/fi/FiEdit'
 	import FiTrash2 from 'svelte-icons-pack/fi/FiTrash2'
-
-	// i18n
-	import { loadNamespaceAsync } from '$i18n/i18n-util.async'
-	import type { Locales } from '$i18n/i18n-types'
-	import LL, { setLocale } from '$i18n/i18n-svelte'
-	$: i18n = $LL['collection-row']
-	$: sharedI18n = $LL.shared
-
-	export let locale: Locales
 
 	// Component Data
 	export let showOptions = true
@@ -57,11 +48,6 @@
 		showModal = false
 	}
 
-	onMount(async () => {
-		await loadNamespaceAsync(locale, 'collection-row')
-		setLocale(locale)
-	})
-
 	function onRemove() {
 		const data = rowCells.reduce((pRow, cRow) => {
 			return {
@@ -69,11 +55,7 @@
 				[cRow.key]: cRow.transform ? cRow.transform(cRow.value) : cRow.value
 			}
 		}, {})
-		const remove = confirm(
-			sharedI18n.remove[apiPathname as keyof typeof sharedI18n.remove]({
-				...data
-			} as any)
-		)
+		const remove = confirm(SHARED.remove[apiPathname as keyof typeof SHARED.remove](data))
 
 		if (remove) {
 			removeSubmitRef.click()
@@ -91,8 +73,8 @@
 						{rowCell.transform
 							? rowCell.transform(rowCell.value)
 							: rowCell.value
-							? i18n.isStatusActiveText()
-							: i18n.isStatusDisabledText()}
+							? 'Ativo'
+							: 'Desativado'}
 					</span>
 				{:else if rowCell.isLink}
 					{#if rowCell.value}
@@ -102,7 +84,7 @@
 					{/if}
 				{:else if rowCell.isStatic}
 					{#if rowCell.value}
-						<a href={`${PUBLIC_STATIC_PATH}/${rowCell.value}`} target="_blank" rel="noreferrer"
+						<a href={`${PUBLIC_FILES_URL}/${rowCell.value}`} target="_blank" rel="noreferrer"
 							>{rowCell.value}</a
 						>
 					{:else}
@@ -118,11 +100,11 @@
 					{#if rowCell.value?.length > textLimit}
 						<!-- svelte-ignore a11y-invalid-attribute -->
 						<a href="" on:click={() => onModalOpen(rowCell)}
-							>{rowCell.value.substring(0, textLimit)}...</a
+							>{stripHtml(rowCell.value.substring(0, textLimit))}...</a
 						>
 					{:else}
 						<!-- svelte-ignore a11y-invalid-attribute -->
-						<a href="" on:click={() => onModalOpen(rowCell)}>{rowCell.value ?? ''}</a>
+						<a href="" on:click={() => onModalOpen(rowCell)}>{stripHtml(rowCell.value ?? '')}</a>
 					{/if}
 				{:else}
 					{rowCell.transform ? rowCell.transform(rowCell.value) : rowCell.value ?? ''}
@@ -138,7 +120,7 @@
 			</div>
 		{:else}
 			<div class="product-cell">
-				<span class="tag">{i18n.notDeletedText()}</span>
+				<span class="tag">NÃO DELETADO</span>
 			</div>
 		{/if}
 	{/if}
@@ -147,9 +129,9 @@
 		<div class="product-cell">
 			{#if showEdit}
 				<a
-					href={`/${locale}/${apiPathname}/edit/${id}`}
+					href={`/${apiPathname}/edit/${id}`}
 					class="edit"
-					title={i18n.editButtonTitle()}
+					title="Editar"
 					style={isDeleted ? 'opacity:.3;cursor:not-allowed' : ''}
 					on:click={isDeleted ? (e) => e.preventDefault() : () => ({})}
 				>
@@ -162,12 +144,7 @@
 					<input type="text" name="id" value={id} hidden={true} />
 					<input bind:this={removeSubmitRef} type="submit" hidden={true} />
 				</form>
-				<button
-					class="remove"
-					title={i18n.removeButtonTitle()}
-					on:click={onRemove}
-					disabled={isDeleted}
-				>
+				<button class="remove" title="Remover" on:click={onRemove} disabled={isDeleted}>
 					<Icon src={FiTrash2} />
 				</button>
 			{/if}

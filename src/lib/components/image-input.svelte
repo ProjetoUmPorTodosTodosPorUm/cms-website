@@ -1,7 +1,7 @@
 <script lang="ts">
 	import defaultAvatarSrc from '$assets/images/fallback-avatar.webp'
 	import { page } from '$app/stores'
-	import { PUBLIC_STATIC_PATH } from '$env/static/public'
+	import { PUBLIC_FILES_URL } from '$env/static/public'
 	import BaseInputFile from './base-input-file.svelte'
 	import type { FileDto } from '$types'
 
@@ -12,7 +12,7 @@
 	export let inputLabel = ''
 
 	$: filename = $page.form?.apiData?.file?.name || file?.name || ''
-	$: imageSrc = filename ? `${PUBLIC_STATIC_PATH}/${filename}` : defaultAvatarSrc
+	$: imageSrc = filename ? `${PUBLIC_FILES_URL}/${filename}` : defaultAvatarSrc
 
 	let openFileDialogBox: () => void
 	function openFileDialog(ev: Event) {

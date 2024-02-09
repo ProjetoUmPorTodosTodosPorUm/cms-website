@@ -2,6 +2,45 @@ import adapter from '@sveltejs/adapter-node'
 import { vitePreprocess } from '@sveltejs/kit/vite'
 import * as child_process from 'node:child_process'
 
+const csrf = process.env.NODE_ENV == 'development' ? false : { checkOrigin: true }
+const baseDirectives = {
+	'default-src': ['self', '*.projetoumportodostodosporum.org', '*.localhost'],
+	'script-src': [
+		'self',
+		'https:',
+		'unsafe-eval',
+		'blob:',
+		'*.projetoumportodostodosporum.org',
+		'*.localhost'
+	],
+	'frame-src': ['self', 'youtube.com', 'www.youtube.com'],
+	'style-src': [
+		'self',
+		'fonts.googleapis.com',
+		'unsafe-inline',
+		'*.projetoumportodostodosporum.org',
+		'*.localhost'
+	],
+	'font-src': ['self', 'fonts.gstatic.com'],
+	'img-src': ['self', 'data:', '*.projetoumportodostodosporum.org', '*.localhost'],
+	'connect-src': [
+		'self',
+		'data:',
+		'blob:',
+		'*.projetoumportodostodosporum.org',
+		'*.localhost',
+		'wss://localhost'
+	],
+	'worker-src': ['self', 'blob:']
+}
+const cspDirectives = Object.keys(baseDirectives).reduce((acc, curr) => {
+	if (['development', 'preview'].includes(process.env.NODE_ENV)) {
+		return { ...acc, [curr]: baseDirectives[curr] }
+	} else {
+		return { ...acc, [curr]: baseDirectives[curr].filter((val) => val.indexOf('localhost') < 0) }
+	}
+}, {})
+
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	// Consult https://kit.svelte.dev/docs/integrations#preprocessors
@@ -14,9 +53,9 @@ const config = {
 		adapter: adapter({
 			polyfill: false
 		}),
+		csrf,
 		alias: {
 			$src: 'src',
-			$i18n: 'src/i18n',
 			$assets: 'src/lib/assets',
 			$stores: 'src/lib/stores',
 			$classes: 'src/lib/classes',
@@ -28,36 +67,9 @@ const config = {
 			$utils: 'src/lib/utils'
 		},
 		csp: {
-			mode: 'auto',
-			directives: {
-				'default-src': ['self'],
-				'script-src': ['self'],
-				'frame-src': ['self', 'youtube.com', 'www.youtube.com'],
-				'style-src': ['self', 'fonts.googleapis.com', 'unsafe-inline'],
-				'font-src': ['self', 'fonts.gstatic.com'],
-				'img-src': ['self', 'data:'],
-				'connect-src': [
-					'*.localhost',
-					'localhost:*',
-					'ws://cms.localhost:*',
-					'*.projetoumportodostodosporum.org',
-					'projetoumportodostodosporum.org'
-				]
-			},
+			directives: cspDirectives,
 			reportOnly: {
-				'default-src': ['self'],
-				'script-src': ['self'],
-				'frame-src': ['self', 'youtube.com', 'www.youtube.com'],
-				'style-src': ['self', 'fonts.googleapis.com', 'unsafe-inline'],
-				'font-src': ['self', 'fonts.gstatic.com'],
-				'img-src': ['self', 'data:'],
-				'connect-src': [
-					'*.localhost',
-					'localhost:*',
-					'ws://cms.localhost:*',
-					'*.projetoumportodostodosporum.org',
-					'projetoumportodostodosporum.org'
-				],
+				...cspDirectives,
 				'report-to': ['api.projetoumportodostodosporum.org/csp-report']
 			}
 		},

@@ -1,27 +1,16 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
 	import { page } from '$app/stores'
-	import { PUBLIC_STATIC_PATH } from '$env/static/public'
+	import { PUBLIC_FILES_URL } from '$env/static/public'
 	import type { FileDto } from '$types'
 	import BaseInputFile from './base-input-file.svelte'
 
 	import Icon from 'svelte-icons-pack/Icon.svelte'
 	import HiOutlinePaperClip from 'svelte-icons-pack/hi/HiOutlinePaperClip'
 
-	// i18n
-	import { loadNamespaceAsync } from '$i18n/i18n-util.async'
-	import LL, { setLocale } from '$i18n/i18n-svelte'
-	$: sharedI18n = $LL.shared
-
 	export let files: FileDto[] = []
 	export let formName = ''
-	export let accept = '.jpg,.jpeg,.png,.pdf,.doc'
+	export let accept = 'audio/*,image/*,.pdf'
 	export let inputLabel = ''
-
-	onMount(async () => {
-		await loadNamespaceAsync($page.data.locale, 'shared')
-		setLocale($page.data.locale)
-	})
 
 	function onUploadFiles() {
 		if ($page.form?.apiData?.files) {
@@ -69,7 +58,7 @@
 	bind:openFileRemoveDialogBox
 	{formName}
 	{accept}
-	filename={filenames.join(', ')}
+	filename={filenames.join(',')}
 	multiple={true}
 >
 	<div slot="body" class="input-files">
@@ -78,7 +67,7 @@
 			<div class="files">
 				{#each files as file (file.name)}
 					<div class="item">
-						<a href={`${PUBLIC_STATIC_PATH}/${file.name}`}>{file.name}</a>
+						<a href={`${PUBLIC_FILES_URL}/${file.name}`}>{file.name}</a>
 						<button class="btn-close" on:click={(ev) => openFileRemoveDialog(ev, file.name)} />
 					</div>
 				{/each}
@@ -86,6 +75,6 @@
 		{:else}
 			<p>{inputLabel}</p>
 		{/if}
-		<button on:click={openFileDialog}>{sharedI18n.inputFile.chooseFile()}</button>
+		<button on:click={openFileDialog}>Escolher Arquivos</button>
 	</div>
 </BaseInputFile>

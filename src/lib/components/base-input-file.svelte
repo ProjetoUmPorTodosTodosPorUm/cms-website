@@ -1,17 +1,6 @@
 <script lang="ts">
-	import { page } from '$app/stores'
 	import { enhance } from '$app/forms'
-	import { onMount } from 'svelte'
-
-	// i18n
-	import { loadNamespaceAsync } from '$i18n/i18n-util.async'
-	import LL, { setLocale } from '$i18n/i18n-svelte'
-	$: sharedI18n = $LL.shared
-
-	onMount(async () => {
-		await loadNamespaceAsync($page.data.locale, 'shared')
-		setLocale($page.data.locale)
-	})
+	import { SHARED } from '$constants'
 
 	export let formName = ''
 	export let filename = ''
@@ -34,7 +23,7 @@
 	}
 
 	export const openFileRemoveDialogBox = (fName: string) => {
-		const remove = confirm(sharedI18n.remove.files({ name: fName }))
+		const remove = confirm(SHARED.remove.files({ name: fName }))
 
 		if (remove) {
 			fileRemoveInputRef.value = fName

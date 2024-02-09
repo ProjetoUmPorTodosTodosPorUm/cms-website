@@ -1,4 +1,3 @@
-import type { Locales, TranslationFunctions } from './i18n/i18n-types'
 import type { FieldDto, UserDto } from './lib/types'
 
 // See https://kit.svelte.dev/docs/types#app
@@ -11,14 +10,11 @@ declare global {
 		}
 
 		interface Locals {
-			locale: Locales
-			LL: TranslationFunctions
 			user: UserDto | null
 		}
 
 		interface PageData {
-			locale: Locales
-			user: UserDto
+			user: UserDto | null
 			fields?: FieldDto[]
 		}
 

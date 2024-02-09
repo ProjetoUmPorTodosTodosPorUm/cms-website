@@ -11,6 +11,7 @@ export type {
 	ApiResponseDto,
 	ChurchDto,
 	CollaboratorDto,
+	RecoveryHouseDto,
 	CreateMailPayloadDto,
 	FieldDto,
 	FileDto,
@@ -24,7 +25,8 @@ export type {
 	TokenDto,
 	UserDto,
 	VolunteerDto,
-	WelcomedFamilyDto
+	WelcomedFamilyDto,
+	ContactDto
 } from './dto'
 
 export * from './message'
