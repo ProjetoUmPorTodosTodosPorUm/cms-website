@@ -27,14 +27,13 @@ ARG PUBLIC_API_URL=https://api.localhost
 ARG PUBLIC_FILES_URL=https://files.localhost
 ARG PUBLIC_ASSETS_URL=https://assets.localhost/web
 ARG PUBLIC_GOOGLE_MAP_API=AIzaSyABC1AW8m5olqyHRUgAlTli8kPzj1iij_0
-ARG MODE=preview
 
 ENV BODY_SIZE_LIMIT 0
 ENV ORIGIN https://cms.localhost
 ENV NODE_ENV preview
 WORKDIR /usr/src/app
 
-RUN npx vite build --mode ${MODE} && npm prune --production
+RUN npx vite build && npm prune --production
 RUN rm -rf /usr/src/app/src
 
 USER node:node
@@ -51,14 +50,13 @@ ARG PUBLIC_API_URL=https://api.projetoumportodostodosporum.org
 ARG PUBLIC_FILES_URL=https://files.projetoumportodostodosporum.org
 ARG PUBLIC_ASSETS_URL=https://assets.projetoumportodostodosporum.org/web
 ARG PUBLIC_GOOGLE_MAP_API=AIzaSyABC1AW8m5olqyHRUgAlTli8kPzj1iij_0
-ARG MODE=production
 
 ENV BODY_SIZE_LIMIT 0
 ENV ORIGIN https://cms.projetoumportodostodosporum.org
 ENV NODE_ENV production
 WORKDIR /usr/src/app
 
-RUN npx vite build --mode ${MODE} && npm prune --production
+RUN npx vite build && npm prune --production
 RUN rm -rf /usr/src/app/src
 
 USER node:node

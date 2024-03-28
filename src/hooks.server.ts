@@ -14,7 +14,7 @@ export const handleFetch: HandleFetch = async ({ event, request, fetch }) => {
 	if (request.url.match(PUBLIC_API_URL)) {
 		// See package.json script.dev for MODE
 		// See API's docker-compose.yml for api's container_name
-		const MODE = import.meta.env.MODE
+		const MODE = process.env.NODE_ENV
 		let localApiURL = 'http://localhost:3000'
 
 		if (MODE == 'preview') {
