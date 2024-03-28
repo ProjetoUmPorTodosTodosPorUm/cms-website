@@ -8,8 +8,8 @@ const file = fileURLToPath(new URL('package.json', import.meta.url))
 const json = readFileSync(file, 'utf8')
 const pkg = JSON.parse(json)
 
-export default defineConfig(({ mode }) => {
-	const serverSettings = mode === 'development' ? { server: { hmr: { path: '/wss' } } } : {}
+export default defineConfig(() => {
+	const serverSettings = process.env.NODE_ENV === 'development' ? { server: { hmr: { path: '/wss' } } } : {}
 
 	return {
 		plugins: [
