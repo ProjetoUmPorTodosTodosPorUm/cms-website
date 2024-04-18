@@ -1,7 +1,7 @@
 ###################
 # BASE IMAGE
 ###################
-FROM node:19.4-alpine as base-image
+FROM node:21.7-alpine as base-image
 
 # Needed for build
 RUN apk add git
