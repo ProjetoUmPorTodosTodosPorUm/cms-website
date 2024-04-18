@@ -28,6 +28,7 @@ ARG PUBLIC_FILES_URL=https://files.localhost
 ARG PUBLIC_ASSETS_URL=https://assets.localhost/web
 ARG PUBLIC_GOOGLE_MAP_API=AIzaSyABC1AW8m5olqyHRUgAlTli8kPzj1iij_0
 
+ENV NODE_TLS_REJECT_UNAUTHORIZED 0
 ENV BODY_SIZE_LIMIT 0
 ENV ORIGIN https://cms.localhost
 ENV NODE_ENV preview
