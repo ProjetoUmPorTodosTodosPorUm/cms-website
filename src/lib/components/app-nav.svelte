@@ -79,34 +79,15 @@
 			icon: HiOutlineCalendar
 		},
 		{
+			name: 'Arquivos',
+			href: `/files?${createdAtQueryString}`,
+			icon: HiOutlineFolderOpen,
+			role: Role.ADMIN
+		},
+		{
 			name: 'Avisos',
 			href: `/announcements?${queryString}`,
 			icon: HiOutlineSpeakerphone
-		},
-		{
-			name: 'Igrejas',
-			href: `/churches?${queryString}`,
-			icon: HiOutlineLibrary
-		},
-		{
-			name: 'Contatos',
-			href: `/contacts?${queryString}`,
-			icon: HiOutlineChat
-		},
-		{
-			name: 'Colaboradores',
-			href: `/collaborators?${queryString}`,
-			icon: HiOutlineUserGroup
-		},
-		{
-			name: 'Casas de Recuperação',
-			href: `/recovery-houses?${queryString}`,
-			icon: BsHouseHeart
-		},
-		{
-			name: 'Ofertas Coletadas',
-			href: `/collected-offers?${queryString}`,
-			icon: HiOutlineHand
 		},
 		{
 			name: 'Campos Missionários',
@@ -115,10 +96,34 @@
 			role: Role.WEB_MASTER
 		},
 		{
-			name: 'Arquivos',
-			href: `/files?${createdAtQueryString}`,
-			icon: HiOutlineFolderOpen,
-			role: Role.ADMIN
+			name: 'Casas de Recuperação',
+			href: `/recovery-houses?${queryString}`,
+			icon: BsHouseHeart
+		},
+		{
+			name: 'Colaboradores',
+			href: `/collaborators?${queryString}`,
+			icon: HiOutlineUserGroup
+		},
+		{
+			name: 'Contatos',
+			href: `/contacts?${queryString}`,
+			icon: HiOutlineChat
+		},
+		{
+			name: 'Famílias Acolhidas',
+			href: `/welcomed-families?${queryString}`,
+			icon: HiOutlineHeart
+		},
+		{
+			name: 'Famílias Ofertantes',
+			href: `/offeror-families?${queryString}`,
+			icon: HiOutlineUserGroup
+		},
+		{
+			name: 'Igrejas',
+			href: `/churches?${queryString}`,
+			icon: HiOutlineLibrary
 		},
 		{
 			name: 'Logs',
@@ -126,11 +131,13 @@
 			icon: HiOutlineArchive,
 			role: Role.ADMIN
 		},
+		
 		{
-			name: 'Famílias Ofertantes',
-			href: `/offeror-families?${queryString}`,
-			icon: HiOutlineUserGroup
+			name: 'Ofertas Coletadas',
+			href: `/collected-offers?${queryString}`,
+			icon: HiOutlineHand
 		},
+		
 		{
 			name: 'Relatórios',
 			href: `/reports?${queryString}`,
@@ -157,11 +164,6 @@
 			name: 'Voluntários',
 			href: `/volunteers?${queryString}`,
 			icon: HiOutlineIdentification
-		},
-		{
-			name: 'Famílias Acolhidas',
-			href: `/welcomed-families?${queryString}`,
-			icon: HiOutlineHeart
 		},
 		{
 			name: 'separator'
