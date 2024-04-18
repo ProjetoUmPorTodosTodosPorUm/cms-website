@@ -62,7 +62,7 @@ export async function safeFetch(
 				cookies.delete('authorization', { path: '/' })
 				cookies.delete('refresh', { path: '/' })
 				cookies.delete('user', { path: '/' })
-				throw error(401, { status: 401, message: 'NOT AUTHORIZED safe-fetch.ts' })
+				error(401, { status: 401, message: 'NOT AUTHORIZED safe-fetch.ts' });
 			}
 		} else {
 			return res

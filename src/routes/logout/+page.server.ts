@@ -6,5 +6,5 @@ export const load: PageServerLoad = ({ cookies }) => {
 	cookies.delete('refresh', { path: '/' })
 	cookies.delete('user', { path: '/' })
 
-	throw redirect(302, '/login')
+	redirect(302, '/login');
 }

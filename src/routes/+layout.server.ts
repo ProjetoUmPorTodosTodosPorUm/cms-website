@@ -55,11 +55,11 @@ function AuthGuard(cookies: Cookies, routeId: string) {
 		if (!authCookie || !refreshCookie || !userCookie) {
 			// TODO error page not logged in
 			// button to log in
-			throw redirect(307, `/login`)
+			redirect(307, `/login`);
 		} else if (adminRouteIds.test(routeId) && userCookie.role !== Role.WEB_MASTER) {
 			// TODO error page not admin
 			// button to dashboard
-			throw redirect(307, `/`)
+			redirect(307, `/`);
 		}
 	}
 }
