@@ -17,19 +17,6 @@
 
 	// Map
 	let googleMapRef: HTMLDivElement
-	const loader = new Loader({
-		apiKey: PUBLIC_GOOGLE_MAP_API,
-		version: 'weekly',
-		libraries: ['places']
-	})
-
-	const mapOptions = {
-		center: {
-			lat: 0,
-			lng: 0
-		},
-		zoom: 4
-	}
 
 	export let form: ActionData
 	let isLoading = false
@@ -37,17 +24,35 @@
 	$: messages, postActionCallback()
 
 	onMount(async () => {
-		const google = await loader.load()
-		const map = new google.maps.Map(googleMapRef, mapOptions)
+		const loader = new Loader({
+			apiKey: PUBLIC_GOOGLE_MAP_API,
+			version: 'weekly',
+			libraries: ['places']
+		})
+
+		const mapOptions = {
+			center: {
+				lat: 0,
+				lng: 0
+			},
+			zoom: 4
+		}
+
+		const Core = await loader.importLibrary('core')
+		const Maps = await loader.importLibrary('maps')
+		const Places = await loader.importLibrary('places')
+
+		const map = new Maps.Map(googleMapRef, mapOptions)
 
 		// Create the search box and link it to the UI element.
 		const input = document.getElementById('pac-input') as HTMLInputElement
-		const searchBox = new google.maps.places.SearchBox(input)
-		map.controls[google.maps.ControlPosition.TOP_LEFT].push(input)
+		const searchBox = new Places.SearchBox(input)
+		map.controls[Core.ControlPosition.TOP_LEFT].push(input)
 
 		// Bias the SearchBox results towards current map's viewport.
 		map.addListener('bounds_changed', () => {
-			searchBox.setBounds(map.getBounds() as google.maps.LatLngBounds)
+			// @ts-ignore as Core.LatLngBounds
+			searchBox.setBounds(map.getBounds())
 		})
 	})
 
