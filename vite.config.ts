@@ -29,6 +29,9 @@ export default defineConfig(() => {
 				flatten: false
 			})
 		],
+		ssr: {
+			noExternal: ['@googlemaps/js-api-loader']
+		},
 		test: {
 			include: ['src/**/*.{test,spec}.{js,ts}']
 		},
