@@ -8,13 +8,15 @@
 	import { editSubmitFunction, fromFilenameToFileDto } from '$utils'
 	import { VOLUNTEERS_INPUT_LABELS, VOLUNTEERS_OCCUPATIONS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineUser from 'svelte-icons-pack/hi/HiOutlineUser'
-	import HiOutlineMail from 'svelte-icons-pack/hi/HiOutlineMail'
-	import HiOutlineCalendar from 'svelte-icons-pack/hi/HiOutlineCalendar'
-	import HiOutlineTag from 'svelte-icons-pack/hi/HiOutlineTag'
-	import HiOutlineLibrary from 'svelte-icons-pack/hi/HiOutlineLibrary'
-	import HiOutlineMenuAlt2 from 'svelte-icons-pack/hi/HiOutlineMenuAlt2'
+	import { Icon } from 'svelte-icons-pack'
+	import {
+		HiOutlineUser,
+		HiOutlineEnvelope,
+		HiOutlineCalendar,
+		HiOutlineTag,
+		HiOutlineBuildingLibrary,
+		HiOutlineBars3
+	} from 'svelte-icons-pack/hi'
 
 	export let data: PageData
 	export let form: ActionData
@@ -70,26 +72,9 @@
 </svelte:head>
 
 <AppContainer {messages}>
-	<AppContent
-		{...appHeader}
-		{isLoading}
-		showActions={false}
-		showRefreshButton={false}
-		on:click={onSubmit}
-	>
-		<form
-			class="app-form"
-			method="POST"
-			action="?/put"
-			use:enhance={editSubmitFunction}
-			on:submit={onSubmit}
-		>
-			<ImageInput
-				file={initialFile}
-				formName="avatar"
-				altText="Imagem de Perfil"
-				inputLabel="Editar"
-			/>
+	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false} on:click={onSubmit}>
+		<form class="app-form" method="POST" action="?/put" use:enhance={editSubmitFunction} on:submit={onSubmit}>
+			<ImageInput file={initialFile} formName="avatar" altText="Imagem de Perfil" inputLabel="Editar" />
 
 			<div class="input">
 				<Icon src={HiOutlineUser} />
@@ -112,7 +97,7 @@
 				/>
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineMail} />
+				<Icon src={HiOutlineEnvelope} />
 				<input
 					value={volunteerData.email}
 					name="email"
@@ -123,12 +108,7 @@
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineCalendar} />
-				<input
-					value={volunteerData.joinedDate.split('T')[0]}
-					name="joinedDate"
-					type="date"
-					autocomplete="off"
-				/>
+				<input value={volunteerData.joinedDate.split('T')[0]} name="joinedDate" type="date" autocomplete="off" />
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineTag} />
@@ -141,7 +121,7 @@
 				</select>
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineLibrary} />
+				<Icon src={HiOutlineBuildingLibrary} />
 				<input
 					value={volunteerData.church}
 					name="church"
@@ -161,7 +141,7 @@
 				/>
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineMenuAlt2} />
+				<Icon src={HiOutlineBars3} />
 				<textarea
 					value={volunteerData.observation}
 					name="observation"

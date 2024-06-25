@@ -1,7 +1,6 @@
 <script lang="ts">
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineCollection from 'svelte-icons-pack/hi/HiOutlineCollection'
-	import HiOutlineX from 'svelte-icons-pack/hi/HiOutlineX'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineTag, HiOutlineXMark } from 'svelte-icons-pack/hi'
 
 	export let tags: string[] = []
 	export let formName: string
@@ -24,7 +23,7 @@
 	}
 </script>
 
-<Icon src={HiOutlineCollection} />
+<Icon src={HiOutlineTag} />
 <input value={tags.join(',')} hidden={true} name={formName} type="text" autocomplete="off" />
 <input bind:this={inputTagRef} on:keypress={onKeyPress} {placeholder} autocomplete="off" />
 {#if tags?.length > 0}
@@ -33,7 +32,7 @@
 			<div class="item">
 				{tag}
 				<button class="btn-close" on:click|preventDefault={() => onRemoveTag(index)}
-					><Icon src={HiOutlineX} /></button
+					><Icon src={HiOutlineXMark} /></button
 				>
 			</div>
 		{/each}

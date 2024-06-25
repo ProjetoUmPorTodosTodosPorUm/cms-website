@@ -8,9 +8,9 @@
 	import type { ActionData, PageData } from './$types'
 	import { ANNOUNCEMENTS_INPUT_LABEL } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineSpeakerphone from 'svelte-icons-pack/hi/HiOutlineSpeakerphone'
-	import BsPinAngle from 'svelte-icons-pack/bs/BsPinAngle'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineMegaphone } from 'svelte-icons-pack/hi'
+	import { BsPinAngle } from 'svelte-icons-pack/bs'
 
 	export let data: PageData
 	export let form: ActionData
@@ -46,15 +46,9 @@
 
 <AppContainer {messages}>
 	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false}>
-		<form
-			class="app-form"
-			method="POST"
-			action="?/put"
-			use:enhance={editSubmitFunction}
-			on:submit={onSubmit}
-		>
+		<form class="app-form" method="POST" action="?/put" use:enhance={editSubmitFunction} on:submit={onSubmit}>
 			<div class="input">
-				<Icon src={HiOutlineSpeakerphone} />
+				<Icon src={HiOutlineMegaphone} />
 				<input
 					bind:value={announcementData.title}
 					name="title"
@@ -71,11 +65,7 @@
 				<!-- file={form?.apiData?.file} -->
 			</div>
 			<div class="input input-lg">
-				<InputFiles
-					files={initialFiles}
-					formName="attachments"
-					inputLabel={ANNOUNCEMENTS_INPUT_LABEL.attachments}
-				/>
+				<InputFiles files={initialFiles} formName="attachments" inputLabel={ANNOUNCEMENTS_INPUT_LABEL.attachments} />
 			</div>
 			<div class="input">
 				<Icon src={BsPinAngle} />

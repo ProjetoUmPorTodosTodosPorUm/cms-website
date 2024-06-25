@@ -6,13 +6,15 @@
 	import type { ActionData } from './$types'
 	import { VOLUNTEERS_INPUT_LABELS, VOLUNTEERS_OCCUPATIONS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineUser from 'svelte-icons-pack/hi/HiOutlineUser'
-	import HiOutlineMail from 'svelte-icons-pack/hi/HiOutlineMail'
-	import HiOutlineCalendar from 'svelte-icons-pack/hi/HiOutlineCalendar'
-	import HiOutlineTag from 'svelte-icons-pack/hi/HiOutlineTag'
-	import HiOutlineLibrary from 'svelte-icons-pack/hi/HiOutlineLibrary'
-	import HiOutlineMenuAlt2 from 'svelte-icons-pack/hi/HiOutlineMenuAlt2'
+	import { Icon } from 'svelte-icons-pack'
+	import {
+		HiOutlineUser,
+		HiOutlineEnvelope,
+		HiOutlineCalendar,
+		HiOutlineTag,
+		HiOutlineBuildingLibrary,
+		HiOutlineBars3
+	} from 'svelte-icons-pack/hi'
 
 	export let form: ActionData
 	let isLoading = false
@@ -65,41 +67,20 @@
 </svelte:head>
 
 <AppContainer {messages}>
-	<AppContent
-		{...appHeader}
-		{isLoading}
-		showActions={false}
-		showRefreshButton={false}
-		on:click={onSubmit}
-	>
+	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false} on:click={onSubmit}>
 		<form class="app-form" method="POST" action="?/post" use:enhance on:submit={onSubmit}>
 			<ImageInput formName="avatar" altText="Imagem de Perfil" inputLabel="Editar" />
 			<div class="input">
 				<Icon src={HiOutlineUser} />
-				<input
-					name="firstName"
-					type="text"
-					placeholder={VOLUNTEERS_INPUT_LABELS.firstName}
-					autocomplete="off"
-				/>
+				<input name="firstName" type="text" placeholder={VOLUNTEERS_INPUT_LABELS.firstName} autocomplete="off" />
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineUser} />
-				<input
-					name="lastName"
-					type="text"
-					placeholder={VOLUNTEERS_INPUT_LABELS.lastName}
-					autocomplete="off"
-				/>
+				<input name="lastName" type="text" placeholder={VOLUNTEERS_INPUT_LABELS.lastName} autocomplete="off" />
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineMail} />
-				<input
-					name="email"
-					type="email"
-					placeholder={VOLUNTEERS_INPUT_LABELS.email}
-					autocomplete="off"
-				/>
+				<Icon src={HiOutlineEnvelope} />
+				<input name="email" type="email" placeholder={VOLUNTEERS_INPUT_LABELS.email} autocomplete="off" />
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineCalendar} />
@@ -116,31 +97,16 @@
 				</select>
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineLibrary} />
-				<input
-					name="church"
-					type="text"
-					placeholder={VOLUNTEERS_INPUT_LABELS.church}
-					autocomplete="off"
-				/>
+				<Icon src={HiOutlineBuildingLibrary} />
+				<input name="church" type="text" placeholder={VOLUNTEERS_INPUT_LABELS.church} autocomplete="off" />
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineUser} />
-				<input
-					name="priest"
-					type="text"
-					placeholder={VOLUNTEERS_INPUT_LABELS.priest}
-					autocomplete="off"
-				/>
+				<input name="priest" type="text" placeholder={VOLUNTEERS_INPUT_LABELS.priest} autocomplete="off" />
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineMenuAlt2} />
-				<textarea
-					name="observation"
-					placeholder={VOLUNTEERS_INPUT_LABELS.observation}
-					autocomplete="off"
-					rows="5"
-				/>
+				<Icon src={HiOutlineBars3} />
+				<textarea name="observation" placeholder={VOLUNTEERS_INPUT_LABELS.observation} autocomplete="off" rows="5" />
 			</div>
 			<FieldSelect />
 			<div class="input">

@@ -5,9 +5,8 @@
 	import { goto, invalidate } from '$app/navigation'
 
 	// Icons
-	import Icon from 'svelte-icons-pack'
-	import FiChevronLeft from 'svelte-icons-pack/fi/FiChevronLeft'
-	import FiChevronRight from 'svelte-icons-pack/fi/FiChevronRight'
+	import { Icon } from 'svelte-icons-pack'
+	import { FiChevronLeft, FiChevronRight } from 'svelte-icons-pack/fi'
 
 	// Constants
 	const PAGES_AROUND_CURRENT = 1
@@ -60,9 +59,7 @@
 	}
 
 	function isPrintableAction(pageNumber: number) {
-		return (
-			pageNumber <= page + PAGES_AROUND_CURRENT + 1 && pageNumber >= page - PAGES_AROUND_CURRENT - 1
-		)
+		return pageNumber <= page + PAGES_AROUND_CURRENT + 1 && pageNumber >= page - PAGES_AROUND_CURRENT - 1
 	}
 
 	async function navigateToPage(page: number) {
@@ -80,10 +77,7 @@
 	{/if}
 	{#each pages as _, index (index)}
 		{#if isPrintablePage(index + 1)}
-			<button
-				class={`item pages ${index + 1 == page ? 'active' : ''}`}
-				on:click={() => onPageSelect(index + 1)}
-			>
+			<button class={`item pages ${index + 1 == page ? 'active' : ''}`} on:click={() => onPageSelect(index + 1)}>
 				{index + 1}
 			</button>
 		{:else if isPrintableAction(index + 1)}

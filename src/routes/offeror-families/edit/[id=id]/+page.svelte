@@ -8,11 +8,13 @@
 	import { editSubmitFunction } from '$utils'
 	import { OFFEROR_FAMILIES_INPUT_LABELS, OFFEROR_FAMILIES_GROUPS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineUser from 'svelte-icons-pack/hi/HiOutlineUser'
-	import HiOutlineHand from 'svelte-icons-pack/hi/HiOutlineHand'
-	import HiOutlineLibrary from 'svelte-icons-pack/hi/HiOutlineLibrary'
-	import HiOutlineUserGroup from 'svelte-icons-pack/hi/HiOutlineUserGroup'
+	import { Icon } from 'svelte-icons-pack'
+	import {
+		HiOutlineUser,
+		HiOutlineHandRaised,
+		HiOutlineBuildingLibrary,
+		HiOutlineUserGroup
+	} from 'svelte-icons-pack/hi'
 
 	export let data: PageData
 	export let form: ActionData
@@ -51,20 +53,8 @@
 </svelte:head>
 
 <AppContainer {messages}>
-	<AppContent
-		{...appHeader}
-		{isLoading}
-		showActions={false}
-		showRefreshButton={false}
-		on:click={onSubmit}
-	>
-		<form
-			class="app-form"
-			method="POST"
-			action="?/put"
-			use:enhance={editSubmitFunction}
-			on:submit={onSubmit}
-		>
+	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false} on:click={onSubmit}>
+		<form class="app-form" method="POST" action="?/put" use:enhance={editSubmitFunction} on:submit={onSubmit}>
 			<div class="input">
 				<Icon src={HiOutlineUser} />
 				<input
@@ -75,7 +65,7 @@
 				/>
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineHand} />
+				<Icon src={HiOutlineHandRaised} />
 				<input
 					bind:value={offerorFamilyData.commitment}
 					name="commitment"
@@ -84,7 +74,7 @@
 				/>
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineLibrary} />
+				<Icon src={HiOutlineBuildingLibrary} />
 				<input
 					bind:value={offerorFamilyData.churchDenomination}
 					name="churchDenomination"

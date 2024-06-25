@@ -8,11 +8,8 @@
 	import { editSubmitFunction } from '$utils'
 	import { COLLECT_OFFERS_INPUT_LABELS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineShoppingBag from 'svelte-icons-pack/hi/HiOutlineShoppingBag'
-	import HiOutlineCurrencyDollar from 'svelte-icons-pack/hi/HiOutlineCurrencyDollar'
-	import HiOutlineCube from 'svelte-icons-pack/hi/HiOutlineCube'
-	import HiOutlineCalendar from 'svelte-icons-pack/hi/HiOutlineCalendar'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineShoppingBag, HiOutlineCurrencyDollar, HiOutlineCube, HiOutlineCalendar } from 'svelte-icons-pack/hi'
 
 	export let data: PageData
 	export let form: ActionData
@@ -44,20 +41,8 @@
 </svelte:head>
 
 <AppContainer {messages}>
-	<AppContent
-		{...appHeader}
-		{isLoading}
-		showActions={false}
-		showRefreshButton={false}
-		on:click={onSubmit}
-	>
-		<form
-			class="app-form"
-			method="POST"
-			action="?/put"
-			use:enhance={editSubmitFunction}
-			on:submit={onSubmit}
-		>
+	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false} on:click={onSubmit}>
+		<form class="app-form" method="POST" action="?/put" use:enhance={editSubmitFunction} on:submit={onSubmit}>
 			<div class="input">
 				<Icon src={HiOutlineShoppingBag} />
 				<input

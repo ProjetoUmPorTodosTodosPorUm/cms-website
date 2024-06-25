@@ -8,9 +8,8 @@
 	import { editSubmitFunction, fromFilenameToFileDto } from '$src/lib/utils'
 	import { CHURCHES_INPUT_LABELS, CHURCH_TYPES } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineLibrary from 'svelte-icons-pack/hi/HiOutlineLibrary'
-	import HiOutlineTag from 'svelte-icons-pack/hi/HiOutlineTag'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineBuildingLibrary, HiOutlineTag } from 'svelte-icons-pack/hi'
 
 	export let data: PageData
 	export let form: ActionData
@@ -52,28 +51,11 @@
 </svelte:head>
 
 <AppContainer {messages}>
-	<AppContent
-		{...appHeader}
-		{isLoading}
-		showActions={false}
-		showRefreshButton={false}
-		on:click={onSubmit}
-	>
-		<form
-			class="app-form"
-			method="POST"
-			action="?/put"
-			use:enhance={editSubmitFunction}
-			on:submit={onSubmit}
-		>
+	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false} on:click={onSubmit}>
+		<form class="app-form" method="POST" action="?/put" use:enhance={editSubmitFunction} on:submit={onSubmit}>
 			<div class="input">
-				<Icon src={HiOutlineLibrary} />
-				<input
-					bind:value={churchData.name}
-					name="name"
-					placeholder={CHURCHES_INPUT_LABELS.name}
-					autocomplete="off"
-				/>
+				<Icon src={HiOutlineBuildingLibrary} />
+				<input bind:value={churchData.name} name="name" placeholder={CHURCHES_INPUT_LABELS.name} autocomplete="off" />
 			</div>
 			<div class="input input-lg">
 				<TinyMCEEditor
@@ -84,12 +66,7 @@
 				<!-- file={form?.apiData?.file} -->
 			</div>
 			<div class="input input-lg">
-				<InputFiles
-					files={initialFiles}
-					formName="images"
-					accept="image/*"
-					inputLabel={CHURCHES_INPUT_LABELS.images}
-				/>
+				<InputFiles files={initialFiles} formName="images" accept="image/*" inputLabel={CHURCHES_INPUT_LABELS.images} />
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineTag} />

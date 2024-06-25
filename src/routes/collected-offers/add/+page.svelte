@@ -6,11 +6,8 @@
 	import type { ActionData } from './$types'
 	import { COLLECT_OFFERS_INPUT_LABELS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineShoppingBag from 'svelte-icons-pack/hi/HiOutlineShoppingBag'
-	import HiOutlineCurrencyDollar from 'svelte-icons-pack/hi/HiOutlineCurrencyDollar'
-	import HiOutlineCube from 'svelte-icons-pack/hi/HiOutlineCube'
-	import HiOutlineCalendar from 'svelte-icons-pack/hi/HiOutlineCalendar'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineShoppingBag, HiOutlineCurrencyDollar, HiOutlineCube, HiOutlineCalendar } from 'svelte-icons-pack/hi'
 
 	export let form: ActionData
 	let isLoading = false
@@ -40,22 +37,11 @@
 </svelte:head>
 
 <AppContainer {messages}>
-	<AppContent
-		{...appHeader}
-		{isLoading}
-		showActions={false}
-		showRefreshButton={false}
-		on:click={onSubmit}
-	>
+	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false} on:click={onSubmit}>
 		<form class="app-form" method="POST" action="?/post" use:enhance on:submit={onSubmit}>
 			<div class="input">
 				<Icon src={HiOutlineShoppingBag} />
-				<input
-					name="foodQnt"
-					placeholder={COLLECT_OFFERS_INPUT_LABELS.foodQnt}
-					type="number"
-					min="0"
-				/>
+				<input name="foodQnt" placeholder={COLLECT_OFFERS_INPUT_LABELS.foodQnt} type="number" min="0" />
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineCurrencyDollar} />
@@ -69,32 +55,15 @@
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineCube} />
-				<input
-					name="othersQnt"
-					placeholder={COLLECT_OFFERS_INPUT_LABELS.othersQnt}
-					type="number"
-					min="0"
-				/>
+				<input name="othersQnt" placeholder={COLLECT_OFFERS_INPUT_LABELS.othersQnt} type="number" min="0" />
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineCalendar} />
 				<div class="number">
-					<input
-						name="month"
-						placeholder={COLLECT_OFFERS_INPUT_LABELS.month}
-						type="number"
-						min="1"
-						max="12"
-					/>
+					<input name="month" placeholder={COLLECT_OFFERS_INPUT_LABELS.month} type="number" min="1" max="12" />
 				</div>
 				<div class="number">
-					<input
-						name="year"
-						placeholder={COLLECT_OFFERS_INPUT_LABELS.year}
-						type="number"
-						min="2000"
-						max="2100"
-					/>
+					<input name="year" placeholder={COLLECT_OFFERS_INPUT_LABELS.year} type="number" min="2000" max="2100" />
 				</div>
 			</div>
 			<FieldSelect />

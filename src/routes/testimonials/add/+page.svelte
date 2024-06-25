@@ -6,9 +6,8 @@
 	import type { ActionData } from './$types'
 	import { TESTIMONIALS_INPUT_LABELS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineUser from 'svelte-icons-pack/hi/HiOutlineUser'
-	import HiOutlineMail from 'svelte-icons-pack/hi/HiOutlineMail'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineUser, HiOutlineEnvelope } from 'svelte-icons-pack/hi'
 
 	export let form: ActionData
 	let isLoading = false
@@ -38,26 +37,15 @@
 </svelte:head>
 
 <AppContainer {messages}>
-	<AppContent
-		{...appHeader}
-		{isLoading}
-		showActions={false}
-		showRefreshButton={false}
-		on:click={onSubmit}
-	>
+	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false} on:click={onSubmit}>
 		<form class="app-form" method="POST" action="?/post" use:enhance on:submit={onSubmit}>
 			<div class="input">
 				<Icon src={HiOutlineUser} />
 				<input name="name" placeholder={TESTIMONIALS_INPUT_LABELS.name} autocomplete="off" />
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineMail} />
-				<input
-					name="email"
-					placeholder={TESTIMONIALS_INPUT_LABELS.email}
-					type="email"
-					autocomplete="off"
-				/>
+				<Icon src={HiOutlineEnvelope} />
+				<input name="email" placeholder={TESTIMONIALS_INPUT_LABELS.email} type="email" autocomplete="off" />
 			</div>
 			<div class="input input-lg">
 				<TinyMCEEditor formName="text" placeholder={TESTIMONIALS_INPUT_LABELS.text} />

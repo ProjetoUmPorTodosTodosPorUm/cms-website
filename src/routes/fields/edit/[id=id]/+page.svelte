@@ -8,9 +8,8 @@
 	import { editSubmitFunction } from '$utils'
 	import { FIELDS_INPUT_LABELS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe'
-	import HiOutlineMinus from 'svelte-icons-pack/hi/HiOutlineMinus'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineGlobeAmericas, HiOutlineMinus } from 'svelte-icons-pack/hi'
 
 	import type { CollectionPoint, FieldDto } from '$types'
 	import { Loader } from '@googlemaps/js-api-loader'
@@ -77,35 +76,15 @@
 </svelte:head>
 
 <AppContainer {messages}>
-	<AppContent
-		{...appHeader}
-		{isLoading}
-		showActions={false}
-		showRefreshButton={false}
-		on:click={onSubmit}
-	>
-		<form
-			class="app-form"
-			method="POST"
-			action="?/put"
-			use:enhance={editSubmitFunction}
-			on:submit={onSubmit}
-		>
+	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false} on:click={onSubmit}>
+		<form class="app-form" method="POST" action="?/put" use:enhance={editSubmitFunction} on:submit={onSubmit}>
 			<div class="input">
-				<Icon src={HiOutlineGlobe} />
-				<input
-					bind:value={fieldData.continent}
-					name="continent"
-					placeholder={FIELDS_INPUT_LABELS.continent}
-				/>
+				<Icon src={HiOutlineGlobeAmericas} />
+				<input bind:value={fieldData.continent} name="continent" placeholder={FIELDS_INPUT_LABELS.continent} />
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineMinus} />
-				<input
-					bind:value={fieldData.country}
-					name="country"
-					placeholder={FIELDS_INPUT_LABELS.country}
-				/>
+				<input bind:value={fieldData.country} name="country" placeholder={FIELDS_INPUT_LABELS.country} />
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineMinus} />
@@ -113,19 +92,11 @@
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineMinus} />
-				<input
-					bind:value={fieldData.abbreviation}
-					name="abbreviation"
-					placeholder={FIELDS_INPUT_LABELS.abbreviation}
-				/>
+				<input bind:value={fieldData.abbreviation} name="abbreviation" placeholder={FIELDS_INPUT_LABELS.abbreviation} />
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineMinus} />
-				<input
-					bind:value={fieldData.designation}
-					name="designation"
-					placeholder={FIELDS_INPUT_LABELS.designation}
-				/>
+				<input bind:value={fieldData.designation} name="designation" placeholder={FIELDS_INPUT_LABELS.designation} />
 			</div>
 			<div class="input">
 				<InputTag

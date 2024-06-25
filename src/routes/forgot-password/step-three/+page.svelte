@@ -7,8 +7,8 @@
 	import { goto } from '$app/navigation'
 	import { FORGOT_PASSWORD_INPUT_LABELS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineLockClosed from 'svelte-icons-pack/hi/HiOutlineLockClosed'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineLockClosed } from 'svelte-icons-pack/hi'
 
 	export let form: ActionData
 	let isLoading = false
@@ -61,14 +61,7 @@
 	let confirmPassword = ''
 </script>
 
-<AuthModal
-	on:submit={onSubmit}
-	{...authModal}
-	{isLoading}
-	{isSubmitDisabled}
-	{messages}
-	showBackButton={true}
->
+<AuthModal on:submit={onSubmit} {...authModal} {isLoading} {isSubmitDisabled} {messages} showBackButton={true}>
 	<svelte:fragment slot="body">
 		<input name="email" type="email" value={email} hidden={true} />
 		<input name="token" type="text" value={token} hidden={true} />

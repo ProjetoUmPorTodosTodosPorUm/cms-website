@@ -8,14 +8,12 @@
 	import { editSubmitFunction } from '$utils'
 	import { WELCOMED_FAMILIES_INPUT_LABELS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineUser from 'svelte-icons-pack/hi/HiOutlineUser'
-	import HiOutlineInformationCircle from 'svelte-icons-pack/hi/HiOutlineInformationCircle'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineUser, HiOutlineInformationCircle } from 'svelte-icons-pack/hi'
 
 	export let data: PageData
 	export let form: ActionData
-	$: welcomedFamilyData =
-		(data.apiData as WelcomedFamilyDto) || (form?.apiData as WelcomedFamilyDto)
+	$: welcomedFamilyData = (data.apiData as WelcomedFamilyDto) || (form?.apiData as WelcomedFamilyDto)
 	let isLoading = false
 	$: messages = form?.messages ?? []
 	$: messages, postActionCallback()
@@ -43,20 +41,8 @@
 </svelte:head>
 
 <AppContainer {messages}>
-	<AppContent
-		{...appHeader}
-		{isLoading}
-		showActions={false}
-		showRefreshButton={false}
-		on:click={onSubmit}
-	>
-		<form
-			class="app-form"
-			method="POST"
-			action="?/put"
-			use:enhance={editSubmitFunction}
-			on:submit={onSubmit}
-		>
+	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false} on:click={onSubmit}>
+		<form class="app-form" method="POST" action="?/put" use:enhance={editSubmitFunction} on:submit={onSubmit}>
 			<div class="input">
 				<Icon src={HiOutlineUser} />
 				<input

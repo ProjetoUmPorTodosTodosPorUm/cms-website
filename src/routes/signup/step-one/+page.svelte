@@ -6,8 +6,8 @@
 	import { goto } from '$app/navigation'
 	import { SIGN_UP_INPUT_LABELS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineMail from 'svelte-icons-pack/hi/HiOutlineMail'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineEnvelope } from 'svelte-icons-pack/hi'
 
 	export let form: ActionData
 	let isLoading = false
@@ -62,7 +62,7 @@
 >
 	<svelte:fragment slot="body">
 		<div class="form-input">
-			<Icon src={HiOutlineMail} />
+			<Icon src={HiOutlineEnvelope} />
 			<input
 				bind:value={email}
 				name="email"

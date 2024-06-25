@@ -7,9 +7,8 @@
 	import { goto } from '$app/navigation'
 	import { SIGN_UP_INPUT_LABELS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineUser from 'svelte-icons-pack/hi/HiOutlineUser'
-	import HiOutlineLockClosed from 'svelte-icons-pack/hi/HiOutlineLockClosed'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineUser, HiOutlineLockClosed } from 'svelte-icons-pack/hi'
 
 	export let form: ActionData
 	let isLoading = false
@@ -54,8 +53,7 @@
 	}
 
 	// Form
-	$: isSubmitDisabled =
-		firstName.length === 0 || (password.length === 0 && confirmPassword.length === 0)
+	$: isSubmitDisabled = firstName.length === 0 || (password.length === 0 && confirmPassword.length === 0)
 	let email = ''
 	let token = ''
 
@@ -65,14 +63,7 @@
 	let confirmPassword = ''
 </script>
 
-<AuthModal
-	on:submit={onSubmit}
-	{...authModal}
-	{isLoading}
-	{isSubmitDisabled}
-	{messages}
-	showBackButton={true}
->
+<AuthModal on:submit={onSubmit} {...authModal} {isLoading} {isSubmitDisabled} {messages} showBackButton={true}>
 	<svelte:fragment slot="body">
 		<input name="email" type="email" value={email} hidden={true} />
 		<input name="token" type="text" value={token} hidden={true} />

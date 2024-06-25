@@ -6,8 +6,8 @@
 	import type { ActionData } from './$types'
 	import { COLLABORATORS_INPUT_LABELS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineUserGroup from 'svelte-icons-pack/hi/HiOutlineUserGroup'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineUserGroup } from 'svelte-icons-pack/hi'
 
 	export let form: ActionData
 	let isLoading = false
@@ -37,31 +37,18 @@
 </svelte:head>
 
 <AppContainer {messages}>
-	<AppContent
-		{...appHeader}
-		{isLoading}
-		showActions={false}
-		showRefreshButton={false}
-		on:click={onSubmit}
-	>
+	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false} on:click={onSubmit}>
 		<form class="app-form" method="POST" action="?/post" use:enhance on:submit={onSubmit}>
 			<div class="input">
 				<Icon src={HiOutlineUserGroup} />
 				<input name="title" placeholder={COLLABORATORS_INPUT_LABELS.title} autocomplete="off" />
 			</div>
 			<div class="input input-lg">
-				<TinyMCEEditor
-					formName="description"
-					placeholder={COLLABORATORS_INPUT_LABELS.description}
-				/>
+				<TinyMCEEditor formName="description" placeholder={COLLABORATORS_INPUT_LABELS.description} />
 				<!-- file={form?.apiData?.file} -->
 			</div>
 			<div class="input input-lg">
-				<InputFile
-					formName="image"
-					accept="image/*"
-					inputLabel={COLLABORATORS_INPUT_LABELS.image}
-				/>
+				<InputFile formName="image" accept="image/*" inputLabel={COLLABORATORS_INPUT_LABELS.image} />
 			</div>
 			<FieldSelect />
 			<div class="input">

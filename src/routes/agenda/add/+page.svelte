@@ -7,9 +7,8 @@
 	import type { ActionData } from './$types'
 	import { AGENDA_INPUT_LABELS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineSpeakerphone from 'svelte-icons-pack/hi/HiOutlineSpeakerphone'
-	import HiOutlineCalendar from 'svelte-icons-pack/hi/HiOutlineCalendar'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineMegaphone, HiOutlineCalendar } from 'svelte-icons-pack/hi'
 
 	export let form: ActionData
 	let isLoading = false
@@ -49,7 +48,7 @@
 	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false}>
 		<form class="app-form" method="POST" action="?/post" use:enhance on:submit={onSubmit}>
 			<div class="input">
-				<Icon src={HiOutlineSpeakerphone} />
+				<Icon src={HiOutlineMegaphone} />
 				<input name="title" placeholder={AGENDA_INPUT_LABELS.title} autocomplete="off" />
 			</div>
 			<div class="input input-lg">

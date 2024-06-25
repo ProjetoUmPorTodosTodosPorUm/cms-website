@@ -5,27 +5,29 @@
 	import { Role } from '$enums'
 	import type { UserStore } from '$stores'
 
-	import Icon from 'svelte-icons-pack'
-	import HiOutlineMenu from 'svelte-icons-pack/hi/HiOutlineMenu'
-	import HiOutlineMenuAlt2 from 'svelte-icons-pack/hi/HiOutlineMenuAlt2'
-	import HiOutlineHome from 'svelte-icons-pack/hi/HiOutlineHome'
-	import HiOutlineCalendar from 'svelte-icons-pack/hi/HiOutlineCalendar'
-	import HiOutlineSpeakerphone from 'svelte-icons-pack/hi/HiOutlineSpeakerphone'
-	import HiOutlineLibrary from 'svelte-icons-pack/hi/HiOutlineLibrary'
-	import HiOutlineUserGroup from 'svelte-icons-pack/hi/HiOutlineUserGroup'
-	import BsHouseHeart from 'svelte-icons-pack/bs/BsHouseHeart'
-	import HiOutlineHand from 'svelte-icons-pack/hi/HiOutlineHand'
-	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe'
-	import HiOutlineFolderOpen from 'svelte-icons-pack/hi/HiOutlineFolderOpen'
-	import HiOutlineArchive from 'svelte-icons-pack/hi/HiOutlineArchive'
-	import HiOutlineChartSquareBar from 'svelte-icons-pack/hi/HiOutlineChartSquareBar'
-	import HiOutlineChat from 'svelte-icons-pack/hi/HiOutlineChat'
-	import HiOutlineTicket from 'svelte-icons-pack/hi/HiOutlineTicket'
-	import HiOutlineUsers from 'svelte-icons-pack/hi/HiOutlineUsers'
-	import HiOutlineIdentification from 'svelte-icons-pack/hi/HiOutlineIdentification'
-	import HiOutlineHeart from 'svelte-icons-pack/hi/HiOutlineHeart'
-	import HiSolidUserCircle from 'svelte-icons-pack/hi/HiSolidUserCircle'
-	import HiOutlineLogout from 'svelte-icons-pack/hi/HiOutlineLogout'
+	import { Icon } from 'svelte-icons-pack'
+	import {
+		HiOutlineBars3CenterLeft,
+		HiOutlineBars3,
+		HiOutlineHome,
+		HiOutlineCalendar,
+		HiOutlineMegaphone,
+		HiOutlineBuildingLibrary,
+		HiOutlineUserGroup,
+		HiOutlineHandRaised,
+		HiOutlineGlobeAmericas,
+		HiOutlineFolderOpen,
+		HiOutlineArchiveBox,
+		HiOutlineChartBarSquare,
+		HiOutlineChatBubbleBottomCenterText,
+		HiOutlineTicket,
+		HiOutlineUsers,
+		HiOutlineIdentification,
+		HiOutlineHeart,
+		HiSolidUserCircle,
+		HiOutlineArrowRightOnRectangle
+	} from 'svelte-icons-pack/hi'
+	import { BsHouseHeart } from 'svelte-icons-pack/bs'
 
 	import { getContext } from 'svelte'
 	import { VERSION } from '@sveltejs/kit'
@@ -65,7 +67,7 @@
 	let navListRef: HTMLElement
 	let navToggleIconRef: HTMLDivElement
 	let navIconComponentRef: Icon
-	let currentMenuIcon = HiOutlineMenuAlt2
+	let currentMenuIcon = HiOutlineBars3
 
 	$: menu = [
 		{
@@ -87,12 +89,12 @@
 		{
 			name: 'Avisos',
 			href: `/announcements?${queryString}`,
-			icon: HiOutlineSpeakerphone
+			icon: HiOutlineMegaphone
 		},
 		{
 			name: 'Campos Missionários',
 			href: `/fields?${queryString}`,
-			icon: HiOutlineGlobe,
+			icon: HiOutlineGlobeAmericas,
 			role: Role.WEB_MASTER
 		},
 		{
@@ -108,7 +110,7 @@
 		{
 			name: 'Contatos',
 			href: `/contacts?${queryString}`,
-			icon: HiOutlineChat
+			icon: HiOutlineChatBubbleBottomCenterText
 		},
 		{
 			name: 'Famílias Acolhidas',
@@ -123,30 +125,30 @@
 		{
 			name: 'Igrejas',
 			href: `/churches?${queryString}`,
-			icon: HiOutlineLibrary
+			icon: HiOutlineBuildingLibrary
 		},
 		{
 			name: 'Logs',
 			href: `/logs?${createdAtQueryString}`,
-			icon: HiOutlineArchive,
+			icon: HiOutlineArchiveBox,
 			role: Role.ADMIN
 		},
-		
+
 		{
 			name: 'Ofertas Coletadas',
 			href: `/collected-offers?${queryString}`,
-			icon: HiOutlineHand
+			icon: HiOutlineHandRaised
 		},
-		
+
 		{
 			name: 'Relatórios',
 			href: `/reports?${queryString}`,
-			icon: HiOutlineChartSquareBar
+			icon: HiOutlineChartBarSquare
 		},
 		{
 			name: 'Testemunhos',
 			href: `/testimonials?${queryString}`,
-			icon: HiOutlineChat
+			icon: HiOutlineChatBubbleBottomCenterText
 		},
 		{
 			name: 'Tokens',
@@ -176,7 +178,7 @@
 		{
 			name: 'Logout',
 			href: `/logout`,
-			icon: HiOutlineLogout
+			icon: HiOutlineArrowRightOnRectangle
 		}
 	] as AppNavMenuItem[]
 
@@ -206,7 +208,7 @@
 		navToggleIconRef.classList.toggle('open')
 		navListRef.classList.toggle('open')
 
-		currentMenuIcon = currentMenuIcon == HiOutlineMenu ? HiOutlineMenuAlt2 : HiOutlineMenu
+		currentMenuIcon = currentMenuIcon == HiOutlineBars3 ? HiOutlineBars3CenterLeft : HiOutlineBars3
 		navIconComponentRef.$set({ src: currentMenuIcon })
 	}
 </script>
@@ -220,9 +222,7 @@
 		</div>
 
 		<div bind:this={navToggleIconRef} class="toggle-icon">
-			<a href="#icon" on:click={onNavToggle}>
-				<Icon bind:this={navIconComponentRef} src={HiOutlineMenuAlt2} /></a
-			>
+			<a href="#icon" on:click={onNavToggle}> <Icon bind:this={navIconComponentRef} src={HiOutlineBars3} /></a>
 		</div>
 	</div>
 	<ul bind:this={navListRef} class="app-nav-list">

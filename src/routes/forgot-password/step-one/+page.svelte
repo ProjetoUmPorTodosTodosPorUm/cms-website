@@ -6,8 +6,8 @@
 	import { goto } from '$app/navigation'
 	import { FORGOT_PASSWORD_INPUT_LABELS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineMail from 'svelte-icons-pack/hi/HiOutlineMail'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineEnvelope } from 'svelte-icons-pack/hi'
 
 	export let form: ActionData
 	let isLoading = false
@@ -52,17 +52,10 @@
 	<title>Recuperar Conta</title>
 </svelte:head>
 
-<AuthModal
-	on:submit={onSubmit}
-	{...authModal}
-	{isLoading}
-	{isSubmitDisabled}
-	{messages}
-	showBackButton={true}
->
+<AuthModal on:submit={onSubmit} {...authModal} {isLoading} {isSubmitDisabled} {messages} showBackButton={true}>
 	<svelte:fragment slot="body">
 		<div class="form-input">
-			<Icon src={HiOutlineMail} />
+			<Icon src={HiOutlineEnvelope} />
 			<input
 				bind:value={email}
 				name="email"

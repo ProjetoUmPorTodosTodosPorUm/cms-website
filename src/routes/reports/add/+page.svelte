@@ -8,11 +8,8 @@
 	import { ReportType } from '$enums'
 	import { REPORTS_INPUT_LABELS, REPORT_TYPES } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlinePencil from 'svelte-icons-pack/hi/HiOutlinePencil'
-	import HiOutlineMenuAlt2 from 'svelte-icons-pack/hi/HiOutlineMenuAlt2'
-	import HiOutlineCalendar from 'svelte-icons-pack/hi/HiOutlineCalendar'
-	import HiOutlineTag from 'svelte-icons-pack/hi/HiOutlineTag'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlinePencil, HiOutlineBars3, HiOutlineCalendar, HiOutlineTag } from 'svelte-icons-pack/hi'
 
 	export let form: ActionData
 	let isLoading = false
@@ -55,20 +52,14 @@
 </svelte:head>
 
 <AppContainer {messages}>
-	<AppContent
-		{...appHeader}
-		{isLoading}
-		showActions={false}
-		showRefreshButton={false}
-		on:click={onSubmit}
-	>
+	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false} on:click={onSubmit}>
 		<form class="app-form" method="POST" action="?/post" use:enhance on:submit={onSubmit}>
 			<div class="input">
 				<Icon src={HiOutlinePencil} />
 				<input name="title" placeholder={REPORTS_INPUT_LABELS.title} autocomplete="off" />
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineMenuAlt2} />
+				<Icon src={HiOutlineBars3} />
 				<textarea
 					name="shortDescription"
 					placeholder={REPORTS_INPUT_LABELS.shortDescription}
@@ -101,13 +92,7 @@
 					/>
 				</div>
 				<div class="number">
-					<input
-						name="year"
-						placeholder={REPORTS_INPUT_LABELS.year}
-						type="number"
-						min="2000"
-						max="2100"
-					/>
+					<input name="year" placeholder={REPORTS_INPUT_LABELS.year} type="number" min="2000" max="2100" />
 				</div>
 			</div>
 			<div class="input">

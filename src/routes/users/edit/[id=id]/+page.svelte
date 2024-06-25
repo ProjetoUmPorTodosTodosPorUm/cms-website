@@ -8,9 +8,8 @@
 	import { editSubmitFunction, fromFilenameToFileDto } from '$utils'
 	import { USERS_INPUT_LABELS, USERS_ROLES } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineUser from 'svelte-icons-pack/hi/HiOutlineUser'
-	import HiOutlineIdentification from 'svelte-icons-pack/hi/HiOutlineIdentification'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineUser, HiOutlineIdentification } from 'svelte-icons-pack/hi'
 
 	export let data: PageData
 	export let form: ActionData
@@ -51,19 +50,8 @@
 
 <AppContainer {messages}>
 	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false}>
-		<form
-			class="app-form"
-			method="POST"
-			action="?/put"
-			use:enhance={editSubmitFunction}
-			on:submit={onSubmit}
-		>
-			<ImageInput
-				file={initialFile}
-				formName="avatar"
-				altText="Imagem de Perfil"
-				inputLabel="Editar"
-			/>
+		<form class="app-form" method="POST" action="?/put" use:enhance={editSubmitFunction} on:submit={onSubmit}>
+			<ImageInput file={initialFile} formName="avatar" altText="Imagem de Perfil" inputLabel="Editar" />
 			<div class="input">
 				<Icon src={HiOutlineUser} />
 				<input

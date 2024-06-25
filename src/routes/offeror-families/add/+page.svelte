@@ -6,11 +6,13 @@
 	import type { ActionData } from './$types'
 	import { OFFEROR_FAMILIES_INPUT_LABELS, OFFEROR_FAMILIES_GROUPS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineUser from 'svelte-icons-pack/hi/HiOutlineUser'
-	import HiOutlineHand from 'svelte-icons-pack/hi/HiOutlineHand'
-	import HiOutlineLibrary from 'svelte-icons-pack/hi/HiOutlineLibrary'
-	import HiOutlineUserGroup from 'svelte-icons-pack/hi/HiOutlineUserGroup'
+	import { Icon } from 'svelte-icons-pack'
+	import {
+		HiOutlineUser,
+		HiOutlineHandRaised,
+		HiOutlineBuildingLibrary,
+		HiOutlineUserGroup
+	} from 'svelte-icons-pack/hi'
 
 	export let form: ActionData
 	let isLoading = false
@@ -47,37 +49,19 @@
 </svelte:head>
 
 <AppContainer {messages}>
-	<AppContent
-		{...appHeader}
-		{isLoading}
-		showActions={false}
-		showRefreshButton={false}
-		on:click={onSubmit}
-	>
+	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false} on:click={onSubmit}>
 		<form class="app-form" method="POST" action="?/post" use:enhance on:submit={onSubmit}>
 			<div class="input">
 				<Icon src={HiOutlineUser} />
-				<input
-					name="representative"
-					placeholder={OFFEROR_FAMILIES_INPUT_LABELS.representative}
-					autocomplete="off"
-				/>
+				<input name="representative" placeholder={OFFEROR_FAMILIES_INPUT_LABELS.representative} autocomplete="off" />
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineHand} />
-				<input
-					name="commitment"
-					placeholder={OFFEROR_FAMILIES_INPUT_LABELS.commitment}
-					autocomplete="off"
-				/>
+				<Icon src={HiOutlineHandRaised} />
+				<input name="commitment" placeholder={OFFEROR_FAMILIES_INPUT_LABELS.commitment} autocomplete="off" />
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineLibrary} />
-				<input
-					name="churchDenomination"
-					placeholder={OFFEROR_FAMILIES_INPUT_LABELS.church}
-					autocomplete="off"
-				/>
+				<Icon src={HiOutlineBuildingLibrary} />
+				<input name="churchDenomination" placeholder={OFFEROR_FAMILIES_INPUT_LABELS.church} autocomplete="off" />
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineUserGroup} />

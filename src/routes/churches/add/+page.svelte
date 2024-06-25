@@ -7,9 +7,8 @@
 	import type { ActionData } from './$types'
 	import { CHURCHES_INPUT_LABELS, CHURCH_TYPES } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineLibrary from 'svelte-icons-pack/hi/HiOutlineLibrary'
-	import HiOutlineTag from 'svelte-icons-pack/hi/HiOutlineTag'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineBuildingLibrary, HiOutlineTag } from 'svelte-icons-pack/hi'
 
 	export let form: ActionData
 	let isLoading = false
@@ -52,16 +51,10 @@
 </svelte:head>
 
 <AppContainer {messages}>
-	<AppContent
-		{...appHeader}
-		{isLoading}
-		showActions={false}
-		showRefreshButton={false}
-		on:click={onSubmit}
-	>
+	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false} on:click={onSubmit}>
 		<form class="app-form" method="POST" action="?/post" use:enhance on:submit={onSubmit}>
 			<div class="input">
-				<Icon src={HiOutlineLibrary} />
+				<Icon src={HiOutlineBuildingLibrary} />
 				<input name="name" placeholder={CHURCHES_INPUT_LABELS.name} autocomplete="off" />
 			</div>
 			<div class="input input-lg">
@@ -69,12 +62,7 @@
 				<!-- file={form?.apiData?.file} -->
 			</div>
 			<div class="input input-lg">
-				<InputFiles
-					formName="images"
-					accept="image/*"
-					inputLabel={CHURCHES_INPUT_LABELS.images}
-					bind:resetFiles
-				/>
+				<InputFiles formName="images" accept="image/*" inputLabel={CHURCHES_INPUT_LABELS.images} bind:resetFiles />
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineTag} />

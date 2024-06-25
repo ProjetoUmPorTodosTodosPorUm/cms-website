@@ -6,9 +6,8 @@
 	import type { ActionData } from './$types'
 	import { WELCOMED_FAMILIES_INPUT_LABELS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineUser from 'svelte-icons-pack/hi/HiOutlineUser'
-	import HiOutlineInformationCircle from 'svelte-icons-pack/hi/HiOutlineInformationCircle'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineUser, HiOutlineInformationCircle } from 'svelte-icons-pack/hi'
 
 	export let form: ActionData
 	let isLoading = false
@@ -38,21 +37,11 @@
 </svelte:head>
 
 <AppContainer {messages}>
-	<AppContent
-		{...appHeader}
-		{isLoading}
-		showActions={false}
-		showRefreshButton={false}
-		on:click={onSubmit}
-	>
+	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false} on:click={onSubmit}>
 		<form class="app-form" method="POST" action="?/post" use:enhance on:submit={onSubmit}>
 			<div class="input">
 				<Icon src={HiOutlineUser} />
-				<input
-					name="representative"
-					placeholder={WELCOMED_FAMILIES_INPUT_LABELS.representative}
-					autocomplete="off"
-				/>
+				<input name="representative" placeholder={WELCOMED_FAMILIES_INPUT_LABELS.representative} autocomplete="off" />
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineInformationCircle} />

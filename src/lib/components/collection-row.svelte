@@ -8,9 +8,8 @@
 	import { Modal } from '$components'
 	import { SHARED } from '$constants'
 
-	import Icon from 'svelte-icons-pack'
-	import FiEdit from 'svelte-icons-pack/fi/FiEdit'
-	import FiTrash2 from 'svelte-icons-pack/fi/FiTrash2'
+	import { Icon } from 'svelte-icons-pack'
+	import { FiEdit, FiTrash2 } from 'svelte-icons-pack/fi'
 
 	// Component Data
 	export let showOptions = true
@@ -70,11 +69,7 @@
 				<span class="cell-label">{rowCell.label}:</span>
 				{#if rowCell.isStatus}
 					<span class={`status ${rowCell.value ? 'active' : 'disabled'}`}>
-						{rowCell.transform
-							? rowCell.transform(rowCell.value)
-							: rowCell.value
-							? 'Ativo'
-							: 'Desativado'}
+						{rowCell.transform ? rowCell.transform(rowCell.value) : rowCell.value ? 'Ativo' : 'Desativado'}
 					</span>
 				{:else if rowCell.isLink}
 					{#if rowCell.value}
@@ -84,9 +79,7 @@
 					{/if}
 				{:else if rowCell.isStatic}
 					{#if rowCell.value}
-						<a href={`${PUBLIC_FILES_URL}/${rowCell.value}`} target="_blank" rel="noreferrer"
-							>{rowCell.value}</a
-						>
+						<a href={`${PUBLIC_FILES_URL}/${rowCell.value}`} target="_blank" rel="noreferrer">{rowCell.value}</a>
 					{:else}
 						{rowCell.transform ? rowCell.transform(rowCell.value) : rowCell.value}
 					{/if}
@@ -99,9 +92,7 @@
 				{:else if rowCell.isModal}
 					{#if rowCell.value?.length > textLimit}
 						<!-- svelte-ignore a11y-invalid-attribute -->
-						<a href="" on:click={() => onModalOpen(rowCell)}
-							>{stripHtml(rowCell.value.substring(0, textLimit))}...</a
-						>
+						<a href="" on:click={() => onModalOpen(rowCell)}>{stripHtml(rowCell.value.substring(0, textLimit))}...</a>
 					{:else}
 						<!-- svelte-ignore a11y-invalid-attribute -->
 						<a href="" on:click={() => onModalOpen(rowCell)}>{stripHtml(rowCell.value ?? '')}</a>
@@ -162,14 +153,7 @@
 				disabled={!isDeleted}
 				bind:checked={selected}
 			/>
-			<input
-				name="ids"
-				type="checkbox"
-				form="hard-remove"
-				value={id}
-				hidden={true}
-				bind:checked={selected}
-			/>
+			<input name="ids" type="checkbox" form="hard-remove" value={id} hidden={true} bind:checked={selected} />
 		</div>
 	{/if}
 </div>

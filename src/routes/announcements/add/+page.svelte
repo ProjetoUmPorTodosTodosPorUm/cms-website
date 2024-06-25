@@ -7,9 +7,9 @@
 	import type { ActionData } from './$types'
 	import { ANNOUNCEMENTS_INPUT_LABEL } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineSpeakerphone from 'svelte-icons-pack/hi/HiOutlineSpeakerphone'
-	import BsPinAngle from 'svelte-icons-pack/bs/BsPinAngle'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineMegaphone } from 'svelte-icons-pack/hi'
+	import { BsPinAngle } from 'svelte-icons-pack/bs'
 
 	export let form: ActionData
 	let isLoading = false
@@ -46,16 +46,10 @@
 </svelte:head>
 
 <AppContainer {messages}>
-	<AppContent
-		{...appHeader}
-		{isLoading}
-		showActions={false}
-		showRefreshButton={false}
-		on:click={onSubmit}
-	>
+	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false} on:click={onSubmit}>
 		<form class="app-form" method="POST" action="?/post" use:enhance on:submit={onSubmit}>
 			<div class="input">
-				<Icon src={HiOutlineSpeakerphone} />
+				<Icon src={HiOutlineMegaphone} />
 				<input name="title" placeholder={ANNOUNCEMENTS_INPUT_LABEL.title} autocomplete="off" />
 			</div>
 			<div class="input input-lg">
@@ -63,11 +57,7 @@
 				<!-- file={form?.apiData?.file} -->
 			</div>
 			<div class="input input-lg">
-				<InputFiles
-					formName="attachments"
-					inputLabel={ANNOUNCEMENTS_INPUT_LABEL.attachments}
-					bind:resetFiles
-				/>
+				<InputFiles formName="attachments" inputLabel={ANNOUNCEMENTS_INPUT_LABEL.attachments} bind:resetFiles />
 			</div>
 			<div class="input">
 				<Icon src={BsPinAngle} />
