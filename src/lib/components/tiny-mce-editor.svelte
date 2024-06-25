@@ -17,6 +17,7 @@
 	$: tinyMCEFilename = file?.name || ''
 
 	$: conf = {
+		license_key: 'gpl',
 		min_height: 300,
 		plugins: [
 			'link',

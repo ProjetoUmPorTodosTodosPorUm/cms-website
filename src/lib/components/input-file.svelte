@@ -4,8 +4,8 @@
 	import BaseInputFile from './base-input-file.svelte'
 	import type { FileDto } from '$types'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlinePaperClip from 'svelte-icons-pack/hi/HiOutlinePaperClip'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlinePaperClip } from 'svelte-icons-pack/hi'
 
 	export let file: FileDto = {} as FileDto
 	export let formName = ''
@@ -40,9 +40,7 @@
 		<Icon src={HiOutlinePaperClip} />
 		<div>
 			{#if filename}
-				<a href={`${PUBLIC_FILES_URL}/${filename}`} target="_blank" title={filename}
-					>{filename.substring(0, 15)}</a
-				>
+				<a href={`${PUBLIC_FILES_URL}/${filename}`} target="_blank" title={filename}>{filename.substring(0, 15)}</a>
 				<button class="btn-close" on:click={(ev) => openFileRemoveDialog(ev, filename)} />
 			{:else}
 				<p>{inputLabel}</p>

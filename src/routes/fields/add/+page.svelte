@@ -7,9 +7,8 @@
 	import type { ActionData } from './$types'
 	import { FIELDS_INPUT_LABELS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe'
-	import HiOutlineMinus from 'svelte-icons-pack/hi/HiOutlineMinus'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineGlobeAmericas, HiOutlineMinus } from 'svelte-icons-pack/hi'
 
 	import type { CollectionPoint } from '$types'
 	import { Loader } from '@googlemaps/js-api-loader'
@@ -79,16 +78,10 @@
 </svelte:head>
 
 <AppContainer {messages}>
-	<AppContent
-		{...appHeader}
-		{isLoading}
-		showActions={false}
-		showRefreshButton={false}
-		on:click={onSubmit}
-	>
+	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false} on:click={onSubmit}>
 		<form class="app-form" method="POST" action="?/post" use:enhance on:submit={onSubmit}>
 			<div class="input">
-				<Icon src={HiOutlineGlobe} />
+				<Icon src={HiOutlineGlobeAmericas} />
 				<input name="continent" placeholder={FIELDS_INPUT_LABELS.continent} />
 			</div>
 			<div class="input">

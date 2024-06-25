@@ -3,9 +3,9 @@
 	import { goto } from '$app/navigation'
 	import { createEventDispatcher } from 'svelte'
 
-	import Icon from 'svelte-icons-pack'
-	import FaSolidArrowLeft from 'svelte-icons-pack/fa/FaSolidArrowLeft'
-	import FiRefreshCw from 'svelte-icons-pack/fi/FiRefreshCw'
+	import { Icon } from 'svelte-icons-pack'
+	import { FaSolidArrowLeft } from 'svelte-icons-pack/fa'
+	import { FiRefreshCw } from 'svelte-icons-pack/fi'
 
 	// Component Data
 	export let name: string

@@ -8,9 +8,8 @@
 	import { browser } from '$app/environment'
 	import { LOGIN_INPUT_LABELS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineMail from 'svelte-icons-pack/hi/HiOutlineMail'
-	import HiOutlineLockClosed from 'svelte-icons-pack/hi/HiOutlineLockClosed'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineEnvelope, HiOutlineLockClosed } from 'svelte-icons-pack/hi'
 
 	export let form: ActionData
 	let isLoading = false
@@ -64,14 +63,8 @@
 <AuthModal on:submit={onSubmit} {...authModal} {isLoading} {isSubmitDisabled} {messages}>
 	<svelte:fragment slot="body">
 		<div class="form-input">
-			<Icon src={HiOutlineMail} />
-			<input
-				bind:value={email}
-				name="email"
-				type="email"
-				placeholder={LOGIN_INPUT_LABELS.email}
-				autocomplete="email"
-			/>
+			<Icon src={HiOutlineEnvelope} />
+			<input bind:value={email} name="email" type="email" placeholder={LOGIN_INPUT_LABELS.email} autocomplete="email" />
 		</div>
 		<div class="form-input">
 			<Icon src={HiOutlineLockClosed} />

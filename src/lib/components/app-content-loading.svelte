@@ -2,8 +2,8 @@
 	import '$scss/components/app-content-loading.scss'
 	import { fade } from 'svelte/transition'
 
-	import Icon from 'svelte-icons-pack'
-	import AiOutlineLoading from 'svelte-icons-pack/ai/AiOutlineLoading'
+	import { Icon } from 'svelte-icons-pack'
+	import { AiOutlineLoading } from 'svelte-icons-pack/ai'
 
 	export let isLoading = false
 </script>

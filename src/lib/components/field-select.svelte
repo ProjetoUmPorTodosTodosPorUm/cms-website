@@ -4,8 +4,8 @@
 	import type { UserStore } from '$stores'
 	import type { FieldDto } from '$types'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineGlobe from 'svelte-icons-pack/hi/HiOutlineGlobe'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineGlobeAmericas } from 'svelte-icons-pack/hi'
 
 	let userStore = getContext<UserStore>('user')
 
@@ -15,7 +15,7 @@
 
 {#if userStore.isWebMaster()}
 	<div class="input">
-		<Icon src={HiOutlineGlobe} />
+		<Icon src={HiOutlineGlobeAmericas} />
 		<select {value} name="field">
 			<option value="" disabled selected>Campo Missionário</option>
 

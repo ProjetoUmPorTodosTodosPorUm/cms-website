@@ -37,7 +37,8 @@ export const SHARED = {
 		'recovery-houses': (data: any) => `Você deseja remover a casa de recuperação ${data.title}?`,
 		'collected-offers': (data: any) =>
 			`Você deseja remover a oferta coletada de ${data.month}/${data.year}?`,
-		volunteers: (data: any) => `Você deseja remover o voluntário(a) ${data.firstName}?`
+		volunteers: (data: any) => `Você deseja remover o voluntário(a) ${data.firstName}?`,
+		contacts: (data: any) => `Você deseja remover a mensagem enviada por ${data.email}?`,
 	},
 
 	isStatus: {

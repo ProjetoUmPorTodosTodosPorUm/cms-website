@@ -6,10 +6,8 @@
 	import type { ActionData } from './$types'
 	import { USERS_INPUT_LABELS, USERS_ROLES } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineMail from 'svelte-icons-pack/hi/HiOutlineMail'
-	import HiOutlineUser from 'svelte-icons-pack/hi/HiOutlineUser'
-	import HiOutlineIdentification from 'svelte-icons-pack/hi/HiOutlineIdentification'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineEnvelopeOpen, HiOutlineUser, HiOutlineIdentification } from 'svelte-icons-pack/hi'
 
 	export let form: ActionData
 	let isLoading = false
@@ -53,13 +51,8 @@
 				<input name="name" type="text" placeholder={USERS_INPUT_LABELS.name} autocomplete="off" />
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineMail} />
-				<input
-					name="email"
-					type="email"
-					placeholder={USERS_INPUT_LABELS.email}
-					autocomplete="off"
-				/>
+				<Icon src={HiOutlineEnvelopeOpen} />
+				<input name="email" type="email" placeholder={USERS_INPUT_LABELS.email} autocomplete="off" />
 			</div>
 			<div class="input">
 				<Icon src={HiOutlineIdentification} />

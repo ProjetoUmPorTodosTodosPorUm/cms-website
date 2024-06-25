@@ -3,8 +3,8 @@
 	import { createEventDispatcher, onMount } from 'svelte'
 	import { fade } from 'svelte/transition'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineX from 'svelte-icons-pack/hi/HiOutlineX'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineXMark } from 'svelte-icons-pack/hi'
 
 	export let id = 0
 	export let message = ''
@@ -42,7 +42,7 @@
 		</div>
 		<!-- svelte-ignore a11y-invalid-attribute -->
 		<a href="#" on:click|preventDefault={close}>
-			<Icon src={HiOutlineX} className="btn-close toast-close" />
+			<Icon src={HiOutlineXMark} className="btn-close toast-close" />
 		</a>
 	</div>
 {/if}

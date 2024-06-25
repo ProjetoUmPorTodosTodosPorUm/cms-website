@@ -11,11 +11,8 @@
 	import type { UserStore } from '$stores'
 	import { PROFILE_INPUT_LABELS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineUser from 'svelte-icons-pack/hi/HiOutlineUser'
-	import HiOutlineMail from 'svelte-icons-pack/hi/HiOutlineMail'
-	import HiOutlineLockClosed from 'svelte-icons-pack/hi/HiOutlineLockClosed'
-	import HiOutlineMinus from 'svelte-icons-pack/hi/HiOutlineMinus'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineUser, HiOutlineEnvelope, HiOutlineLockClosed, HiOutlineMinus } from 'svelte-icons-pack/hi'
 
 	export let data: PageData
 	export let form: ActionData
@@ -67,19 +64,8 @@
 
 <AppContainer {messages}>
 	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false}>
-		<form
-			class="app-form"
-			method="POST"
-			action="?/put"
-			use:enhance={editSubmitFunction}
-			on:submit={onSubmit}
-		>
-			<ImageInput
-				file={initialFile}
-				formName="avatar"
-				altText="Imagem de Perfil"
-				inputLabel="Editar"
-			/>
+		<form class="app-form" method="POST" action="?/put" use:enhance={editSubmitFunction} on:submit={onSubmit}>
+			<ImageInput file={initialFile} formName="avatar" altText="Imagem de Perfil" inputLabel="Editar" />
 			<div class="input">
 				<Icon src={HiOutlineUser} />
 				<input
@@ -101,7 +87,7 @@
 				/>
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineMail} />
+				<Icon src={HiOutlineEnvelope} />
 				<input
 					value={userData.email}
 					name="email"

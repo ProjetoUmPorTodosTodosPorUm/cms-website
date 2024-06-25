@@ -9,11 +9,8 @@
 	import { editSubmitFunction, fromFilenameToFileDto } from '$src/lib/utils'
 	import { REPORTS_INPUT_LABELS, REPORT_TYPES } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlinePencil from 'svelte-icons-pack/hi/HiOutlinePencil'
-	import HiOutlineMenuAlt2 from 'svelte-icons-pack/hi/HiOutlineMenuAlt2'
-	import HiOutlineCalendar from 'svelte-icons-pack/hi/HiOutlineCalendar'
-	import HiOutlineTag from 'svelte-icons-pack/hi/HiOutlineTag'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlinePencil, HiOutlineBars3, HiOutlineCalendar, HiOutlineTag } from 'svelte-icons-pack/hi'
 
 	export let data: PageData
 	export let form: ActionData
@@ -56,31 +53,14 @@
 </svelte:head>
 
 <AppContainer {messages}>
-	<AppContent
-		{...appHeader}
-		{isLoading}
-		showActions={false}
-		showRefreshButton={false}
-		on:click={onSubmit}
-	>
-		<form
-			class="app-form"
-			method="POST"
-			action="?/put"
-			use:enhance={editSubmitFunction}
-			on:submit={onSubmit}
-		>
+	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false} on:click={onSubmit}>
+		<form class="app-form" method="POST" action="?/put" use:enhance={editSubmitFunction} on:submit={onSubmit}>
 			<div class="input">
 				<Icon src={HiOutlinePencil} />
-				<input
-					value={reportData.title}
-					name="title"
-					placeholder={REPORTS_INPUT_LABELS.title}
-					autocomplete="off"
-				/>
+				<input value={reportData.title} name="title" placeholder={REPORTS_INPUT_LABELS.title} autocomplete="off" />
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineMenuAlt2} />
+				<Icon src={HiOutlineBars3} />
 				<textarea
 					value={reportData.shortDescription}
 					name="shortDescription"
@@ -90,11 +70,7 @@
 				/>
 			</div>
 			<div class="input input-lg">
-				<TinyMCEEditor
-					value={reportData.text || ''}
-					formName="message"
-					placeholder={REPORTS_INPUT_LABELS.text}
-				/>
+				<TinyMCEEditor value={reportData.text || ''} formName="message" placeholder={REPORTS_INPUT_LABELS.text} />
 				<!-- file={form?.apiData?.file} -->
 			</div>
 			<div class="input input-lg">

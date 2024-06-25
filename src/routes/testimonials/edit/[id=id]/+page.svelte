@@ -8,9 +8,8 @@
 	import { editSubmitFunction } from '$src/lib/utils'
 	import { TESTIMONIALS_INPUT_LABELS } from '$constants'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineUser from 'svelte-icons-pack/hi/HiOutlineUser'
-	import HiOutlineMail from 'svelte-icons-pack/hi/HiOutlineMail'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineUser, HiOutlineEnvelope } from 'svelte-icons-pack/hi'
 
 	export let data: PageData
 	export let form: ActionData
@@ -42,20 +41,8 @@
 </svelte:head>
 
 <AppContainer {messages}>
-	<AppContent
-		{...appHeader}
-		{isLoading}
-		showActions={false}
-		showRefreshButton={false}
-		on:click={onSubmit}
-	>
-		<form
-			class="app-form"
-			method="POST"
-			action="?/put"
-			use:enhance={editSubmitFunction}
-			on:submit={onSubmit}
-		>
+	<AppContent {...appHeader} {isLoading} showActions={false} showRefreshButton={false} on:click={onSubmit}>
+		<form class="app-form" method="POST" action="?/put" use:enhance={editSubmitFunction} on:submit={onSubmit}>
 			<div class="input">
 				<Icon src={HiOutlineUser} />
 				<input
@@ -66,7 +53,7 @@
 				/>
 			</div>
 			<div class="input">
-				<Icon src={HiOutlineMail} />
+				<Icon src={HiOutlineEnvelope} />
 				<input
 					value={testimonialData.email}
 					name="email"
@@ -76,11 +63,7 @@
 				/>
 			</div>
 			<div class="input input-lg">
-				<TinyMCEEditor
-					value={testimonialData.text}
-					formName="text"
-					placeholder={TESTIMONIALS_INPUT_LABELS.text}
-				/>
+				<TinyMCEEditor value={testimonialData.text} formName="text" placeholder={TESTIMONIALS_INPUT_LABELS.text} />
 				<!-- file={form?.apiData?.file} -->
 			</div>
 			<FieldSelect value={testimonialData.fieldId} />

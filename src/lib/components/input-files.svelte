@@ -4,8 +4,8 @@
 	import type { FileDto } from '$types'
 	import BaseInputFile from './base-input-file.svelte'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlinePaperClip from 'svelte-icons-pack/hi/HiOutlinePaperClip'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlinePaperClip } from 'svelte-icons-pack/hi'
 
 	export let files: FileDto[] = []
 	export let formName = ''

@@ -4,9 +4,9 @@
 	import { createEventDispatcher } from 'svelte'
 	import { enhance } from '$app/forms'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineArrowSmLeft from 'svelte-icons-pack/hi/HiOutlineArrowSmLeft'
-	import AiOutlineLoading from 'svelte-icons-pack/ai/AiOutlineLoading'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineArrowLeft } from 'svelte-icons-pack/hi'
+	import { AiOutlineLoading } from 'svelte-icons-pack/ai'
 
 	export let showBackButton = false
 
@@ -32,27 +32,19 @@
 		<div class="form-image">
 			{#if showBackButton}
 				<button on:click|preventDefault={onBackButtonClick}>
-					<Icon src={HiOutlineArrowSmLeft} className="icon" />
+					<Icon src={HiOutlineArrowLeft} className="icon" />
 				</button>
 			{/if}
 		</div>
 		<div class="form">
 			<h2>{title}</h2>
 			<p>{subTitle}</p>
-			<form
-				method="POST"
-				{action}
-				on:submit|preventDefault|stopPropagation={onSubmit}
-				use:enhance
-				class="form-inputs"
-			>
+			<form method="POST" {action} on:submit|preventDefault|stopPropagation={onSubmit} use:enhance class="form-inputs">
 				<slot name="body" />
 
 				{#if isLoading}
 					<!-- on:click={submit} -->
-					<button disabled={true} type="submit"
-						><Icon src={AiOutlineLoading} className="loading-icon" /></button
-					>
+					<button disabled={true} type="submit"><Icon src={AiOutlineLoading} className="loading-icon" /></button>
 				{:else}
 					<button disabled={isSubmitDisabled} type="submit">{buttonText}</button>
 				{/if}

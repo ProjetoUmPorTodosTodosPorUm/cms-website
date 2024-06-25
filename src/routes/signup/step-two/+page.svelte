@@ -5,8 +5,8 @@
 	import type { ActionData } from './$types'
 	import { page } from '$app/stores'
 
-	import Icon from 'svelte-icons-pack/Icon.svelte'
-	import HiOutlineKey from 'svelte-icons-pack/hi/HiOutlineKey'
+	import { Icon } from 'svelte-icons-pack'
+	import { HiOutlineKey } from 'svelte-icons-pack/hi'
 
 	export let form: ActionData
 	let isLoading = false
@@ -91,14 +91,7 @@
 	<title>Criar Conta</title>
 </svelte:head>
 
-<AuthModal
-	on:submit={onSubmit}
-	{...authModal}
-	{isLoading}
-	{isSubmitDisabled}
-	{messages}
-	showBackButton={true}
->
+<AuthModal on:submit={onSubmit} {...authModal} {isLoading} {isSubmitDisabled} {messages} showBackButton={true}>
 	<svelte:fragment slot="body">
 		<input name="email" type="email" value={email} hidden={true} />
 
