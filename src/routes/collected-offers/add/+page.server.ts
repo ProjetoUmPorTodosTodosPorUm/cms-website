@@ -7,7 +7,7 @@ import { ApiError } from '$classes/api-error'
 import { COLLECT_OFFERS_INPUT_LABELS, SHARED } from '$constants'
 
 export const actions = {
-	post: async ({ fetch, request, cookies }) => {
+	post: async ({ fetch, request }) => {
 		const schema = yup.object().shape({
 			month: yup
 				.number()
@@ -54,7 +54,7 @@ export const actions = {
 				{ abortEarly: false }
 			)
 
-			const res = await safeFetch(fetch, cookies, {
+			const res = await safeFetch(fetch, {
 				url: `${PUBLIC_API_URL}/monthly-offer`,
 				method: 'POST',
 				body: { month, year, foodQnt, monetaryValue, othersQnt, field }

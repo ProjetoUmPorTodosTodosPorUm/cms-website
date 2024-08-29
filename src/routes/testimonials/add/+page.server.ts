@@ -7,7 +7,7 @@ import { ApiError } from '$classes/api-error'
 import { TESTIMONIALS_INPUT_LABELS, SHARED } from '$constants'
 
 export const actions = {
-	post: async ({ fetch, request, cookies }) => {
+	post: async ({ fetch, request }) => {
 		const schema = yup.object().shape({
 			name: yup.string().required(SHARED.yup.required(TESTIMONIALS_INPUT_LABELS.name)),
 			email: yup
@@ -28,7 +28,7 @@ export const actions = {
 		try {
 			schema.validateSync({ name, email, text, field }, { abortEarly: false })
 
-			const res = await safeFetch(fetch, cookies, {
+			const res = await safeFetch(fetch, {
 				url: `${PUBLIC_API_URL}/testimonial`,
 				method: 'POST',
 				body: { name, email: email || undefined, text, field }

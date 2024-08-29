@@ -2,22 +2,22 @@ import type { PageServerLoad } from './$types'
 import { listLoad, restoreAction, hardRemoveAction, removeAction } from '$utils'
 import type { Actions } from './$types'
 
-export const load: PageServerLoad = async ({ fetch, cookies, url, depends }) => {
+export const load: PageServerLoad = async ({ fetch, url, depends }) => {
 	depends('app:list-load')
 
-	return await listLoad('announcement', fetch, cookies, url)
+	return await listLoad('announcement', fetch, url)
 }
 
 export const actions = {
-	remove: async ({ fetch, request, cookies }) => {
-		return await removeAction('announcement', fetch, request, cookies)
+	remove: async ({ fetch, request }) => {
+		return await removeAction('announcement', fetch, request)
 	},
 
-	restore: async ({ fetch, request, cookies }) => {
-		return await restoreAction('announcement', fetch, request, cookies)
+	restore: async ({ fetch, request }) => {
+		return await restoreAction('announcement', fetch, request)
 	},
 
-	hardRemove: async ({ fetch, request, cookies }) => {
-		return await hardRemoveAction('announcement', fetch, request, cookies)
+	hardRemove: async ({ fetch, request }) => {
+		return await hardRemoveAction('announcement', fetch, request)
 	}
 } satisfies Actions

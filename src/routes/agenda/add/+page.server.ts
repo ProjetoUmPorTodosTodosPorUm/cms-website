@@ -13,7 +13,7 @@ import { ApiError } from '$classes/api-error'
 import { AGENDA_INPUT_LABELS, SHARED } from '$constants'
 
 export const actions = {
-	post: async ({ fetch, request, cookies }) => {
+	post: async ({ fetch, request }) => {
 		const schema = yup.object().shape({
 			title: yup.string().required(SHARED.yup.required(AGENDA_INPUT_LABELS.title)),
 			message: yup.string().required(SHARED.yup.required(AGENDA_INPUT_LABELS.message)),
@@ -36,7 +36,7 @@ export const actions = {
 				{ abortEarly: false }
 			)
 
-			const res = await safeFetch(fetch, cookies, {
+			const res = await safeFetch(fetch, {
 				url: `${PUBLIC_API_URL}/agenda`,
 				method: 'POST',
 				body: { title, message, attachments: arrAttachments, date, field }
@@ -58,11 +58,11 @@ export const actions = {
 		}
 	},
 
-	bulkFile: async ({ fetch, request, cookies }) => {
-		return await bulkFileAction(fetch, request, cookies)
+	bulkFile: async ({ fetch, request }) => {
+		return await bulkFileAction(fetch, request)
 	},
 
-	fileRemove: async ({ fetch, request, cookies }) => {
-		return await fileRemoveAction(fetch, request, cookies)
+	fileRemove: async ({ fetch, request }) => {
+		return await fileRemoveAction(fetch, request)
 	}
 } satisfies Actions

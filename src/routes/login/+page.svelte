@@ -1,11 +1,6 @@
 <script lang="ts">
 	import AuthModal from '$components/auth-modal.svelte'
-	import { getContext } from 'svelte'
 	import type { ActionData } from './$types'
-	import { delay } from '$utils'
-	import { goto } from '$app/navigation'
-	import type { UserStore } from '$stores'
-	import { browser } from '$app/environment'
 	import { LOGIN_INPUT_LABELS } from '$constants'
 
 	import { Icon } from 'svelte-icons-pack'
@@ -13,23 +8,9 @@
 
 	export let form: ActionData
 	let isLoading = false
-	const userStore = getContext<UserStore>('user')
 
 	$: messages = form?.messages ?? []
 	$: messages, postActionCallback()
-	$: justLoggedIn = !!form?.apiData
-	$: messages || justLoggedIn, redirectLoggedIn()
-
-	async function redirectLoggedIn() {
-		if (browser) {
-			if (justLoggedIn) {
-				await delay(1000)
-				await goto(`/`)
-			} else if (userStore.isLoggedIn()) {
-				await goto(`/`)
-			}
-		}
-	}
 
 	async function postActionCallback() {
 		// ignore first loading triggering

@@ -14,7 +14,7 @@ import { Occupation } from '$enums'
 import { VOLUNTEERS_INPUT_LABELS, VOLUNTEERS_OCCUPATIONS, SHARED } from '$constants'
 
 export const actions = {
-	post: async ({ fetch, request, cookies }) => {
+	post: async ({ fetch, request }) => {
 		const occupations = [
 			{ value: 'PRESIDENT', text: VOLUNTEERS_OCCUPATIONS.president },
 			{ value: 'VICE_PRESIDENT', text: VOLUNTEERS_OCCUPATIONS.vicePresident },
@@ -89,7 +89,7 @@ export const actions = {
 				{ abortEarly: false }
 			)
 
-			const res = await safeFetch(fetch, cookies, {
+			const res = await safeFetch(fetch, {
 				url: `${PUBLIC_API_URL}/volunteer`,
 				method: 'POST',
 				body: {
@@ -122,11 +122,11 @@ export const actions = {
 		}
 	},
 
-	file: async ({ fetch, request, cookies }) => {
-		return await fileAction(fetch, request, cookies)
+	file: async ({ fetch, request }) => {
+		return await fileAction(fetch, request)
 	},
 
-	fileRemove: async ({ fetch, request, cookies }) => {
-		return await fileRemoveAction(fetch, request, cookies)
+	fileRemove: async ({ fetch, request }) => {
+		return await fileRemoveAction(fetch, request)
 	}
 } satisfies Actions

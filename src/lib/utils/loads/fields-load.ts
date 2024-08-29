@@ -1,12 +1,9 @@
 import type { ApiResponseDto } from '$types'
 import { generateMessages, safeFetch } from '$utils'
 import { PUBLIC_API_URL } from '$env/static/public'
-import type { Cookies } from '@sveltejs/kit'
 
-export async function fieldsLoad(skFetch: typeof fetch, cookies: Cookies) {
-	// do not trust user input
-
-	const res = await safeFetch(skFetch, cookies, {
+export async function fieldsLoad(skFetch: typeof fetch) {
+	const res = await safeFetch(skFetch, {
 		url: `${PUBLIC_API_URL}/field?itemsPerPage=100`
 	})
 

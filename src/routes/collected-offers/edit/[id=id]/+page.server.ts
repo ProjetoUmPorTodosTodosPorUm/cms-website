@@ -7,12 +7,12 @@ import { ApiError } from '$classes/api-error'
 import type { PageServerLoad } from './$types'
 import { COLLECT_OFFERS_INPUT_LABELS, SHARED } from '$constants'
 
-export const load: PageServerLoad = async ({ fetch, cookies, params }) => {
-	return await editLoad('monthly-offer', fetch, cookies, params)
+export const load: PageServerLoad = async ({ fetch, params }) => {
+	return await editLoad('monthly-offer', fetch, params)
 }
 
 export const actions = {
-	put: async ({ fetch, request, locals, cookies, params }) => {
+	put: async ({ fetch, request, locals, params }) => {
 		const schema = yup.object().shape({
 			month: yup
 				.number()
@@ -59,7 +59,7 @@ export const actions = {
 				{ abortEarly: false }
 			)
 
-			const res = await safeFetch(fetch, cookies, {
+			const res = await safeFetch(fetch, {
 				url: `${PUBLIC_API_URL}/monthly-offer/${params.id}`,
 				method: 'PUT',
 				body: { month, year, foodQnt, monetaryValue, othersQnt, field }

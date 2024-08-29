@@ -7,7 +7,7 @@ import { ApiError } from '$classes/api-error'
 import { FIELDS_INPUT_LABELS, SHARED } from '$constants'
 
 export const actions = {
-	post: async ({ fetch, request, cookies }) => {
+	post: async ({ fetch, request }) => {
 		const schema = yup.object().shape({
 			continent: yup.string().required(SHARED.yup.required(FIELDS_INPUT_LABELS.continent)),
 			country: yup.string().required(SHARED.yup.required(FIELDS_INPUT_LABELS.country)),
@@ -49,7 +49,7 @@ export const actions = {
 				{ abortEarly: false }
 			)
 
-			const res = await safeFetch(fetch, cookies, {
+			const res = await safeFetch(fetch, {
 				url: `${PUBLIC_API_URL}/field`,
 				method: 'POST',
 				body: {

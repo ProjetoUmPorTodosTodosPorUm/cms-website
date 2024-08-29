@@ -13,7 +13,7 @@ import { ApiError } from '$classes/api-error'
 import { COLLABORATORS_INPUT_LABELS, SHARED } from '$constants'
 
 export const actions = {
-	post: async ({ fetch, request, cookies }) => {
+	post: async ({ fetch, request }) => {
 		const schema = yup.object().shape({
 			title: yup.string().required(SHARED.yup.required(COLLABORATORS_INPUT_LABELS.title)),
 			description: yup
@@ -35,7 +35,7 @@ export const actions = {
 				{ abortEarly: false }
 			)
 
-			const res = await safeFetch(fetch, cookies, {
+			const res = await safeFetch(fetch, {
 				url: `${PUBLIC_API_URL}/collaborator`,
 				method: 'POST',
 				body: { title, description, image, field }
@@ -57,11 +57,11 @@ export const actions = {
 		}
 	},
 
-	file: async ({ fetch, request, cookies }) => {
-		return await fileAction(fetch, request, cookies)
+	file: async ({ fetch, request }) => {
+		return await fileAction(fetch, request)
 	},
 
-	fileRemove: async ({ fetch, request, cookies }) => {
-		return await fileRemoveAction(fetch, request, cookies)
+	fileRemove: async ({ fetch, request }) => {
+		return await fileRemoveAction(fetch, request)
 	}
 } satisfies Actions

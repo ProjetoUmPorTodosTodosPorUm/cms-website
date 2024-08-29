@@ -8,12 +8,12 @@ import { OfferorFamilyGroup } from '$enums'
 import type { PageServerLoad } from './$types'
 import { OFFEROR_FAMILIES_INPUT_LABELS, OFFEROR_FAMILIES_GROUPS, SHARED } from '$constants'
 
-export const load: PageServerLoad = async ({ fetch, cookies, params }) => {
-	return await editLoad('offeror-family', fetch, cookies, params)
+export const load: PageServerLoad = async ({ fetch, params }) => {
+	return await editLoad('offeror-family', fetch, params)
 }
 
 export const actions = {
-	put: async ({ fetch, request, cookies, params }) => {
+	put: async ({ fetch, request, params }) => {
 		const groups = [
 			{ value: 'CHURCH', text: OFFEROR_FAMILIES_GROUPS.church },
 			{ value: 'COMMUNITY', text: OFFEROR_FAMILIES_GROUPS.community },
@@ -51,7 +51,7 @@ export const actions = {
 				{ abortEarly: false }
 			)
 
-			const res = await safeFetch(fetch, cookies, {
+			const res = await safeFetch(fetch, {
 				url: `${PUBLIC_API_URL}/offeror-family/${params.id}`,
 				method: 'PUT',
 				body: { representative, commitment, churchDenomination, group, field }

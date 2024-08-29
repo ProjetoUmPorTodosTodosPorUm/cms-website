@@ -1,19 +1,17 @@
 <script lang="ts">
-	import { getContext } from 'svelte'
 	import { page } from '$app/stores'
-	import type { UserStore } from '$stores'
 	import type { FieldDto } from '$types'
+	import { Role } from '$enums'
 
 	import { Icon } from 'svelte-icons-pack'
 	import { HiOutlineGlobeAmericas } from 'svelte-icons-pack/hi'
 
-	let userStore = getContext<UserStore>('user')
-
 	export let value = ''
 	$: fields = $page.data.fields || ([] as FieldDto[])
+	$: user = $page.data.user
 </script>
 
-{#if userStore.isWebMaster()}
+{#if user?.role === Role.WEB_MASTER}
 	<div class="input">
 		<Icon src={HiOutlineGlobeAmericas} />
 		<select {value} name="field">

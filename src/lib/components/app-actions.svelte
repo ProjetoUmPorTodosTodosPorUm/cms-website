@@ -1,16 +1,16 @@
 <script lang="ts">
 	import '$scss/components/app-actions.scss'
 	import { Pagination, SearchInput } from '$components'
-	import type { UserStore } from '$stores'
-	import { getContext, onMount } from 'svelte'
+	import { onMount } from 'svelte'
 	import { fade } from 'svelte/transition'
 	import { page } from '$app/stores'
 	import { goto, invalidate } from '$app/navigation'
 	import { enhance } from '$app/forms'
 	import type { FieldDto } from '$types'
+	import { Role } from '../enums'
 
 	$: fields = $page.data.fields || ([] as FieldDto[])
-	const userStore = getContext<UserStore>('user')
+	$: user = $page.data.user
 
 	// Component Data - forwarding
 	export let maxPage = 1
@@ -110,7 +110,7 @@
 	<Pagination {maxPage} />
 	<div class="app-actions-wrapper">
 		<div class="filter-button-wrapper">
-			{#if userStore.isWebMaster() && showFilter}
+			{#if user?.role === Role.WEB_MASTER && showFilter}
 				<button on:click={handleFilterMenu} class="action-button filter jsFilter"
 					><span>Filtro</span><svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -200,7 +200,7 @@
 		</button>
 	</div>
 </div>
-{#if userStore.isAdmin() || userStore.isWebMaster()}
+{#if user?.role === Role.ADMIN || user?.role === Role.WEB_MASTER}
 	<div class="app-actions-admin">
 		<div class="show-deleted">
 			<span>Mostrar Removidos</span>

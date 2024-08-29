@@ -14,12 +14,12 @@ import { ApiError } from '$classes/api-error'
 import type { PageServerLoad } from './$types'
 import { COLLABORATORS_INPUT_LABELS, SHARED } from '$constants'
 
-export const load: PageServerLoad = async ({ fetch, cookies, params }) => {
-	return await editLoad('collaborator', fetch, cookies, params)
+export const load: PageServerLoad = async ({ fetch, params }) => {
+	return await editLoad('collaborator', fetch, params)
 }
 
 export const actions = {
-	put: async ({ fetch, request, cookies, params }) => {
+	put: async ({ fetch, request, params }) => {
 		const schema = yup.object().shape({
 			title: yup.string().required(SHARED.yup.required(COLLABORATORS_INPUT_LABELS.title)),
 			description: yup
@@ -41,7 +41,7 @@ export const actions = {
 				{ abortEarly: false }
 			)
 
-			const res = await safeFetch(fetch, cookies, {
+			const res = await safeFetch(fetch, {
 				url: `${PUBLIC_API_URL}/collaborator/${params.id}`,
 				method: 'PUT',
 				body: { title, description, image, field }
@@ -63,11 +63,11 @@ export const actions = {
 		}
 	},
 
-	file: async ({ fetch, request, cookies }) => {
-		return await fileAction(fetch, request, cookies)
+	file: async ({ fetch, request }) => {
+		return await fileAction(fetch, request)
 	},
 
-	fileRemove: async ({ fetch, request, cookies }) => {
-		return await fileRemoveAction(fetch, request, cookies)
+	fileRemove: async ({ fetch, request }) => {
+		return await fileRemoveAction(fetch, request)
 	}
 } satisfies Actions
