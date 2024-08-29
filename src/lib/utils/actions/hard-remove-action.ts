@@ -1,5 +1,5 @@
 import { PUBLIC_API_URL } from '$env/static/public'
-import { type Cookies, fail } from '@sveltejs/kit'
+import { fail } from '@sveltejs/kit'
 import type { ApiResponseDto } from '$types'
 import { generateMessages } from '$utils'
 import { safeFetch } from '$utils'
@@ -8,12 +8,11 @@ export async function hardRemoveAction(
 	apiPathname: string,
 	skFetch: typeof fetch,
 	request: Request,
-	cookies: Cookies
 ) {
 	const data = await request.formData()
 	const ids = data.getAll('ids')
 
-	const res = await safeFetch(skFetch, cookies, {
+	const res = await safeFetch(skFetch, {
 		url: `${PUBLIC_API_URL}/${apiPathname}/hard-remove`,
 		method: 'DELETE',
 		body: { ids }

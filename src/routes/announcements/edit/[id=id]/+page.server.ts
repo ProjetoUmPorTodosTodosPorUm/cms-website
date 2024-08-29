@@ -14,12 +14,12 @@ import { ApiError } from '$classes/api-error'
 import type { PageServerLoad } from './$types'
 import { ANNOUNCEMENTS_INPUT_LABEL, SHARED } from '$constants'
 
-export const load: PageServerLoad = async ({ fetch, cookies, params }) => {
-	return await editLoad('announcement', fetch, cookies, params)
+export const load: PageServerLoad = async ({ fetch, params }) => {
+	return await editLoad('announcement', fetch, params)
 }
 
 export const actions = {
-	put: async ({ fetch, request, cookies, params }) => {
+	put: async ({ fetch, request, params }) => {
 		const schema = yup.object().shape({
 			title: yup.string().required(SHARED.yup.required(ANNOUNCEMENTS_INPUT_LABEL.title)),
 			message: yup.string().required(SHARED.yup.required(ANNOUNCEMENTS_INPUT_LABEL.message)),
@@ -42,7 +42,7 @@ export const actions = {
 				{ abortEarly: false }
 			)
 
-			const res = await safeFetch(fetch, cookies, {
+			const res = await safeFetch(fetch, {
 				url: `${PUBLIC_API_URL}/announcement/${params.id}`,
 				method: 'PUT',
 				body: { title, message, attachments: arrAttachments, fixed, field }
@@ -64,11 +64,11 @@ export const actions = {
 		}
 	},
 
-	bulkFile: async ({ fetch, request, cookies }) => {
-		return await bulkFileAction(fetch, request, cookies)
+	bulkFile: async ({ fetch, request }) => {
+		return await bulkFileAction(fetch, request)
 	},
 
-	fileRemove: async ({ fetch, request, cookies }) => {
-		return await fileRemoveAction(fetch, request, cookies)
+	fileRemove: async ({ fetch, request }) => {
+		return await fileRemoveAction(fetch, request)
 	}
 } satisfies Actions

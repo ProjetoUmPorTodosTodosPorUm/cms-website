@@ -8,7 +8,7 @@ import { OfferorFamilyGroup } from '$enums'
 import { OFFEROR_FAMILIES_INPUT_LABELS, OFFEROR_FAMILIES_GROUPS, SHARED } from '$constants'
 
 export const actions = {
-	post: async ({ fetch, request, cookies }) => {
+	post: async ({ fetch, request }) => {
 		const groups = [
 			{ value: 'CHURCH', text: OFFEROR_FAMILIES_GROUPS.church },
 			{ value: 'COMMUNITY', text: OFFEROR_FAMILIES_GROUPS.community },
@@ -46,7 +46,7 @@ export const actions = {
 				{ abortEarly: false }
 			)
 
-			const res = await safeFetch(fetch, cookies, {
+			const res = await safeFetch(fetch, {
 				url: `${PUBLIC_API_URL}/offeror-family`,
 				method: 'POST',
 				body: { representative, commitment, churchDenomination, group, field }

@@ -2,7 +2,7 @@
 export type { AppNavMenuItem, ColumnCell, Pagination, RowCell } from './components'
 
 // Stores
-export type { SettingsStore, UserStore } from './store'
+export type { SettingsStore } from './store'
 
 // DTOs
 export type {

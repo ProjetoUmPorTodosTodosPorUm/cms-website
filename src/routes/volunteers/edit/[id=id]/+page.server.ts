@@ -15,12 +15,12 @@ import { Occupation } from '$enums'
 import type { PageServerLoad } from './$types'
 import { VOLUNTEERS_INPUT_LABELS, VOLUNTEERS_OCCUPATIONS, SHARED } from '$constants'
 
-export const load: PageServerLoad = async ({ fetch, cookies, params }) => {
-	return await editLoad('volunteer', fetch, cookies, params)
+export const load: PageServerLoad = async ({ fetch, params }) => {
+	return await editLoad('volunteer', fetch, params)
 }
 
 export const actions = {
-	put: async ({ fetch, request, cookies, params }) => {
+	put: async ({ fetch, request, params }) => {
 		const occupations = [
 			{ value: 'PRESIDENT', text: VOLUNTEERS_OCCUPATIONS.president },
 			{ value: 'VICE_PRESIDENT', text: VOLUNTEERS_OCCUPATIONS.vicePresident },
@@ -95,7 +95,7 @@ export const actions = {
 				{ abortEarly: false }
 			)
 
-			const res = await safeFetch(fetch, cookies, {
+			const res = await safeFetch(fetch, {
 				url: `${PUBLIC_API_URL}/volunteer/${params.id}`,
 				method: 'PUT',
 				body: {
@@ -128,11 +128,11 @@ export const actions = {
 		}
 	},
 
-	file: async ({ fetch, request, cookies }) => {
-		return await fileAction(fetch, request, cookies)
+	file: async ({ fetch, request }) => {
+		return await fileAction(fetch, request)
 	},
 
-	fileRemove: async ({ fetch, request, cookies }) => {
-		return await fileRemoveAction(fetch, request, cookies)
+	fileRemove: async ({ fetch, request }) => {
+		return await fileRemoveAction(fetch, request)
 	}
 } satisfies Actions

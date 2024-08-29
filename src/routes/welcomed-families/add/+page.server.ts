@@ -7,7 +7,7 @@ import { ApiError } from '$classes/api-error'
 import { WELCOMED_FAMILIES_INPUT_LABELS, SHARED } from '$constants'
 
 export const actions = {
-	post: async ({ fetch, request, cookies }) => {
+	post: async ({ fetch, request }) => {
 		const schema = yup.object().shape({
 			representative: yup
 				.string()
@@ -27,7 +27,7 @@ export const actions = {
 		try {
 			schema.validateSync({ representative, observation, field }, { abortEarly: false })
 
-			const res = await safeFetch(fetch, cookies, {
+			const res = await safeFetch(fetch, {
 				url: `${PUBLIC_API_URL}/welcomed-family`,
 				method: 'POST',
 				body: { representative, observation, field }

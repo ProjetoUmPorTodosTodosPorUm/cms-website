@@ -13,9 +13,9 @@ import {
 import { ApiError } from '$classes/api-error'
 import { PROFILE_INPUT_LABELS, SHARED } from '$constants'
 
-export const load: PageServerLoad = async ({ fetch, cookies }) => {
+export const load: PageServerLoad = async ({ fetch }) => {
 	// code from editLoad
-	const res = await safeFetch(fetch, cookies, {
+	const res = await safeFetch(fetch, {
 		url: `${PUBLIC_API_URL}/user/me`
 	})
 
@@ -40,7 +40,7 @@ export const load: PageServerLoad = async ({ fetch, cookies }) => {
 }
 
 export const actions = {
-	put: async ({ fetch, request, cookies }) => {
+	put: async ({ fetch, request, locals }) => {
 		const schema = yup.object().shape(
 			{
 				firstName: yup.string().required(SHARED.yup.required(PROFILE_INPUT_LABELS.firstName)),
@@ -82,18 +82,25 @@ export const actions = {
 				{ abortEarly: false }
 			)
 
-			const res = await safeFetch(fetch, cookies, {
+			const res = await safeFetch(fetch, {
 				url: `${PUBLIC_API_URL}/user/me`,
 				method: 'PUT',
 				body: { firstName, lastName, password: password || undefined, avatar }
 			})
-			let resJson: ApiResponseDto
 
 			if (res && res.status !== 200) {
 				throw new ApiError((await res.json()) as ApiResponseDto, res.status)
-			} else {
-				resJson = await res?.json()
-			}
+			} 
+
+			let resJson: ApiResponseDto = await res?.json()
+
+			const { session } = locals
+            await session.setData({
+                ...session.data,
+                user: resJson.data,
+            })
+            await session.save()
+
 			return {
 				apiData: resJson.data,
 				messages: generateMessages([{ message: resJson.message, variant: 'success' }])
@@ -103,11 +110,11 @@ export const actions = {
 		}
 	},
 
-	file: async ({ fetch, request, cookies }) => {
-		return await fileAction(fetch, request, cookies)
+	file: async ({ fetch, request }) => {
+		return await fileAction(fetch, request)
 	},
 
-	fileRemove: async ({ fetch, request, cookies }) => {
-		return await fileRemoveAction(fetch, request, cookies)
+	fileRemove: async ({ fetch, request }) => {
+		return await fileRemoveAction(fetch, request)
 	}
 } satisfies Actions

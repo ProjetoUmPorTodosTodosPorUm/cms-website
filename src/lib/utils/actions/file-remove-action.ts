@@ -1,10 +1,10 @@
 import { PUBLIC_API_URL } from '$env/static/public'
-import { type Cookies, fail } from '@sveltejs/kit'
+import { fail } from '@sveltejs/kit'
 import type { ApiResponseDto, FileDto, Pagination } from '$types'
 import { fromPaginationToQuery, generateMessages } from '$utils'
 import { safeFetch } from '$utils'
 
-export async function fileRemoveAction(skFetch: typeof fetch, request: Request, cookies: Cookies) {
+export async function fileRemoveAction(skFetch: typeof fetch, request: Request) {
 	const data = await request.formData()
 	const fileName = data.get('filename')?.toString() || ''
 
@@ -19,7 +19,7 @@ export async function fileRemoveAction(skFetch: typeof fetch, request: Request, 
 	}
 	const queryString = fromPaginationToQuery(pagination)
 
-	const fileRes = await safeFetch(skFetch, cookies, {
+	const fileRes = await safeFetch(skFetch, {
 		url: `${PUBLIC_API_URL}/file?${queryString}`,
 		method: 'GET',
 		body: data,
@@ -36,7 +36,7 @@ export async function fileRemoveAction(skFetch: typeof fetch, request: Request, 
 		file = fileResJson.data[0]
 	}
 
-	const res = await safeFetch(skFetch, cookies, {
+	const res = await safeFetch(skFetch, {
 		url: `${PUBLIC_API_URL}/file/${file.id}`,
 		method: 'DELETE',
 		body: data,

@@ -7,12 +7,12 @@ import { ApiError } from '$classes/api-error'
 import type { PageServerLoad } from './$types'
 import { WELCOMED_FAMILIES_INPUT_LABELS, SHARED } from '$constants'
 
-export const load: PageServerLoad = async ({ fetch, cookies, params }) => {
-	return await editLoad('welcomed-family', fetch, cookies, params)
+export const load: PageServerLoad = async ({ fetch, params }) => {
+	return await editLoad('welcomed-family', fetch, params)
 }
 
 export const actions = {
-	put: async ({ fetch, request, cookies, params }) => {
+	put: async ({ fetch, request, params }) => {
 		const schema = yup.object().shape({
 			representative: yup
 				.string()
@@ -32,7 +32,7 @@ export const actions = {
 		try {
 			schema.validateSync({ representative, observation, field }, { abortEarly: false })
 
-			const res = await safeFetch(fetch, cookies, {
+			const res = await safeFetch(fetch, {
 				url: `${PUBLIC_API_URL}/welcomed-family/${params.id}`,
 				method: 'PUT',
 				body: { representative, observation, field }

@@ -14,7 +14,7 @@ import { ApiError } from '$classes/api-error'
 import { CHURCHES_INPUT_LABELS, CHURCH_TYPES, SHARED } from '$constants'
 
 export const actions = {
-	post: async ({ fetch, request, cookies }) => {
+	post: async ({ fetch, request }) => {
 		const churchTypes = [
 			{ value: 'PIONEER', text: CHURCH_TYPES.pioneer },
 			{ value: 'EXPANSION', text: CHURCH_TYPES.expansion },
@@ -50,7 +50,7 @@ export const actions = {
 				{ abortEarly: false }
 			)
 
-			const res = await safeFetch(fetch, cookies, {
+			const res = await safeFetch(fetch, {
 				url: `${PUBLIC_API_URL}/church`,
 				method: 'POST',
 				body: { name, description, images: arrImages, type, field }
@@ -72,11 +72,11 @@ export const actions = {
 		}
 	},
 
-	bulkFile: async ({ fetch, request, cookies }) => {
-		return await bulkFileAction(fetch, request, cookies)
+	bulkFile: async ({ fetch, request }) => {
+		return await bulkFileAction(fetch, request)
 	},
 
-	fileRemove: async ({ fetch, request, cookies }) => {
-		return await fileRemoveAction(fetch, request, cookies)
+	fileRemove: async ({ fetch, request }) => {
+		return await fileRemoveAction(fetch, request)
 	}
 } satisfies Actions

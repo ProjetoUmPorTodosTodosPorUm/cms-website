@@ -14,7 +14,7 @@ import { ReportType } from '$enums'
 import { REPORTS_INPUT_LABELS, REPORT_TYPES, SHARED } from '$constants'
 
 export const actions = {
-	post: async ({ fetch, request, cookies }) => {
+	post: async ({ fetch, request }) => {
 		const reportTypes = [
 			{ value: 'ORDINARY', text: REPORT_TYPES.ordinary },
 			{ value: 'SEMESTER', text: REPORT_TYPES.semester },
@@ -80,7 +80,7 @@ export const actions = {
 				{ abortEarly: false }
 			)
 
-			const res = await safeFetch(fetch, cookies, {
+			const res = await safeFetch(fetch, {
 				url: `${PUBLIC_API_URL}/report`,
 				method: 'POST',
 				body: {
@@ -111,11 +111,11 @@ export const actions = {
 		}
 	},
 
-	bulkFile: async ({ fetch, request, cookies }) => {
-		return await bulkFileAction(fetch, request, cookies)
+	bulkFile: async ({ fetch, request }) => {
+		return await bulkFileAction(fetch, request)
 	},
 
-	fileRemove: async ({ fetch, request, cookies }) => {
-		return await fileRemoveAction(fetch, request, cookies)
+	fileRemove: async ({ fetch, request }) => {
+		return await fileRemoveAction(fetch, request)
 	}
 } satisfies Actions

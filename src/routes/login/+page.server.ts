@@ -1,13 +1,13 @@
 import type { Actions } from './$types'
 import * as yup from 'yup'
 import { PUBLIC_API_URL } from '$env/static/public'
-import type { ApiResponseDto } from '$types'
+import type { ApiResponseDto, LoginResponseDto } from '$types'
 import { ApiError } from '$classes/api-error'
-import { actionErrorHandler } from '$utils'
+import { actionErrorHandler, generateMessages } from '$utils'
 import { LOGIN_INPUT_LABELS, SHARED } from '$constants'
 
 export const actions = {
-	post: async ({ fetch, request, cookies }) => {
+	post: async ({ fetch, request, locals }) => {
 		const schema = yup.object().shape({
 			email: yup
 				.string()
@@ -33,47 +33,26 @@ export const actions = {
 				},
 				body: JSON.stringify({ email, password })
 			})
-			let resJson: ApiResponseDto
+			
 
 			if (res.status !== 201) {
 				throw new ApiError((await res.json()) as ApiResponseDto, res.status)
-			} else {
-				resJson = await res.json()
-			}
+			} 
 
-			cookies.set('authorization', `Bearer ${resJson.data.accessToken}`, {
-				httpOnly: true,
-				secure: false, // change when prod
-				path: '/',
-				sameSite: true,
-				maxAge: 15 * 60 // 15m
-			})
+			let resJson: ApiResponseDto = await res.json()
+			const { user, accessToken, refreshToken } = resJson.data as LoginResponseDto
 
-			cookies.set('refresh', `Bearer ${resJson.data.refreshToken}`, {
-				httpOnly: true,
-				secure: false, // change when prod
-				path: '/',
-				sameSite: true,
-				maxAge: 7 * 60 * 60 * 24 // 7d
-			})
-
-			cookies.set('user', JSON.stringify(resJson.data.user), {
-				httpOnly: true,
-				secure: false, // change when prod
-				path: '/',
-				sameSite: true,
-				maxAge: 15 * 60 // 15m
-			})
+			const { session } = locals
+            await session.setData({
+                user,
+                accessToken,
+                refreshToken
+            })
+            await session.save()
 
 			return {
-				apiData: resJson.data.user,
-				messages: [
-					{
-						message: resJson.message,
-						id: Date.now(),
-						variant: 'success'
-					}
-				]
+				apiData: user,
+				messages: generateMessages([{ message: resJson.message, variant: 'success' }])
 			}
 		} catch (error) {
 			return actionErrorHandler(error)

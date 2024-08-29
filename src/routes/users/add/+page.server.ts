@@ -8,7 +8,7 @@ import { ApiError } from '$classes/api-error'
 import { USERS_INPUT_LABELS, USERS_ROLES, SHARED } from '$constants'
 
 export const actions = {
-	post: async ({ fetch, request, cookies }) => {
+	post: async ({ fetch, request }) => {
 		const roles = [
 			{ value: 'VOLUNTEER', text: USERS_ROLES.volunteer },
 			{ value: 'ADMIN', text: USERS_ROLES.admin },
@@ -36,7 +36,7 @@ export const actions = {
 		try {
 			schema.validateSync({ name, email, payload }, { abortEarly: false })
 
-			const res = await safeFetch(fetch, cookies, {
+			const res = await safeFetch(fetch, {
 				url: `${PUBLIC_API_URL}/auth/create-email`,
 				method: 'POST',
 				body: { name, email, payload }

@@ -1,69 +1,63 @@
-import type { Cookies } from '@sveltejs/kit'
-import type { LayoutServerLoad } from './$types'
 import { redirect } from '@sveltejs/kit'
-import type { UserDto } from '$types'
+import type { LayoutRouteId, LayoutServerLoad } from './$types'
 import { Role } from '$enums'
 import { fieldsLoad } from '$utils'
+import type { Session } from 'svelte-kit-sessions'
 
-const publicRouteIds = [
-	'/login',
-	'/signup/step-one',
-	'/signup/step-two',
-	'/signup/step-three',
-	'/signup/finished',
-	'/forgot-password/step-one',
-	'/forgot-password/step-two',
-	'/forgot-password/step-three',
-	'/forgot-password/finished',
-	'/health'
-]
-const adminRouteIds = /(\/files.*|\/logs.*|\/users.*)/
+const publicRouteIdsRegExp = /(\/sigup.*|\/forgot-password.*|\/health|\/login)/
+const adminRouteIdsRegExp = /(\/files.*|\/logs.*|\/tokens.*|\/users.*)/
 
-export const load: LayoutServerLoad = async ({
-	locals: { user },
-	cookies,
-	route,
-	depends,
-	fetch
-}) => {
+export const load: LayoutServerLoad = async ({ locals, route, depends, fetch }) => {
 	depends('app:fields-load')
 
-	// guard routes
-	AuthGuard(cookies, route.id ?? '')
+	const { session } = locals
+	AuthGuard(session, route.id)
 
 	// pass information from "server-context" to "shared server + client context"
-	const isWebMaster = user?.role === 'WEB_MASTER'
+	const isWebMaster = session.data && session.data.user?.role === Role.WEB_MASTER
 	if (isWebMaster) {
 		return {
-			...(await fieldsLoad(fetch, cookies)),
-			user
+			...(await fieldsLoad(fetch)),
+			user: session.data.user
+		}
+	} else if(session.data) {
+		return {
+			fields: [],
+			user: session.data.user
 		}
 	} else {
 		return {
 			fields: [],
-			user
+			user: null
 		}
 	}
 }
 
-function AuthGuard(cookies: Cookies, routeId: string) {
-	const authCookie = cookies.get('authorization')
-	const refreshCookie = cookies.get('refresh')
-	const userCookie: UserDto = JSON.parse(cookies.get('user') || '{}')
-
+function AuthGuard(session: Session, routeId: LayoutRouteId) {
 	if (!isPublicRoute(routeId)) {
-		if (!authCookie || !refreshCookie || !userCookie) {
-			// TODO error page not logged in
-			// button to log in
-			redirect(307, `/login`);
-		} else if (adminRouteIds.test(routeId) && userCookie.role !== Role.WEB_MASTER) {
-			// TODO error page not admin
-			// button to dashboard
-			redirect(307, `/`);
+        if (!session.data.user || !session.data.accessToken) {
+            redirect(307, '/login')
+        }
+
+		// full access
+		if(session.data.user?.role === Role.WEB_MASTER) {
+			return
 		}
-	}
+
+        if (isAdminRoute(routeId) && session.data.user?.role !== Role.ADMIN) {
+            redirect(307, '/')
+        }
+    } else if (routeId?.toString() == '/login') {
+        if (session.data.user && session.data.accessToken) {
+            redirect(307, '/')
+        }
+    }
 }
 
-function isPublicRoute(routeId: string) {
-	return publicRouteIds.includes(routeId)
+function isPublicRoute(routeId: LayoutRouteId) {
+	return publicRouteIdsRegExp.test(String(routeId))
+}
+
+function isAdminRoute(routeId: LayoutRouteId) {
+	return adminRouteIdsRegExp.test(String(routeId))
 }

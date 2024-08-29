@@ -7,12 +7,12 @@ import { ApiError } from '$classes/api-error'
 import type { PageServerLoad } from './$types'
 import { FIELDS_INPUT_LABELS, SHARED } from '$constants'
 
-export const load: PageServerLoad = async ({ fetch, cookies, params }) => {
-	return await editLoad('field', fetch, cookies, params)
+export const load: PageServerLoad = async ({ fetch, params }) => {
+	return await editLoad('field', fetch, params)
 }
 
 export const actions = {
-	put: async ({ fetch, request, cookies, params }) => {
+	put: async ({ fetch, request, params }) => {
 		const schema = yup.object().shape({
 			continent: yup.string().required(SHARED.yup.required(FIELDS_INPUT_LABELS.continent)),
 			country: yup.string().required(SHARED.yup.required(FIELDS_INPUT_LABELS.country)),
@@ -54,7 +54,7 @@ export const actions = {
 				{ abortEarly: false }
 			)
 
-			const res = await safeFetch(fetch, cookies, {
+			const res = await safeFetch(fetch, {
 				url: `${PUBLIC_API_URL}/field/${params.id}`,
 				method: 'PUT',
 				body: {

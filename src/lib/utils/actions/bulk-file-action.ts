@@ -1,13 +1,13 @@
 import { PUBLIC_API_URL } from '$env/static/public'
-import { type Cookies, fail } from '@sveltejs/kit'
+import { fail } from '@sveltejs/kit'
 import type { ApiResponseDto, FileDto } from '$types'
 import { generateMessages } from '$utils'
 import { safeFetch } from '$utils'
 
-export async function bulkFileAction(skFetch: typeof fetch, request: Request, cookies: Cookies) {
+export async function bulkFileAction(skFetch: typeof fetch, request: Request) {
 	const data = await request.formData()
 
-	const res = await safeFetch(skFetch, cookies, {
+	const res = await safeFetch(skFetch, {
 		url: `${PUBLIC_API_URL}/file/bulk`,
 		method: 'POST',
 		body: data,

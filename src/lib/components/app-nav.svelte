@@ -1,9 +1,13 @@
 <script lang="ts">
 	import '$scss/components/app-nav.scss'
 	import imageAsset from '$assets/images/logo.png'
+
+	import { VERSION } from '@sveltejs/kit'
+	import { page } from '$app/stores'
 	import type { AppNavMenuItem, Pagination } from '$types'
 	import { Role } from '$enums'
-	import type { UserStore } from '$stores'
+	import { fromPaginationToQuery } from '$utils'
+	import SwitchTheme from './switch-theme.svelte'
 
 	import { Icon } from 'svelte-icons-pack'
 	import {
@@ -29,12 +33,6 @@
 	} from 'svelte-icons-pack/hi'
 	import { BsHouseHeart } from 'svelte-icons-pack/bs'
 
-	import { getContext } from 'svelte'
-	import { VERSION } from '@sveltejs/kit'
-	import { fromPaginationToQuery } from '$utils'
-	import SwitchTheme from './switch-theme.svelte'
-	import { page } from '$app/stores'
-
 	const pagination: Pagination = {
 		page: 1,
 		deleted: false,
@@ -58,9 +56,8 @@
 	// @ts-ignore
 	const APP_VERSION = __APP_VERSION__
 
-	const userStore = getContext<UserStore>('user')
-	$: user = userStore.get()
-	$: userFullname = `${user.firstName} ${user.lastName || ''}`
+	$: user = $page.data.user
+	$: userFullname = `${user?.firstName} ${user?.lastName || ''}`
 
 	$: active = $page.route.id || ''
 
@@ -175,11 +172,6 @@
 			href: `/profile`,
 			icon: HiSolidUserCircle
 		},
-		{
-			name: 'Logout',
-			href: `/logout`,
-			icon: HiOutlineArrowRightOnRectangle
-		}
 	] as AppNavMenuItem[]
 
 	$: menuFilteredByRole = filterMenuByRole(menu)
@@ -187,7 +179,7 @@
 	function filterMenuByRole(menu: AppNavMenuItem[]) {
 		return menu.filter((item) => {
 			if (item.role) {
-				return user.role === item.role || user.role === Role.WEB_MASTER
+				return user?.role === item.role || user?.role === Role.WEB_MASTER
 			} else {
 				return true
 			}
@@ -238,6 +230,12 @@
 				<hr class="app-nav-list-separator" />
 			{/if}
 		{/each}
+		<li class="app-nav-list-item">
+			<a href="/logout" data-sveltekit-preload-data="false">
+				<Icon src={HiOutlineArrowRightOnRectangle} />
+				<span>Logout</span>
+			</a>
+		</li>
 	</ul>
 
 	<div class="app-info">

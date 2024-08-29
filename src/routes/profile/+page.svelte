@@ -1,14 +1,12 @@
 <script lang="ts">
 	import '$scss/dashboard.scss'
 	import '$scss/dashboard-form.scss'
-	import { getContext } from 'svelte'
 	import { enhance } from '$app/forms'
 	import { page } from '$app/stores'
 	import { AppContainer, AppContent, ImageInput } from '$components'
 	import type { FileDto, UserDto } from '$types'
 	import type { PageData, ActionData } from './$types'
 	import { editSubmitFunction, fromFilenameToFileDto } from '$utils'
-	import type { UserStore } from '$stores'
 	import { PROFILE_INPUT_LABELS } from '$constants'
 
 	import { Icon } from 'svelte-icons-pack'
@@ -17,7 +15,6 @@
 	export let data: PageData
 	export let form: ActionData
 	let isLoading = true
-	const userStore = getContext<UserStore>('user')
 	$: messages = form?.messages || (data.messages as any[])
 	$: messages, postActionCallback()
 	$: userData = (data.apiData as UserDto) || ((form?.apiData as any)?.user as UserDto)
@@ -29,7 +26,6 @@
 
 			// @TODO away to verify if an error occurred
 			if ($page.status === 200) {
-				userStore.updateUser(userData)
 				erasePassword()
 			}
 		}
