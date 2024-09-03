@@ -2,7 +2,7 @@
 	import type { RowCell } from '$types'
 	import JSONTree from 'svelte-json-tree'
 	import { PUBLIC_FILES_URL } from '$env/static/public'
-	import { apiPathnameFromUrl, stripHtml } from '$utils'
+	import { apiPathnameFromUrl, shrinkText, stripHtml } from '$utils'
 	import { page } from '$app/stores'
 	import { enhance } from '$app/forms'
 	import { Modal } from '$components'
@@ -38,7 +38,7 @@
 
 	function onModalOpen(rowCell: RowCell) {
 		modal.title = rowCell.label
-		modal.text = rowCell.value
+		modal.text = rowCell.transform ? rowCell.transform(rowCell.value, rowCells) : rowCell.value
 		modal.html = rowCell.modalModalHtml || false
 		showModal = true
 	}
@@ -51,7 +51,7 @@
 		const data = rowCells.reduce((pRow, cRow) => {
 			return {
 				...pRow,
-				[cRow.key]: cRow.transform ? cRow.transform(cRow.value) : cRow.value
+				[cRow.key]: cRow.transform ? cRow.transform(cRow.value, rowCells) : cRow.value
 			}
 		}, {})
 		const remove = confirm(SHARED.remove[apiPathname as keyof typeof SHARED.remove](data))
@@ -69,7 +69,7 @@
 				<span class="cell-label">{rowCell.label}:</span>
 				{#if rowCell.isStatus}
 					<span class={`status ${rowCell.value ? 'active' : 'disabled'}`}>
-						{rowCell.transform ? rowCell.transform(rowCell.value) : rowCell.value ? 'Ativo' : 'Desativado'}
+						{rowCell.transform ? rowCell.transform(rowCell.value, rowCells) : rowCell.value ? 'Ativo' : 'Desativado'}
 					</span>
 				{:else if rowCell.isLink}
 					{#if rowCell.value}
@@ -81,24 +81,19 @@
 					{#if rowCell.value}
 						<a href={`${PUBLIC_FILES_URL}/${rowCell.value}`} target="_blank" rel="noreferrer">{rowCell.value}</a>
 					{:else}
-						{rowCell.transform ? rowCell.transform(rowCell.value) : rowCell.value}
+						{rowCell.transform ? rowCell.transform(rowCell.value, rowCells) : rowCell.value}
 					{/if}
 				{:else if rowCell.isTag}
 					<span class="tag">
-						{rowCell.transform ? rowCell.transform(rowCell.value) : rowCell.value}
+						{rowCell.transform ? rowCell.transform(rowCell.value, rowCells) : rowCell.value}
 					</span>
 				{:else if rowCell.isJson}
 					<JSONTree value={rowCell.value} />
 				{:else if rowCell.isModal}
-					{#if rowCell.value?.length > textLimit}
-						<!-- svelte-ignore a11y-invalid-attribute -->
-						<a href="" on:click={() => onModalOpen(rowCell)}>{stripHtml(rowCell.value.substring(0, textLimit))}...</a>
-					{:else}
-						<!-- svelte-ignore a11y-invalid-attribute -->
-						<a href="" on:click={() => onModalOpen(rowCell)}>{stripHtml(rowCell.value ?? '')}</a>
-					{/if}
+					<!-- svelte-ignore a11y-invalid-attribute -->
+					<a href="" on:click={() => onModalOpen(rowCell)}>{stripHtml(shrinkText(rowCell.value, textLimit))}</a>
 				{:else}
-					{rowCell.transform ? rowCell.transform(rowCell.value) : rowCell.value ?? ''}
+					{rowCell.transform ? rowCell.transform(rowCell.value, rowCells) : rowCell.value ?? ''}
 				{/if}
 			</div>
 		{/if}
@@ -107,7 +102,7 @@
 	{#if showDeleted}
 		{#if isDeleted}
 			<div class="product-cell">
-				{deletedRow.transform ? deletedRow.transform(deletedRow.value) : deletedRow.value}
+				{deletedRow.transform ? deletedRow.transform(deletedRow.value, rowCells) : deletedRow.value}
 			</div>
 		{:else}
 			<div class="product-cell">

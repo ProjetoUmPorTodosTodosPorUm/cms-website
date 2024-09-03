@@ -1,22 +1,16 @@
 <script lang="ts">
 	import '$lib/scss/dashboard.scss'
-	import { navigating } from '$app/stores'
 	import type { ActionData, PageData } from './$types'
-	import {
-		AppContainer,
-		AppContent,
-		CollectionHeader,
-		CollectionRow,
-		CollectionRowPlaceholder
-	} from '$components'
+	import { AppContainer, AppContent, CollectionHeader, CollectionRow } from '$components'
 	import type { ColumnCell, RowCell, ContactDto } from '$types'
 	import { friendlyDateString } from '$utils'
 	import { CONTACTS_INPUT_LABELS, SHARED } from '$constants'
+	import { PUBLIC_FILES_URL } from '$env/static/public'
 
 	export let data: PageData
 	export let form: ActionData
 
-	$: testimonialData = data.apiData as ContactDto[]
+	$: contactData = data.apiData as ContactDto[]
 	$: totalCount = data.totalCount
 	$: totalPages = data.totalPages
 	$: messages = form?.messages || (data.messages as any[])
@@ -41,6 +35,10 @@
 			key: 'message'
 		},
 		{
+			label: CONTACTS_INPUT_LABELS.attachments,
+			key: 'attachments'
+		},
+		{
 			label: SHARED.collectionHeader.createdAtLabel,
 			key: 'createdAt'
 		},
@@ -54,7 +52,7 @@
 		}
 	] as ColumnCell[]
 
-	$: collectionData = Object.entries(testimonialData).map(
+	$: collectionData = Object.entries(contactData).map(
 		([key, item]) =>
 			[
 				{
@@ -76,8 +74,32 @@
 					label: CONTACTS_INPUT_LABELS.message,
 					key: 'message',
 					value: item.message,
-					isModal: true
-					//modalModalHtml: true
+					isModal: true,
+					modalModalHtml: true,
+					transform: (value: string, ctx) => {
+						const attachments: string[] = ctx.filter((item) => item.key === 'attachments')[0].value
+
+						if(attachments.length > 0) {
+
+						return `
+							${value}
+							<ul style="list-style:none;padding:0;margin: 1rem 0 0;">
+								${attachments.map((attachment) => {
+									return `<li><a style="text-decoration:underline;" href="${PUBLIC_FILES_URL}/${attachment}" target="_blank">${attachment}</a></li>`
+								}).join(' ')}
+								
+							</ul>
+						`
+						} else {
+							return value
+						}
+					}
+				},
+				{
+					label: CONTACTS_INPUT_LABELS.attachments,
+					key: 'attachments',
+					value: item.attachments,
+					isJson: true
 				},
 				{
 					label: SHARED.collectionHeader.createdAtLabel,
@@ -106,13 +128,7 @@
 </svelte:head>
 
 <AppContainer {messages}>
-	<AppContent
-		{...appHeader}
-		{totalCount}
-		showBackButton={false}
-		showFilter={false}
-		maxPage={totalPages}
-	>
+	<AppContent {...appHeader} {totalCount} showBackButton={false} showFilter={false} maxPage={totalPages}>
 		<CollectionHeader columns={collectionHeader} />
 		{#each collectionData as row, i (row[0].value)}
 			<CollectionRow rowCells={row} showEdit={false} />

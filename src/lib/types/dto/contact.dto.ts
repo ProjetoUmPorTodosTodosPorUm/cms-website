@@ -3,6 +3,7 @@ export type ContactDto = {
 	name: string
 	email: string
 	message: string
+	attachments?: string[]
 
 	createdAt: string
 	updatedAt: string
