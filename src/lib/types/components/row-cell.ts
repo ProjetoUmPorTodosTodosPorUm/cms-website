@@ -9,5 +9,5 @@ export type RowCell = {
 	isStatic?: boolean
 	isModal?: boolean
 	modalModalHtml?: boolean
-	transform?: (value: any) => any
+	transform?: (value: any, context: RowCell[]) => any
 }
