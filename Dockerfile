@@ -1,7 +1,7 @@
 ###################
 # BASE IMAGE
 ###################
-FROM node:21.7-alpine as base-image
+FROM node:21.7-alpine AS base-image
 
 # Needed for build
 RUN apk add git
@@ -21,7 +21,7 @@ COPY . .
 ###################
 # PREVIEW IMAGE
 ###################
-FROM base-image as preview-image
+FROM base-image AS preview-image
 
 ARG PUBLIC_API_URL=https://api.localhost
 ARG PUBLIC_FILES_URL=https://files.localhost
@@ -45,7 +45,7 @@ CMD ["node", "build"]
 ###################
 # PROD IMAGE
 ###################
-FROM base-image as prod-image
+FROM base-image AS prod-image
 
 ARG PUBLIC_API_URL=https://api.projetoumportodostodosporum.org
 ARG PUBLIC_FILES_URL=https://files.projetoumportodostodosporum.org

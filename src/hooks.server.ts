@@ -93,7 +93,7 @@ export const handle = sveltekitSessionHandle({
 		secure: process.env.NODE_ENV === 'production' ? true : false,
 		httpOnly: process.env.NODE_ENV === 'production' ? true : false,
 		sameSite: 'strict',
-		// 7 days in ms
-		expires: new Date((new Date()).valueOf() + (7 * 24 * 60 * 60 * 1000))
+		// 7 days in seconds
+		maxAge: (7 * 24 * 60 * 60)
 	}
 });
